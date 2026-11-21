@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест-тренажер: Анафилактический шок (КП МЗ РК № 109)</title>
+    <style>
+        /* Базовые переменные клинической цветовой палитры */
+        :root {
+            --primary: #0f766e;
+            --primary-hover: #115e59;
+            --primary-light: #f0fdfa;
+            --primary-border: #99f6e4;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-300: #cbd5e1;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --white: #ffffff;
+            --success-bg: #ecfdf5;
+            --success-border: #10b981;
+            --success-text: #065f46;
+            --error-bg: #fef2f2;
+            --error-border: #ef4444;
+            --error-text: #991b1b;
+            --warning-bg: #fffbeb;
+            --warning-border: #f59e0b;
+            --warning-text: #92400e;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--slate-100);
+            color: var(--slate-900);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Верхняя шапка */
+        header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-inner {
+            max-width: 860px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #0f766e, #0d9488);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(15, 118, 110, 0.25);
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--slate-900);
+            line-height: 1.25;
+        }
+
+        .brand-subtitle {
+            font-size: 12.5px;
+            color: var(--slate-500);
+            margin-top: 2px;
+        }
+
+        /* Переключатель режимов */
+        .mode-switcher {
+            display: flex;
+            background-color: var(--slate-100);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--slate-200);
+        }
+
+        .mode-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 14px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--slate-600);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn:hover {
+            color: var(--slate-900);
+        }
+
+        .mode-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+            box-shadow: 0 2px 6px rgba(15, 118, 110, 0.25);
+        }
+
+        /* Основной контейнер */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 24px 16px 48px;
+        }
+
+        /* Панель прогресса и навигации по номерам вопросов */
+        .status-card {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            border: 1px solid var(--slate-200);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary-border);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background-color: var(--slate-100);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f766e, #14b8a6);
+            border-radius: 999px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Сетка быстрой навигации по вопросам */
+        .q-nav-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .q-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--slate-200);
+            background-color: var(--slate-50);
+            color: var(--slate-700);
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .q-dot:hover {
+            border-color: var(--primary);
+        }
+
+        .q-dot.current {
+            border: 2px solid var(--primary);
+            font-weight: 700;
+            transform: translateY(-1px);
+        }
+
+        .q-dot.answered-neutral {
+            background-color: #e0f2fe;
+            border-color: #38bdf8;
+            color: #0369a1;
+        }
+
+        .q-dot.answered-correct {
+            background-color: var(--success-bg);
+            border-color: var(--success-border);
+            color: var(--success-text);
+        }
+
+        .q-dot.answered-wrong {
+            background-color: var(--error-bg);
+            border-color: var(--error-border);
+            color: var(--error-text);
+        }
+
+        /* Карточка вопроса */
+        .question-card {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            border: 1px solid var(--slate-200);
+            box-shadow: var(--shadow-md);
+        }
+
+        .q-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .q-category {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--primary);
+            background-color: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .q-number {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate-500);
+        }
+
+        .q-text {
+            font-size: 17.5px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 20px;
+            line-height: 1.45;
+        }
+
+        /* Варианты ответов */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            background-color: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            font-size: 15px;
+            color: var(--slate-800);
+            line-height: 1.45;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: var(--slate-50);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-letter {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: var(--slate-100);
+            color: var(--slate-700);
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+            border: 1px solid var(--slate-300);
+            transition: all 0.18s ease;
+        }
+
+        /* Состояния выбора */
+        .option-btn.selected-exam {
+            border-color: #0284c7;
+            background-color: #f0f9ff;
+        }
+
+        .option-btn.selected-exam .option-letter {
+            background-color: #0284c7;
+            color: var(--white);
+            border-color: #0284c7;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-border);
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            font-weight: 500;
+        }
+
+        .option-btn.correct .option-letter {
+            background-color: var(--success-border);
+            color: var(--white);
+            border-color: var(--success-border);
+        }
+
+        .option-btn.wrong {
+            border-color: var(--error-border);
+            background-color: var(--error-bg);
+            color: var(--error-text);
+        }
+
+        .option-btn.wrong .option-letter {
+            background-color: var(--error-border);
+            color: var(--white);
+            border-color: var(--error-border);
+        }
+
+        .option-btn.dimmed {
+            opacity: 0.6;
+        }
+
+        /* Блок клинического пояснения */
+        .explanation-box {
+            margin-top: 20px;
+            padding: 16px 18px;
+            border-radius: var(--radius-md);
+            font-size: 14.5px;
+            line-height: 1.55;
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .explanation-box.visible {
+            display: block;
+        }
+
+        .explanation-box.is-correct {
+            background-color: var(--success-bg);
+            border: 1px solid #a7f3d0;
+            color: var(--success-text);
+        }
+
+        .explanation-box.is-wrong {
+            background-color: var(--error-bg);
+            border: 1px solid #fecaca;
+            color: var(--error-text);
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Панель кнопок управления внизу карточки */
+        .card-footer {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid var(--slate-100);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 11px 18px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.18s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: var(--slate-100);
+            color: var(--slate-700);
+            border-color: var(--slate-200);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: var(--slate-200);
+            color: var(--slate-900);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-finish {
+            background-color: #0f172a;
+            color: var(--white);
+        }
+
+        .btn-finish:hover:not(:disabled) {
+            background-color: #1e293b;
+        }
+
+        /* Экран результатов */
+        .results-card {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            border: 1px solid var(--slate-200);
+            box-shadow: var(--shadow-md);
+            display: none;
+        }
+
+        .results-card.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .score-hero {
+            text-align: center;
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            background-color: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            margin-bottom: 24px;
+        }
+
+        .score-circle {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            border: 5px solid var(--primary);
+            background-color: var(--white);
+            color: var(--slate-900);
+        }
+
+        .score-circle.passed {
+            border-color: var(--success-border);
+            color: var(--success-text);
+        }
+
+        .score-circle.failed {
+            border-color: var(--error-border);
+            color: var(--error-text);
+        }
+
+        .score-percent {
+            font-size: 28px;
+            line-height: 1.1;
+        }
+
+        .score-fraction {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--slate-500);
+            margin-top: 2px;
+        }
+
+        .verdict-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .verdict-badge.passed {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #a7f3d0;
+        }
+
+        .verdict-badge.failed {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid #fecaca;
+        }
+
+        .verdict-desc {
+            font-size: 14.5px;
+            color: var(--slate-600);
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .results-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        /* Детальный разбор всех вопросов в результатах */
+        .review-section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .review-item {
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            background-color: var(--white);
+        }
+
+        .review-item.rev-correct {
+            border-left: 4px solid var(--success-border);
+        }
+
+        .review-item.rev-wrong {
+            border-left: 4px solid var(--error-border);
+        }
+
+        .review-q-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--slate-900);
+            margin-bottom: 8px;
+        }
+
+        .review-ans-row {
+            font-size: 13.5px;
+            margin-bottom: 4px;
+        }
+
+        .review-explanation {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--slate-200);
+            font-size: 13.5px;
+            color: var(--slate-600);
+        }
+
+        /* Уведомление (вместо alert) */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--slate-900);
+            color: var(--white);
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 50;
+            opacity: 0;
+            transition: all 0.3s ease;
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .question-card {
+                padding: 18px 16px;
+            }
+            .q-text {
+                font-size: 16px;
+            }
+            .option-btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+            .card-footer {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+            .nav-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .nav-group .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка приложения -->
+    <header>
+        <div class="header-inner">
+            <div class="brand">
+                <div class="brand-icon" aria-hidden="true">
+                    <!-- Векторный медицинский щит с крестом -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="M12 8v8"/>
+                        <path d="M8 12h8"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="brand-title">Тест-тренажер: Анафилактический шок</div>
+                    <div class="brand-subtitle">Неотложная помощь и состав укладки • КП МЗ РК № 109</div>
+                </div>
+            </div>
+
+            <!-- Переключатель режимов: Обучение / Экзамен -->
+            <div class="mode-switcher" role="group" aria-label="Выбор режима тестирования">
+                <button id="btnModeTraining" class="mode-btn active" onclick="setMode('training')">Режим обучения</button>
+                <button id="btnModeExam" class="mode-btn" onclick="setMode('exam')">Режим экзамена</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Панель прогресса и навигации -->
+        <section id="statusSection" class="status-card">
+            <div class="progress-header">
+                <span id="progressText">Отвечено: 0 из 15</span>
+                <span id="modeDescriptionBadge" class="mode-badge">Обучение: разбор сразу после ответа</span>
+            </div>
+            <div class="progress-track">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div id="qNavGrid" class="q-nav-grid" aria-label="Навигация по вопросам"></div>
+        </section>
+
+        <!-- Активная карточка вопроса -->
+        <section id="quizSection" class="question-card">
+            <div class="q-meta">
+                <span id="qCategory" class="q-category">Категория</span>
+                <span id="qNumber" class="q-number">Вопрос 1 из 15</span>
+            </div>
+
+            <h2 id="qText" class="q-text">Текст вопроса</h2>
+
+            <div id="optionsList" class="options-list"></div>
+
+            <div id="explanationBox" class="explanation-box">
+                <div id="explanationTitle" class="explanation-title"></div>
+                <div id="explanationText"></div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-secondary" onclick="restartAndShuffle()" title="Сбросить ответы и перемешать порядок вопросов">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    Перемешать / Заново
+                </button>
+
+                <div class="nav-group">
+                    <button id="btnPrev" class="btn btn-secondary" onclick="prevQuestion()">← Назад</button>
+                    <button id="btnNext" class="btn btn-primary" onclick="nextQuestion()">Далее →</button>
+                    <button id="btnFinish" class="btn btn-finish" onclick="finishQuiz()">Завершить тест</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Экран итоговых результатов -->
+        <section id="resultsSection" class="results-card">
+            <div class="score-hero">
+                <div id="scoreCircle" class="score-circle">
+                    <span id="scorePercent" class="score-percent">0%</span>
+                    <span id="scoreFraction" class="score-fraction">0 из 15</span>
+                </div>
+                <div id="verdictBadge" class="verdict-badge">Результат</div>
+                <p id="verdictDesc" class="verdict-desc"></p>
+            </div>
+
+            <div class="results-actions">
+                <button class="btn btn-primary" onclick="restartAndShuffle()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    Пройти заново / Перемешать вопросы
+                </button>
+                <button class="btn btn-secondary" onclick="switchModeAndRestart()">
+                    Сменить режим и пройти заново
+                </button>
+            </div>
+
+            <h3 class="review-section-title">Детальный клинический разбор ответов</h3>
+            <div id="reviewList" class="review-list"></div>
+        </section>
+    </main>
+
+    <!-- Всплывающее уведомление -->
+    <div id="toast" class="toast" role="status"></div>
+
+    <script>
+        /**
+         * Клиническая база из 15 вопросов по анафилактическому шоку и составу укладки
+         * согласно Клиническому протоколу МЗ РК № 109.
+         */
+        const ORIGINAL_QUESTIONS = [
+            {
+                id: 1,
+                category: "Препарат первой линии",
+                question: "Какой препарат является средством первой линии неотложной помощи при анафилактическом шоке?",
+                options: [
+                    "Преднизолон",
+                    "Эпинефрин (Адреналин) 0,18%",
+                    "Хлоропирамин (Супрастин)",
+                    "Аминофиллин (Эуфиллин)"
+                ],
+                correctIndex: 1,
+                explanation: "Согласно КП МЗ РК № 109, Эпинефрин (Адреналин) — единственный препарат первой линии. Он стимулирует альфа- и бета-адренорецепторы, быстро устраняя вазодилатацию, сосудистый коллапс, бронхоспазм и отек слизистых."
+            },
+            {
+                id: 2,
+                category: "Путь введения и дозировка",
+                question: "Куда и в какой разовой дозе взрослому пациенту в первую очередь вводится 0,18% раствор Эпинефрина?",
+                options: [
+                    "Внутривенно струйно 1,0 мл без разведения",
+                    "Внутримышечно в переднелатеральную поверхность бедра в дозе 0,3–0,5 мл (0,01 мг/кг)",
+                    "Подкожно в область плеча в дозе 0,1 мл",
+                    "Внутримышечно в верхненаружный квадрант ягодицы в дозе 1,0 мл"
+                ],
+                correctIndex: 1,
+                explanation: "Внутримышечное введение в переднелатеральную поверхность бедра (0,01 мг/кг, взрослым 0,3–0,5 мл 0,18% раствора) обеспечивает максимально быстрое и надежное всасывание в условиях шока и периферического вазоспазма."
+            },
+            {
+                id: 3,
+                category: "Тайминг терапии",
+                question: "Через какой интервал времени допускается повторное внутримышечное введение Эпинефрина при сохранении гипотензии и отсутствии эффекта?",
+                options: [
+                    "Каждые 1–2 минуты",
+                    "Каждые 5–15 минут",
+                    "Через 30–40 минут после введения глюкокортикостероидов",
+                    "Повторное введение до приезда реанимационной бригады запрещено"
+                ],
+                correctIndex: 1,
+                explanation: "При недостаточном клиническом эффекте и сохранении артериальной гипотензии внутримышечное введение Эпинефрина повторяют каждые 5–15 минут под контролем АД и ЧСС."
+            },
+            {
+                id: 4,
+                category: "Положение пациента",
+                question: "Какое положение необходимо придать пациенту в стандартном случае анафилактического шока с артериальной гипотензией?",
+                options: [
+                    "Сидя с наклоном туловища вперед",
+                    "Горизонтальное с приподнятым ножным концом (положение Тренделенбурга), голова повернута набок",
+                    "Строго на животе",
+                    "Полусидя с опущенными ногами"
+                ],
+                correctIndex: 1,
+                explanation: "Положение Тренделенбурга (горизонтально с приподнятыми ногами) улучшает венозный возврат крови к сердцу и кровоснабжение головного мозга. Поворот головы набок и выдвижение нижней челюсти предупреждают аспирацию и западение языка."
+            },
+            {
+                id: 5,
+                category: "Особые клинические ситуации",
+                question: "В каком положении следует разместить и транспортировать пациента, если в клинической картине преобладает выраженный отек гортани и тяжелое удушье?",
+                options: [
+                    "Строго горизонтально с опущенным головным концом",
+                    "В полусидячем положении",
+                    "Лежа на левом боку с прижатыми к животу коленями",
+                    "Положение пациента не влияет на проходимость дыхательных путей"
+                ],
+                correctIndex: 1,
+                explanation: "Исключение из правила положения Тренделенбурга: при выраженном отеке гортани и тяжелой дыхательной недостаточности укладывать пациента горизонтально запрещено — необходимо придать полусидячее положение для облегчения дыхания."
+            },
+            {
+                id: 6,
+                category: "Состав укладки и фармакология",
+                question: "Какой антигистаминный препарат КАТЕГОРИЧЕСКИ ЗАПРЕЩЕН в противошоковой укладке и терапии анафилактического шока?",
+                options: [
+                    "Хлоропирамин (Супрастин) 2%",
+                    "Дифенгидрамин (Димедрол) 1%",
+                    "Прометазин (Пипольфен)",
+                    "Клемастин (Тавегил) 0,1%"
+                ],
+                correctIndex: 2,
+                explanation: "Прометазин (Пипольфен) обладает выраженным альфа-адреноблокирующим и гипотензивным эффектом, что критически усугубляет сосудистый коллапс при анафилактическом шоке."
+            },
+            {
+                id: 7,
+                category: "Инфузионная терапия",
+                question: "Какой раствор и в каком стартовом объеме применяется для экстренного восполнения объема циркулирующей крови (ОЦК)?",
+                options: [
+                    "5% раствор декстрозы (глюкозы) — 200 мл капельно",
+                    "0,9% раствор натрия хлорида — от 1000 мл и более быстро струйно/капельно",
+                    "10% раствор кальция хлорида — 10 мл внутривенно",
+                    "Вода для инъекций — 400 мл"
+                ],
+                correctIndex: 1,
+                explanation: "При анафилактическом шоке развивается относительная гиповолемия из-за массивной вазодилатации и повышения проницаемости сосудов. Немедленно начинают быструю инфузию 0,9% раствора натрия хлорида в объеме от 1 литра и более."
+            },
+            {
+                id: 8,
+                category: "Местная терапия",
+                question: "Какова правильная местная тактика, если аллерген поступил в конечность (инъекция препарата или укус насекомого)?",
+                options: [
+                    "Наложить артериальный жгут на 2 часа и приложить грелку",
+                    "Наложить венозный жгут проксимальнее места введения (до 30 мин, ослабляя каждые 10 мин), обколоть место разведенным эпинефрином и приложить холод",
+                    "Сделать крестообразный разрез и отсосать кровь",
+                    "Нанести согревающую мазь и забинтовать конечность"
+                ],
+                correctIndex: 1,
+                explanation: "Для замедления всасывания аллергена накладывают жгут проксимальнее (не пережимая артерии!) на срок до 30 минут с ослаблением на 1–2 минуты каждые 10 минут, обкалывают место 0,3–0,5 мл 0,18% эпинефрина в 5 мл 0,9% NaCl и прикладывают холод."
+            },
+            {
+                id: 9,
+                category: "Госпитализация и наблюдение",
+                question: "Какова минимальная длительность обязательного наблюдения пациента в условиях ОРИТ после перенесенного анафилактического шока?",
+                options: [
+                    "2 часа в процедурном кабинете",
+                    "6 часов в приемном покое",
+                    "24–48 часов в отделении реанимации и интенсивной терапии (ОРИТ)",
+                    "Наблюдение не требуется при нормализации артериального давления"
+                ],
+                correctIndex: 2,
+                explanation: "Все пациенты, перенесшие анафилактический шок, подлежат обязательной экстренной госпитализации в ОРИТ минимум на 24–48 часов в связи с высоким риском развития двухфазной (отсроченной) анафилактической реакции."
+            },
+            {
+                id: 10,
+                category: "Терапия второй линии",
+                question: "Какую стартовую дозу Преднизолона рекомендуется вводить взрослым в качестве терапии второй линии при анафилактическом шоке?",
+                options: [
+                    "15–30 мг внутримышечно",
+                    "90–150 мг внутривенно струйно",
+                    "500 мг перорально в таблетках",
+                    "Глюкокортикостероиды при анафилактическом шоке не используются"
+                ],
+                correctIndex: 1,
+                explanation: "Глюкокортикостероиды (Преднизолон 90–150 мг в/в струйно или Дексаметазон 8–32 мг, Гидрокортизон 150–300 мг) относятся ко второй линии терапии и назначаются для предотвращения затяжных и двухфазных аллергических реакций."
+            },
+            {
+                id: 11,
+                category: "Купирование бронхоспазма",
+                question: "Какие препараты из противошоковой укладки применяются при сохраняющемся бронхоспазме на фоне введения эпинефрина?",
+                options: [
+                    "Ингаляция Сальбутамола через небулайзер или Аминофиллин (Эуфиллин) 2,4% — 10 мл в/в медленно на физрастворе",
+                    "Морфин 1% — 1,0 мл внутривенно",
+                    "Атропин 0,1% — 1,0 мл подкожно",
+                    "Фуросемид 40 мг внутривенно"
+                ],
+                correctIndex: 0,
+                explanation: "При резистентном бронхоспазме применяют ингаляционные бета-2-агонисты (Сальбутамол через небулайзер) или медленное внутривенное введение Аминофиллина (Эуфиллина) 2,4% 10 мл, разведенного в 10 мл 0,9% раствора NaCl."
+            },
+            {
+                id: 12,
+                category: "Оснащение укладки (МИ)",
+                question: "Какой размер периферических венозных катетеров (вазофиксов) должен находиться в противошоковой укладке согласно требованиям?",
+                options: [
+                    "Только тонкие педиатрические катетеры № 24–26",
+                    "Крупные катетеры № 16–18 (не менее 2 шт.) и системы для в/в инфузий",
+                    "Венозные катетеры в укладку не входят",
+                    "Только подключичные катетеры"
+                ],
+                correctIndex: 1,
+                explanation: "Для обеспечения высокой скорости струйной инфузии кристаллоидных растворов при коллапсе укладка комплектуется периферическими венозными катетерами большого диаметра (№ 16–18 — 2 шт.) и инфузионными системами."
+            },
+            {
+                id: 13,
+                category: "Дозирование антигистаминных средств",
+                question: "В какой дозе и каким путем вводится Хлоропирамин (Супрастин) 2% при анафилактическом шоке?",
+                options: [
+                    "2–4 мл внутримышечно или внутривенно (после стабилизации гемодинамики)",
+                    "0,1 мл подкожно",
+                    "10 мл внутривенно болюсно за 2 секунды",
+                    "Только внутрь в виде таблеток"
+                ],
+                correctIndex: 0,
+                explanation: "Хлоропирамин (Супрастин) 2% вводится парентерально (в/м или в/в) в дозе 2–4 мл (или Дифенгидрамин 1% — 1–2 мл) как вспомогательное средство после введения эпинефрина и начала инфузионной терапии."
+            },
+            {
+                id: 14,
+                category: "Внутривенное введение Эпинефрина",
+                question: "При каком условии допускается внутривенное введение Эпинефрина при анафилактическом шоке?",
+                options: [
+                    "Всем пациентам сразу в процедурном кабинете без разведения",
+                    "Строго в условиях реанимации/ОРИТ при тяжелой гипоперфузии и постоянном мониторинге ЭКГ и АД",
+                    "Внутривенное введение Эпинефрина запрещено даже в реанимации",
+                    "Только при легкой крапивнице без снижения АД"
+                ],
+                correctIndex: 1,
+                explanation: "Болюсное в/в введение эпинефрина сопряжено с высоким риском жизнеугрожающих аритмий и гипертонического криза, поэтому оно допускается исключительно в условиях реанимационного отделения под постоянным кардиомониторингом."
+            },
+            {
+                id: 15,
+                category: "Обеспечение проходимости дыхательных путей",
+                question: "Какие медицинские изделия для респираторной поддержки и контроля диуреза при тяжелом шоке входят в стандартную укладку РК?",
+                options: [
+                    "Только марлевые повязки и пипетки",
+                    "Мешок Амбу с масками, ротоглоточные воздуховоды, роторасширитель, языкодержатель, отсос/груша, источник кислорода и катетер Фоллея № 20–22",
+                    "Аппарат ИВЛ экспертного класса и диализатор",
+                    "Только грелка и пузырь со льдом"
+                ],
+                correctIndex: 1,
+                explanation: "Полная укладка включает средства для восстановления проходимости дыхательных путей (мешок Амбу, воздуховоды, роторасширитель, языкодержатель, груша/отсос, кислород), тонометр с фонендоскопом, а также катетер Фоллея № 20–22 с мочесборником для контроля диуреза."
+            }
+        ];
+
+        // Состояние приложения
+        let mode = 'training'; // 'training' | 'exam'
+        let questions = [];
+        let currentIndex = 0;
+        let userAnswers = {}; // { questionIndex: selectedOptionIndex }
+        let isFinished = false;
+
+        // Инициализация при загрузке
+        window.addEventListener('DOMContentLoaded', () => {
+            questions = [...ORIGINAL_QUESTIONS];
+            renderAll();
+        });
+
+        /**
+         * Переключение между режимом обучения и режимом экзамена
+         */
+        function setMode(newMode) {
+            if (mode === newMode && !isFinished) return;
+            mode = newMode;
+
+            document.getElementById('btnModeTraining').classList.toggle('active', mode === 'training');
+            document.getElementById('btnModeExam').classList.toggle('active', mode === 'exam');
+
+            const badge = document.getElementById('modeDescriptionBadge');
+            badge.textContent = mode === 'training'
+                ? 'Обучение: разбор сразу после ответа'
+                : 'Экзамен: итоговый результат после всех вопросов';
+
+            // Сброс прогресса при смене режима
+            currentIndex = 0;
+            userAnswers = {};
+            isFinished = false;
+
+            document.getElementById('resultsSection').classList.remove('visible');
+            document.getElementById('statusSection').style.display = 'block';
+            document.getElementById('quizSection').style.display = 'block';
+
+            renderAll();
+            showToast(mode === 'training' ? 'Включен режим обучения' : 'Включен режим экзамена');
+        }
+
+        /**
+         * Перемешивание вопросов и вариантов ответов (алгоритм Фишера — Йетса)
+         */
+        function restartAndShuffle() {
+            const shuffled = ORIGINAL_QUESTIONS.map(q => {
+                // Создаем пары [текст варианта, является_ли_правильным]
+                const paired = q.options.map((opt, idx) => ({
+                    text: opt,
+                    isCorrect: idx === q.correctIndex
+                }));
+
+                // Перемешиваем варианты ответов
+                for (let i = paired.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [paired[i], paired[j]] = [paired[j], paired[i]];
+                }
+
+                return {
+                    ...q,
+                    options: paired.map(p => p.text),
+                    correctIndex: paired.findIndex(p => p.isCorrect)
+                };
+            });
+
+            // Перемешиваем сами вопросы
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+
+            questions = shuffled;
+            currentIndex = 0;
+            userAnswers = {};
+            isFinished = false;
+
+            document.getElementById('resultsSection').classList.remove('visible');
+            document.getElementById('statusSection').style.display = 'block';
+            document.getElementById('quizSection').style.display = 'block';
+
+            renderAll();
+            showToast('Вопросы и варианты ответов перемешаны');
+        }
+
+        function switchModeAndRestart() {
+            const nextMode = mode === 'training' ? 'exam' : 'training';
+            setMode(nextMode);
+        }
+
+        /**
+         * Полная перерисовка интерфейса
+         */
+        function renderAll() {
+            renderProgressAndNav();
+            renderQuestionCard();
+        }
+
+        /**
+         * Отрисовка шкалы прогресса и кнопок навигации по вопросам
+         */
+        function renderProgressAndNav() {
+            const total = questions.length;
+            const answeredCount = Object.keys(userAnswers).length;
+            const percent = Math.round((answeredCount / total) * 100);
+
+            document.getElementById('progressText').textContent = `Отвечено: ${answeredCount} из ${total}`;
+            document.getElementById('progressFill').style.width = `${percent}%`;
+
+            const grid = document.getElementById('qNavGrid');
+            grid.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'q-dot';
+                btn.textContent = idx + 1;
+                btn.title = `Перейти к вопросу ${idx + 1}`;
+
+                if (idx === currentIndex) {
+                    btn.classList.add('current');
+                }
+
+                if (userAnswers[idx] !== undefined) {
+                    if (mode === 'training') {
+                        const isRight = userAnswers[idx] === q.correctIndex;
+                        btn.classList.add(isRight ? 'answered-correct' : 'answered-wrong');
+                    } else {
+                        btn.classList.add('answered-neutral');
+                    }
+                }
+
+                btn.onclick = () => {
+                    currentIndex = idx;
+                    renderAll();
+                };
+
+                grid.appendChild(btn);
+            });
+        }
+
+        /**
+         * Отрисовка активного вопроса и вариантов ответа
+         */
+        function renderQuestionCard() {
+            const q = questions[currentIndex];
+            const total = questions.length;
+            const selectedOpt = userAnswers[currentIndex];
+            const hasAnswered = selectedOpt !== undefined;
+
+            document.getElementById('qCategory').textContent = q.category;
+            document.getElementById('qNumber').textContent = `Вопрос ${currentIndex + 1} из ${total}`;
+            document.getElementById('qText').textContent = q.question;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            const letters = ['А', 'Б', 'В', 'Г'];
+
+            q.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+
+                // В режиме обучения блокируем повторное нажатие после ответа
+                if (mode === 'training' && hasAnswered) {
+                    btn.disabled = true;
+                    if (optIdx === q.correctIndex) {
+                        btn.classList.add('correct');
+                    } else if (optIdx === selectedOpt) {
+                        btn.classList.add('wrong');
+                    } else {
+                        btn.classList.add('dimmed');
+                    }
+                } else if (mode === 'exam' && hasAnswered) {
+                    // В режиме экзамена подсвечиваем выбранный вариант, но не раскрываем правильный ответ
+                    if (optIdx === selectedOpt) {
+                        btn.classList.add('selected-exam');
+                    }
+                }
+
+                btn.innerHTML = `
+                    <span class="option-letter">${letters[optIdx]}</span>
+                    <span>${optText}</span>
+                `;
+
+                btn.onclick = () => handleSelectOption(optIdx);
+                optionsList.appendChild(btn);
+            });
+
+            // Блок пояснения (виден только в режиме обучения после ответа)
+            const expBox = document.getElementById('explanationBox');
+            const expTitle = document.getElementById('explanationTitle');
+            const expText = document.getElementById('explanationText');
+
+            if (mode === 'training' && hasAnswered) {
+                const isRight = selectedOpt === q.correctIndex;
+                expBox.className = `explanation-box visible ${isRight ? 'is-correct' : 'is-wrong'}`;
+                expTitle.textContent = isRight ? '✓ Верно! Клиническое обоснование:' : '✕ Неверно. Клиническое обоснование:';
+                expText.textContent = q.explanation;
+            } else {
+                expBox.className = 'explanation-box';
+            }
+
+            // Управление кнопками навигации
+            document.getElementById('btnPrev').disabled = currentIndex === 0;
+            const btnNext = document.getElementById('btnNext');
+            const btnFinish = document.getElementById('btnFinish');
+
+            if (currentIndex === total - 1) {
+                btnNext.style.display = 'none';
+                btnFinish.style.display = 'inline-flex';
+            } else {
+                btnNext.style.display = 'inline-flex';
+                btnFinish.style.display = 'inline-flex';
+            }
+        }
+
+        /**
+         * Обработка выбора ответа пользователем
+         */
+        function handleSelectOption(optIdx) {
+            if (mode === 'training' && userAnswers[currentIndex] !== undefined) {
+                return;
+            }
+            userAnswers[currentIndex] = optIdx;
+            renderAll();
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderAll();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderAll();
+            }
+        }
+
+        /**
+         * Завершение теста и формирование итогового отчета
+         */
+        function finishQuiz() {
+            const total = questions.length;
+            const answeredCount = Object.keys(userAnswers).length;
+
+            if (answeredCount < total) {
+                const firstUnanswered = questions.findIndex((_, idx) => userAnswers[idx] === undefined);
+                if (firstUnanswered !== -1) {
+                    currentIndex = firstUnanswered;
+                    renderAll();
+                    showToast(`Ответьте на все вопросы (осталось: ${total - answeredCount}). Переход к вопросу №${firstUnanswered + 1}`);
+                    return;
+                }
+            }
+
+            isFinished = true;
+            document.getElementById('statusSection').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'none';
+
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.classList.add('visible');
+
+            // Подсчет баллов
+            let correctCount = 0;
+            questions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correctIndex) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / total) * 100);
+            const isPassed = percent >= 80; // Порог зачета 80% (12 из 15)
+
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.className = `score-circle ${isPassed ? 'passed' : 'failed'}`;
+            document.getElementById('scorePercent').textContent = `${percent}%`;
+            document.getElementById('scoreFraction').textContent = `${correctCount} из ${total}`;
+
+            const verdictBadge = document.getElementById('verdictBadge');
+            verdictBadge.className = `verdict-badge ${isPassed ? 'passed' : 'failed'}`;
+            verdictBadge.textContent = isPassed ? 'Зачет сдан (КП МЗ РК № 109)' : 'Требуется повторение протокола';
+
+            const verdictDesc = document.getElementById('verdictDesc');
+            if (percent === 100) {
+                verdictDesc.textContent = 'Безупречный результат! Вы отлично владеете алгоритмом неотложной помощи при анафилактическом шоке и требованиями к укладке.';
+            } else if (isPassed) {
+                verdictDesc.textContent = 'Хороший уровень подготовки (проходной порог 80% преодолен). Ознакомьтесь с разбором допущенных неточностей ниже.';
+            } else {
+                verdictDesc.textContent = 'Для уверенного прохождения рекомендуется набрать не менее 80% (12 из 15 правильных ответов). Изучите подробный разбор ошибок ниже.';
+            }
+
+            // Генерация детального разбора всех 15 вопросов
+            const reviewList = document.getElementById('reviewList');
+            reviewList.innerHTML = '';
+            const letters = ['А', 'Б', 'В', 'Г'];
+
+            questions.forEach((q, idx) => {
+                const uAns = userAnswers[idx];
+                const isRight = uAns === q.correctIndex;
+
+                const item = document.createElement('div');
+                item.className = `review-item ${isRight ? 'rev-correct' : 'rev-wrong'}`;
+
+                const userText = uAns !== undefined
+                    ? `${letters[uAns]}) ${q.options[uAns]}`
+                    : 'Нет ответа';
+                const correctText = `${letters[q.correctIndex]}) ${q.options[q.correctIndex]}`;
+
+                item.innerHTML = `
+                    <div class="review-q-title">${idx + 1}. ${q.question}</div>
+                    <div class="review-ans-row" style="color: ${isRight ? '#065f46' : '#991b1b'}; font-weight: 600;">
+                        Ваш ответ: ${userText} ${isRight ? '✓' : '✕'}
+                    </div>
+                    ${!isRight ? `<div class="review-ans-row" style="color: #065f46; font-weight: 600;">Правильный ответ: ${correctText}</div>` : ''}
+                    <div class="review-explanation"><strong>Пояснение:</strong> ${q.explanation}</div>
+                `;
+
+                reviewList.appendChild(item);
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /**
+         * Показ ненавязчивого всплывающего уведомления
+         */
+        let toastTimer = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3200);
+        }
+    </script>
+</body>
+</html>

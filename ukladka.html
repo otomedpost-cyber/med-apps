@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анафилактический шок: Укладка и Алгоритм (КП РК № 109)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+        /* Стили для печати отчета по укладке */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .card-shadow {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+            .checkbox-custom {
+                border: 1.5px solid #000 !important;
+            }
+        }
+        .tab-active {
+            background-color: #0f766e;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(15, 118, 110, 0.25);
+        }
+        .subtab-active {
+            border-bottom: 2px solid #0f766e;
+            color: #0f766e;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Верхняя панель навигации -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 no-print">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-teal-700 text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <!-- Медицинский крест / щит SVG -->
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight">Анафилактический шок</h1>
+                    <p class="text-xs sm:text-sm text-slate-500">Контроль укладки и алгоритм помощи • КП МЗ РК № 109</p>
+                </div>
+            </div>
+
+            <!-- Переключатель главных разделов -->
+            <nav class="flex bg-slate-100 p-1 rounded-xl self-start sm:self-auto w-full sm:w-auto">
+                <button id="btnTabKit" onclick="switchMainTab('kit')" class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg text-sm font-medium transition-all tab-active cursor-pointer">
+                    Проверка укладки
+                </button>
+                <button id="btnTabRules" onclick="switchMainTab('rules')" class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 transition-all cursor-pointer">
+                    Правила оказания помощи
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Заголовок для печатной версии -->
+    <div class="hidden print-only max-w-5xl mx-auto px-6 pt-6 pb-2 border-b border-slate-300">
+        <h1 class="text-xl font-bold">Акт проверки противошоковой укладки (Анафилактический шок)</h1>
+        <p class="text-sm text-slate-600 mt-1">Согласно клиническим протоколам МЗ РК (КП № 109). Дата проверки: <span id="printDate"></span></p>
+    </div>
+
+    <!-- Основной контейнер -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+        <!-- ========================================================= -->
+        <!-- РАЗДЕЛ 1: ПРОВЕРКА УКЛАДКИ (ЧЕК-ЛИСТ)                      -->
+        <!-- ========================================================= -->
+        <section id="sectionKit" class="space-y-6">
+            
+            <!-- Панель статуса укомплектованности и действий -->
+            <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 card-shadow">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div>
+                        <div class="flex items-center gap-2.5 flex-wrap">
+                            <h2 class="text-lg font-bold text-slate-900">Аудит противошоковой укладки</h2>
+                            <span id="kitStatusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+                                Требуется проверка
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-500 mt-1">Отметьте наличие препаратов, целостность упаковки и актуальность сроков годности.</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2.5 no-print">
+                        <button onclick="checkAllItems()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 transition cursor-pointer">
+                            Отметить всё
+                        </button>
+                        <button onclick="resetKit()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer">
+                            Сбросить проверку
+                        </button>
+                        <button onclick="printReport()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 text-white hover:bg-slate-900 transition flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                            </svg>
+                            Печать / Отчет
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Шкала прогресса -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs sm:text-sm font-medium">
+                        <span class="text-slate-600">Укомплектованность: <strong id="checkedCount" class="text-slate-900">0</strong> из <strong id="totalCount" class="text-slate-900">18</strong> позиций</span>
+                        <span id="progressPercent" class="text-teal-700 font-bold">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200">
+                        <div id="progressBar" class="bg-teal-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Сводка отсутствующих позиций (показывается если < 100%) -->
+                <div id="missingAlert" class="mt-4 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs sm:text-sm text-amber-900 hidden">
+                    <span class="font-semibold">Не проверены / отсутствуют:</span> <span id="missingListText"></span>
+                </div>
+            </div>
+
+            <!-- Блок 1: Лекарственные средства (ЛС) -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden card-shadow">
+                <div class="bg-slate-50 px-5 py-3.5 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-teal-600"></span>
+                        <h3 class="font-bold text-slate-800 text-base">1. Лекарственные средства (ЛС)</h3>
+                    </div>
+                    <span id="medsCounter" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-600">0 / 7</span>
+                </div>
+                <div id="medsContainer" class="divide-y divide-slate-100">
+                    <!-- Рендерится через JS -->
+                </div>
+            </div>
+
+            <!-- Блок 2: Медицинские изделия (МИ) -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden card-shadow">
+                <div class="bg-slate-50 px-5 py-3.5 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                        <h3 class="font-bold text-slate-800 text-base">2. Медицинские изделия и расходные материалы (МИ)</h3>
+                    </div>
+                    <span id="devicesCounter" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-600">0 / 11</span>
+                </div>
+                <div id="devicesContainer" class="divide-y divide-slate-100">
+                    <!-- Рендерится через JS -->
+                </div>
+            </div>
+
+            <!-- Подпись ответственного лица (видна при печати) -->
+            <div class="hidden print-only pt-8 grid grid-cols-2 gap-8 text-sm">
+                <div>Ответственное лицо (ФИО, должность): _______________________</div>
+                <div>Подпись: _______________________</div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- РАЗДЕЛ 2: ПРАВИЛА ОКАЗАНИЯ ПОМОЩИ                         -->
+        <!-- ========================================================= -->
+        <section id="sectionRules" class="hidden space-y-6">
+
+            <!-- Подменю раздела -->
+            <div class="bg-white rounded-2xl px-4 sm:px-6 border border-slate-200 flex gap-6 overflow-x-auto no-print">
+                <button id="btnSubAlgo" onclick="switchSubTab('algo')" class="py-4 text-sm whitespace-nowrap transition-all subtab-active cursor-pointer">
+                    Пошаговый алгоритм (ABCDE)
+                </button>
+                <button id="btnSubQuiz" onclick="switchSubTab('quiz')" class="py-4 text-sm text-slate-500 hover:text-slate-800 whitespace-nowrap transition-all cursor-pointer">
+                    Самопроверка / Тест-тренажер
+                </button>
+            </div>
+
+            <!-- ПОДРАЗДЕЛ 2А: ПОШАГОВЫЙ АЛГОРИТМ + ТАЙМЕР ЭПИНЕФРИНА -->
+            <div id="subtabAlgo" class="space-y-6">
+                
+                <!-- Интерактивный клинический таймер введения Эпинефрина -->
+                <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-5 sm:p-6 shadow-md">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                <h3 class="font-bold text-base sm:text-lg">Таймер повторного введения Эпинефрина (5–15 мин)</h3>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-300">
+                                Фиксируйте время от начала шока / первой инъекции. При отсутствии эффекта введение повторяют каждые 5–15 минут.
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3 bg-slate-950/50 p-3 rounded-xl border border-slate-700">
+                            <div class="px-3">
+                                <div class="text-[11px] uppercase tracking-wider text-slate-400">Прошло времени</div>
+                                <div id="timerDisplay" class="text-2xl sm:text-3xl font-mono font-bold text-teal-400">00:00</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="btnTimerToggle" onclick="toggleTimer()" class="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-sm font-semibold transition cursor-pointer">
+                                    Старт
+                                </button>
+                                <button onclick="logDose()" class="px-3.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition cursor-pointer">
+                                    + Доза введена
+                                </button>
+                                <button onclick="resetTimer()" class="px-3 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition cursor-pointer">
+                                    Сброс
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Журнал введенных доз -->
+                    <div id="doseLogContainer" class="mt-3 pt-3 border-t border-slate-700/80 hidden">
+                        <div class="text-xs text-slate-400 mb-1.5">Журнал введения Эпинефрина:</div>
+                        <div id="doseLogList" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- Карточки шагов алгоритма -->
+                <div class="space-y-4">
+                    
+                    <!-- Шаг 1 -->
+                    <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 card-shadow">
+                        <div class="flex items-start gap-4">
+                            <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 font-bold flex items-center justify-center shrink-0 text-sm">
+                                Шаг 1
+                            </div>
+                            <div class="space-y-2.5 flex-1">
+                                <h4 class="font-bold text-slate-900 text-base sm:text-lg">Прекращение поступления аллергена и оценка состояния (ABCDE)</h4>
+                                <ul class="space-y-2 text-sm text-slate-700 list-disc pl-5">
+                                    <li><strong>Немедленно остановить введение</strong> лекарственного препарата или прекратить контакт с аллергеном.</li>
+                                    <li>Оценить уровень сознания, проходимость дыхательных путей, частоту дыхания и гемодинамику (АД, пульс).</li>
+                                    <li><strong>Положение пациента:</strong> уложить горизонтально с приподнятым ножным концом (<strong>положение Тренделенбурга</strong>) для улучшения венозного возврата. Повернуть голову набок, выдвинуть нижнюю челюсть.</li>
+                                </ul>
+                                <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs sm:text-sm text-rose-900">
+                                    <strong>Важное исключение:</strong> При выраженном отеке гортани или тяжелой одышке/удушье укладывать горизонтально запрещено — переведите пациента в <strong>полусидячее положение</strong>!
+                                </div>
+                                <p class="text-sm text-slate-700">Обеспечить доступ свежего воздуха и начать <strong>оксигенотерапию</strong> (увлажненный кислород).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 2 -->
+                    <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 card-shadow">
+                        <div class="flex items-start gap-4">
+                            <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 font-bold flex items-center justify-center shrink-0 text-sm">
+                                Шаг 2
+                            </div>
+                            <div class="space-y-2 flex-1">
+                                <h4 class="font-bold text-slate-900 text-base sm:text-lg">Местная терапия (при парентеральном введении или укусе)</h4>
+                                <ul class="space-y-2 text-sm text-slate-700 list-disc pl-5">
+                                    <li>Если аллерген введен в конечность (инъекция / укус насекомого) — наложить <strong>венозный жгут проксимальнее</strong> места введения (не пережимая артерии!) на срок до 30 минут, ослабляя на 1–2 минуты каждые 10 минут.</li>
+                                    <li>Обколоть место инъекции/укуса крестообразно <strong>0,18% раствором эпинефрина 0,3–0,5 мл</strong>, разведенным в 5,0 мл 0,9% раствора натрия хлорида, и приложить холод.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 3 -->
+                    <div class="bg-white rounded-2xl p-5 sm:p-6 border-2 border-teal-600/30 card-shadow">
+                        <div class="flex items-start gap-4">
+                            <div class="w-9 h-9 rounded-xl bg-teal-700 text-white font-bold flex items-center justify-center shrink-0 text-sm">
+                                Шаг 3
+                            </div>
+                            <div class="space-y-3 flex-1">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <h4 class="font-bold text-slate-900 text-base sm:text-lg">Базовая медикаментозная терапия (Главные приоритеты)</h4>
+                                    <span class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 text-xs font-bold">Критически важно</span>
+                                </div>
+
+                                <div class="p-3.5 rounded-xl bg-teal-50 border border-teal-200 space-y-1.5">
+                                    <div class="font-bold text-teal-950 text-sm sm:text-base">1. Эпинефрин (Адреналин) — препарат первой линии!</div>
+                                    <p class="text-sm text-teal-900">
+                                        Ввести <strong>внутримышечно в переднелатеральную поверхность бедра</strong> в дозе 0,01 мг/кг (взрослым <strong>0,3–0,5 мл 0,18% раствора</strong>). При отсутствии эффекта повторять каждые <strong>5–15 минут</strong>.
+                                    </p>
+                                    <p class="text-xs text-teal-800">
+                                        *Внутривенное введение допускается строго в условиях реанимации при мониторинге гемодинамики.
+                                    </p>
+                                </div>
+
+                                <ul class="space-y-2 text-sm text-slate-700 list-disc pl-5">
+                                    <li><strong>2. Венозный доступ и инфузия:</strong> пунктировать периферическую вену (катетер № 16–18), начать быструю инфузию <strong>0,9% раствора натрия хлорида</strong> в объеме от 1000 мл и более для восполнения ОЦК.</li>
+                                    <li><strong>3. Глюкокортикостероиды (вторая линия):</strong> ввести в/в струйно <strong>Преднизолон 90–150 мг</strong> (или Дексаметазон 8–32 мг, или Гидрокортизон 150–300 мг) для предупреждения затяжной/двухфазной реакции.</li>
+                                    <li><strong>4. Антигистаминные препараты:</strong> в/м или в/в <strong>Хлоропирамин (Супрастин) 2% — 2–4 мл</strong> или Дифенгидрамин 1% — 1–2 мл. <em>(Пипольфен противопоказан из-за риска коллапса).</em></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 4 -->
+                    <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 card-shadow">
+                        <div class="flex items-start gap-4">
+                            <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 font-bold flex items-center justify-center shrink-0 text-sm">
+                                Шаг 4
+                            </div>
+                            <div class="space-y-2 flex-1">
+                                <h4 class="font-bold text-slate-900 text-base sm:text-lg">Симптоматическая терапия и реанимация</h4>
+                                <ul class="space-y-2 text-sm text-slate-700 list-disc pl-5">
+                                    <li><strong>При бронхоспазме:</strong> ингаляция <strong>Сальбутамола</strong> через небулайзер или в/в медленно <strong>Аминофиллин (Эуфиллин) 2,4% — 10 мл</strong> на 10 мл 0,9% раствора NaCl.</li>
+                                    <li><strong>При развитии клинической смерти:</strong> немедленно приступить к базовой сердечно-легочной реанимации (компрессии грудной клетки 30:2 + ИВЛ мешком Амбу).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 5 -->
+                    <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 card-shadow">
+                        <div class="flex items-start gap-4">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 font-bold flex items-center justify-center shrink-0 text-sm">
+                                Шаг 5
+                            </div>
+                            <div class="space-y-2 flex-1">
+                                <h4 class="font-bold text-slate-900 text-base sm:text-lg">Экстренная эвакуация и наблюдение</h4>
+                                <p class="text-sm text-slate-700">
+                                    Немедленно вызвать реанимационную бригаду СМП. Все пациенты, перенесшие анафилактический шок (даже после купирования симптомов), подлежат <strong>обязательной экстренной госпитализации в ОРИТ на 24–48 часов</strong> из-за высокого риска развития двухфазной (отсроченной) анафилаксии.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ПОДРАЗДЕЛ 2Б: САМОПРОВЕРКА / ТЕСТ-ТРЕНАЖЕР -->
+            <div id="subtabQuiz" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 card-shadow">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Клинический тест-тренажер (КП МЗ РК № 109)</h3>
+                            <p class="text-sm text-slate-500">Проверьте знание дозировок, путей введения и тактики при анафилактическом шоке.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="quizScoreBadge" class="px-3 py-1.5 rounded-xl bg-teal-50 text-teal-800 text-sm font-semibold border border-teal-200">
+                                Верно: 0 / 6
+                            </span>
+                            <button onclick="resetQuiz()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium transition cursor-pointer">
+                                Начать заново
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="quizContainer" class="divide-y divide-slate-100 mt-2">
+                        <!-- Вопросы рендерятся через JS -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // =========================================================================
+        // БАЗА ДАННЫХ УКЛАДКИ (СОГЛАСНО ПРОТОКОЛАМ МЗ РК)
+        // =========================================================================
+        const kitData = {
+            meds: [
+                {
+                    id: 'm1',
+                    name: 'Эпинефрин (Адреналин) 0,18% — 1,0 мл',
+                    spec: 'Несколько ампул. Препарат первой линии!',
+                    badge: 'Препарат № 1',
+                    badgeColor: 'bg-rose-100 text-rose-800'
+                },
+                {
+                    id: 'm2',
+                    name: 'Глюкокортикостероиды (Преднизолон 30 мг / Дексаметазон 4–8 мг / Гидрокортизон)',
+                    spec: 'В ампулах/флаконах для парентерального введения',
+                    badge: 'Вторая линия',
+                    badgeColor: 'bg-teal-50 text-teal-800'
+                },
+                {
+                    id: 'm3',
+                    name: 'Хлоропирамин (Супрастин) 2% — 1,0 мл',
+                    spec: 'Антигистаминный препарат парентерального введения',
+                    badge: null
+                },
+                {
+                    id: 'm4',
+                    name: 'Дифенгидрамин (Димедрол) 1% — 1,0 мл / Клемастин (Тавегил) 0,1% — 2,0 мл',
+                    spec: 'Внимание: Пипольфен не применяется из-за выраженного гипотензивного эффекта!',
+                    badge: 'Без Пипольфена',
+                    badgeColor: 'bg-amber-100 text-amber-800'
+                },
+                {
+                    id: 'm5',
+                    name: 'Аминофиллин (Эуфиллин) 2,4% — 5,0 или 10,0 мл',
+                    spec: 'Бронхолитик для в/в введения при бронхоспазме',
+                    badge: null
+                },
+                {
+                    id: 'm6',
+                    name: 'Сальбутамол (раствор для небулайзера или дозированный ингалятор)',
+                    spec: 'Ингаляционный бета-2-агонист',
+                    badge: null
+                },
+                {
+                    id: 'm7',
+                    name: 'Натрия хлорид 0,9% — 400–500 мл',
+                    spec: 'Флаконы или пластиковые контейнеры для инфузионной терапии',
+                    badge: 'Инфузия',
+                    badgeColor: 'bg-indigo-50 text-indigo-800'
+                }
+            ],
+            devices: [
+                {
+                    id: 'd1',
+                    name: 'Шприцы одноразовые объемом 2,0 мл, 5,0 мл, 10,0 мл, 20,0 мл',
+                    spec: 'По 5 шт. каждого объема в стерильной упаковке'
+                },
+                {
+                    id: 'd2',
+                    name: 'Периферические венозные катетеры (вазофиксы) № 16–18 (2 шт.) и системы для в/в инфузий (2 шт.)',
+                    spec: 'Для экстренного венозного доступа и струйной инфузии'
+                },
+                {
+                    id: 'd3',
+                    name: 'Жгут кровоостанавливающий, медицинский пластырь (Тегадерм), спиртовые салфетки (или 70% спирт)',
+                    spec: 'Расходные материалы для венепункции и фиксации катетера'
+                },
+                {
+                    id: 'd4',
+                    name: 'Стерильные медицинские перчатки',
+                    spec: '2–3 пары разных размеров'
+                },
+                {
+                    id: 'd5',
+                    name: 'Мешок дыхательный ручной (мешок Амбу) с лицевыми масками',
+                    spec: 'Для проведения ИВЛ'
+                },
+                {
+                    id: 'd6',
+                    name: 'Воздуховоды ротоглоточные стерильные',
+                    spec: 'Разные размеры для обеспечения проходимости дыхательных путей'
+                },
+                {
+                    id: 'd7',
+                    name: 'Роторасширитель, языкодержатель, шпатели одноразовые',
+                    spec: 'Инструменты для ревизии ротоглотки'
+                },
+                {
+                    id: 'd8',
+                    name: 'Груша / отсос для удаления слизи и рвотных масс',
+                    spec: 'Профилактика аспирации'
+                },
+                {
+                    id: 'd9',
+                    name: 'Кислородная подушка или централизованный источник кислорода',
+                    spec: 'Оксигенотерапия'
+                },
+                {
+                    id: 'd10',
+                    name: 'Тонометр и фонендоскоп',
+                    spec: 'Контроль АД, пульса и аускультация легких'
+                },
+                {
+                    id: 'd11',
+                    name: 'Катетер Фоллея № 20–22 и мочесборник',
+                    spec: 'Для контроля почасового диуреза при тяжелом шоке'
+                }
+            ]
+        };
+
+        // Состояние чек-листа (хранит checked и note/expiry)
+        let kitState = {};
+
+        function initKit() {
+            const saved = localStorage.getItem('rk_anaphylaxis_kit_state');
+            if (saved) {
+                try {
+                    kitState = JSON.parse(saved);
+                } catch (e) {
+                    kitState = {};
+                }
+            }
+            renderKitList('meds', 'medsContainer');
+            renderKitList('devices', 'devicesContainer');
+            updateKitProgress();
+
+            // Установить текущую дату для печати
+            const now = new Date();
+            document.getElementById('printDate').textContent = now.toLocaleDateString('ru-RU');
+        }
+
+        function renderKitList(category, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            kitData[category].forEach(item => {
+                const state = kitState[item.id] || { checked: false, note: '' };
+                const row = document.createElement('div');
+                row.className = `p-4 sm:px-5 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${state.checked ? 'bg-teal-50/30' : 'hover:bg-slate-50'}`;
+
+                row.innerHTML = `
+                    <label class="flex items-start gap-3.5 cursor-pointer flex-1 select-none">
+                        <input type="checkbox" ${state.checked ? 'checked' : ''} onchange="toggleKitItem('${item.id}')"
+                            class="mt-1 w-5 h-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer shrink-0 checkbox-custom">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-medium text-sm sm:text-base ${state.checked ? 'text-slate-900' : 'text-slate-800'}">${item.name}</span>
+                                ${item.badge ? `<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold ${item.badgeColor}">${item.badge}</span>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-500">${item.spec}</p>
+                        </div>
+                    </label>
+                    <div class="sm:w-52 shrink-0 pl-8 sm:pl-0">
+                        <input type="text" value="${escapeHtml(state.note)}" oninput="updateKitNote('${item.id}', this.value)"
+                            placeholder="Срок годности / примечание..."
+                            class="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:border-teal-500 text-slate-700 placeholder-slate-400">
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function toggleKitItem(id) {
+            if (!kitState[id]) kitState[id] = { checked: false, note: '' };
+            kitState[id].checked = !kitState[id].checked;
+            saveKitState();
+            renderKitList('meds', 'medsContainer');
+            renderKitList('devices', 'devicesContainer');
+            updateKitProgress();
+        }
+
+        function updateKitNote(id, value) {
+            if (!kitState[id]) kitState[id] = { checked: false, note: '' };
+            kitState[id].note = value;
+            saveKitState();
+        }
+
+        function checkAllItems() {
+            [...kitData.meds, ...kitData.devices].forEach(item => {
+                if (!kitState[item.id]) kitState[item.id] = { checked: true, note: '' };
+                else kitState[item.id].checked = true;
+            });
+            saveKitState();
+            renderKitList('meds', 'medsContainer');
+            renderKitList('devices', 'devicesContainer');
+            updateKitProgress();
+        }
+
+        function resetKit() {
+            kitState = {};
+            saveKitState();
+            renderKitList('meds', 'medsContainer');
+            renderKitList('devices', 'devicesContainer');
+            updateKitProgress();
+        }
+
+        function saveKitState() {
+            localStorage.setItem('rk_anaphylaxis_kit_state', JSON.stringify(kitState));
+        }
+
+        function updateKitProgress() {
+            const medsChecked = kitData.meds.filter(i => kitState[i.id]?.checked).length;
+            const devicesChecked = kitData.devices.filter(i => kitState[i.id]?.checked).length;
+            const totalChecked = medsChecked + devicesChecked;
+            const totalAll = kitData.meds.length + kitData.devices.length;
+            const percent = Math.round((totalChecked / totalAll) * 100);
+
+            document.getElementById('medsCounter').textContent = `${medsChecked} / ${kitData.meds.length}`;
+            document.getElementById('devicesCounter').textContent = `${devicesChecked} / ${kitData.devices.length}`;
+            document.getElementById('checkedCount').textContent = totalChecked;
+            document.getElementById('totalCount').textContent = totalAll;
+            document.getElementById('progressPercent').textContent = `${percent}%`;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+
+            const badge = document.getElementById('kitStatusBadge');
+            const missingAlert = document.getElementById('missingAlert');
+
+            if (percent === 100) {
+                badge.textContent = 'Укладка полностью укомплектована';
+                badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800';
+                missingAlert.classList.add('hidden');
+            } else if (totalChecked === 0) {
+                badge.textContent = 'Требуется проверка';
+                badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700';
+                missingAlert.classList.add('hidden');
+            } else {
+                badge.textContent = `Не укомплектована (${totalAll - totalChecked} поз.)`;
+                badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+                
+                const missingNames = [...kitData.meds, ...kitData.devices]
+                    .filter(i => !kitState[i.id]?.checked)
+                    .map(i => i.name.split('—')[0].trim());
+                document.getElementById('missingListText').textContent = missingNames.join(', ');
+                missingAlert.classList.remove('hidden');
+            }
+        }
+
+        function printReport() {
+            window.print();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        // =========================================================================
+        // НАВИГАЦИЯ ПО ВКЛАДКАМ
+        // =========================================================================
+        function switchMainTab(tab) {
+            const secKit = document.getElementById('sectionKit');
+            const secRules = document.getElementById('sectionRules');
+            const btnKit = document.getElementById('btnTabKit');
+            const btnRules = document.getElementById('btnTabRules');
+
+            if (tab === 'kit') {
+                secKit.classList.remove('hidden');
+                secRules.classList.add('hidden');
+                btnKit.classList.add('tab-active');
+                btnKit.classList.remove('text-slate-600');
+                btnRules.classList.remove('tab-active');
+                btnRules.classList.add('text-slate-600');
+            } else {
+                secKit.classList.add('hidden');
+                secRules.classList.remove('hidden');
+                btnRules.classList.add('tab-active');
+                btnRules.classList.remove('text-slate-600');
+                btnKit.classList.remove('tab-active');
+                btnKit.classList.add('text-slate-600');
+            }
+        }
+
+        function switchSubTab(sub) {
+            const algo = document.getElementById('subtabAlgo');
+            const quiz = document.getElementById('subtabQuiz');
+            const btnAlgo = document.getElementById('btnSubAlgo');
+            const btnQuiz = document.getElementById('btnSubQuiz');
+
+            if (sub === 'algo') {
+                algo.classList.remove('hidden');
+                quiz.classList.add('hidden');
+                btnAlgo.classList.add('subtab-active');
+                btnAlgo.classList.remove('text-slate-500');
+                btnQuiz.classList.remove('subtab-active');
+                btnQuiz.classList.add('text-slate-500');
+            } else {
+                algo.classList.add('hidden');
+                quiz.classList.remove('hidden');
+                btnQuiz.classList.add('subtab-active');
+                btnQuiz.classList.remove('text-slate-500');
+                btnAlgo.classList.remove('subtab-active');
+                btnAlgo.classList.add('text-slate-500');
+            }
+        }
+
+        // =========================================================================
+        // ТАЙМЕР ПОВТОРНОГО ВВЕДЕНИЯ ЭПИНЕФРИНА
+        // =========================================================================
+        let timerInterval = null;
+        let secondsElapsed = 0;
+        let doseLogs = [];
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60).toString().padStart(2, '0');
+            const s = (sec % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('btnTimerToggle');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.textContent = 'Продолжить';
+                btn.classList.replace('bg-amber-600', 'bg-teal-600');
+            } else {
+                timerInterval = setInterval(() => {
+                    secondsElapsed++;
+                    const display = document.getElementById('timerDisplay');
+                    display.textContent = formatTime(secondsElapsed);
+                    // Подсветка при достижении 5 и 15 минут
+                    if (secondsElapsed >= 300 && secondsElapsed < 900) {
+                        display.className = 'text-2xl sm:text-3xl font-mono font-bold text-amber-400';
+                    } else if (secondsElapsed >= 900) {
+                        display.className = 'text-2xl sm:text-3xl font-mono font-bold text-rose-400';
+                    }
+                }, 1000);
+                btn.textContent = 'Пауза';
+                btn.classList.replace('bg-teal-600', 'bg-amber-600');
+            }
+        }
+
+        function logDose() {
+            const now = new Date();
+            const clockTime = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            doseLogs.push(`Доза №${doseLogs.length + 1}: ${clockTime} (таймер ${formatTime(secondsElapsed)})`);
+            
+            const container = document.getElementById('doseLogContainer');
+            const list = document.getElementById('doseLogList');
+            container.classList.remove('hidden');
+            list.innerHTML = doseLogs.map(log => 
+                `<span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-600 text-xs text-teal-300 font-mono">${log}</span>`
+            ).join('');
+        }
+
+        function resetTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            secondsElapsed = 0;
+            doseLogs = [];
+            const display = document.getElementById('timerDisplay');
+            display.textContent = '00:00';
+            display.className = 'text-2xl sm:text-3xl font-mono font-bold text-teal-400';
+            const btn = document.getElementById('btnTimerToggle');
+            btn.textContent = 'Старт';
+            btn.className = 'px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-sm font-semibold transition cursor-pointer';
+            document.getElementById('doseLogContainer').classList.add('hidden');
+            document.getElementById('doseLogList').innerHTML = '';
+        }
+
+        // =========================================================================
+        // ТЕСТ-ТРЕНАЖЕР ПО КЛИНИЧЕСКОМУ ПРОТОКОЛУ РК
+        // =========================================================================
+        const quizQuestions = [
+            {
+                q: '1. Какой препарат и путь его введения являются первой линией неотложной помощи при анафилактическом шоке?',
+                options: [
+                    'Преднизолон 90 мг внутривенно струйно',
+                    'Эпинефрин (Адреналин) 0,18% — 0,3–0,5 мл внутримышечно в переднелатеральную поверхность бедра',
+                    'Хлоропирамин (Супрастин) 2% — 2,0 мл внутримышечно',
+                    'Эпинефрин 0,18% — 1,0 мл подкожно в плечо'
+                ],
+                correct: 1,
+                explanation: 'Эпинефрин — единственный препарат первой линии. Внутримышечное введение в переднелатеральную поверхность бедра обеспечивает максимально быстрое и надежное всасывание в условиях периферического вазоспазма.'
+            },
+            {
+                q: '2. Через какой интервал времени допускается повторное введение Эпинефрина при сохранении гипотензии и отсутствии эффекта?',
+                options: [
+                    'Каждые 1–2 минуты',
+                    'Каждые 5–15 минут',
+                    'Через 30–40 минут после введения гормонов',
+                    'Повторное введение в процедурном кабинете запрещено'
+                ],
+                correct: 1,
+                explanation: 'При недостаточном клиническом эффекте внутримышечную дозу Эпинефрина повторяют каждые 5–15 минут под контролем АД и ЧСС.'
+            },
+            {
+                q: '3. Какое положение необходимо придать пациенту, если у него преобладает выраженный отек гортани и тяжелое удушье?',
+                options: [
+                    'Строго горизонтальное с приподнятыми ногами (Тренделенбурга)',
+                    'Полусидячее положение',
+                    'На животе с повернутой головой',
+                    'Положение не имеет значения'
+                ],
+                correct: 1,
+                explanation: 'Положение Тренделенбурга применяется при гипотензии, однако при выраженном отеке гортани или тяжелой дыхательной недостаточности пациента необходимо перевести в полусидячее положение для облегчения дыхания.'
+            },
+            {
+                q: '4. Какой антигистаминный препарат категорически не применяется при анафилактическом шоке из-за риска усугубления гипотензии?',
+                options: [
+                    'Хлоропирамин (Супрастин)',
+                    'Дифенгидрамин (Димедрол)',
+                    'Прометазин (Пипольфен)',
+                    'Клемастин (Тавегил)'
+                ],
+                correct: 2,
+                explanation: 'Прометазин (Пипольфен) вызывает выраженный гипотензивный эффект и усугубляет сосудистый коллапс, поэтому исключен из терапии анафилактического шока.'
+            },
+            {
+                q: '5. Какова рекомендуемая стартовая доза Преднизолона внутривенно струйно для взрослых при анафилактическом шоке?',
+                options: [
+                    '15–30 мг',
+                    '90–150 мг',
+                    '300–500 мг',
+                    'Глюкокортикостероиды при шоке не применяются'
+                ],
+                correct: 1,
+                explanation: 'Глюкокортикостероиды являются препаратами второй линии (предупреждают пролонгированные фазы реакции): Преднизолон вводится в дозе 90–150 мг в/в (или Дексаметазон 8–32 мг).'
+            },
+            {
+                q: '6. На какой минимальный срок пациент после перенесенного анафилактического шока должен быть госпитализирован в ОРИТ?',
+                options: [
+                    'На 2–3 часа в дневной стационар',
+                    'На 6 часов при условии нормализации АД',
+                    'На 24–48 часов',
+                    'Госпитализация не требуется, если шок купирован на месте'
+                ],
+                correct: 2,
+                explanation: 'Все пациенты, перенесшие анафилактический шок, подлежат обязательной экстренной госпитализации в ОРИТ минимум на 24–48 часов из-за риска развития отсроченной (двухфазной) реакции.'
+            }
+        ];
+
+        let userAnswers = {};
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((item, qIdx) => {
+                const selected = userAnswers[qIdx];
+                const isAnswered = selected !== undefined;
+
+                const qDiv = document.createElement('div');
+                qDiv.className = 'py-5 space-y-3';
+
+                let optionsHtml = item.options.map((opt, oIdx) => {
+                    let btnClass = 'border-slate-200 hover:border-teal-500 hover:bg-slate-50 text-slate-700';
+                    if (isAnswered) {
+                        if (oIdx === item.correct) {
+                            btnClass = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-medium';
+                        } else if (oIdx === selected && selected !== item.correct) {
+                            btnClass = 'border-rose-400 bg-rose-50 text-rose-950';
+                        } else {
+                            btnClass = 'border-slate-200 opacity-60 text-slate-500';
+                        }
+                    }
+
+                    return `
+                        <button onclick="selectAnswer(${qIdx}, ${oIdx})" ${isAnswered ? 'disabled' : ''}
+                            class="w-full text-left p-3.5 rounded-xl border text-sm transition-all flex items-start gap-3 ${btnClass} ${!isAnswered ? 'cursor-pointer' : 'cursor-default'}">
+                            <span class="w-5 h-5 rounded-full border border-current flex items-center justify-center text-xs shrink-0 mt-0.5">
+                                ${String.fromCharCode(1040 + oIdx)}
+                            </span>
+                            <span>${opt}</span>
+                        </button>
+                    `;
+                }).join('');
+
+                let feedbackHtml = '';
+                if (isAnswered) {
+                    const isRight = selected === item.correct;
+                    feedbackHtml = `
+                        <div class="p-3.5 rounded-xl text-xs sm:text-sm ${isRight ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' : 'bg-rose-50 text-rose-900 border border-rose-200'}">
+                            <strong>${isRight ? 'Верно!' : 'Неверно.'}</strong> ${item.explanation}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = `
+                    <div class="font-semibold text-slate-900 text-sm sm:text-base">${item.q}</div>
+                    <div class="space-y-2">${optionsHtml}</div>
+                    ${feedbackHtml}
+                `;
+                container.appendChild(qDiv);
+            });
+
+            updateQuizScore();
+        }
+
+        function selectAnswer(qIdx, oIdx) {
+            if (userAnswers[qIdx] !== undefined) return;
+            userAnswers[qIdx] = oIdx;
+            renderQuiz();
+        }
+
+        function updateQuizScore() {
+            let correctCount = 0;
+            quizQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) correctCount++;
+            });
+            document.getElementById('quizScoreBadge').textContent = `Верно: ${correctCount} / ${quizQuestions.length}`;
+        }
+
+        function resetQuiz() {
+            userAnswers = {};
+            renderQuiz();
+        }
+
+        // Инициализация при загрузке
+        window.addEventListener('DOMContentLoaded', () => {
+            initKit();
+            renderQuiz();
+        });
+    </script>
+</body>
+</html>
