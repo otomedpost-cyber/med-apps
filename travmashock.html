@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Военно-полевая травматология и хирургия — Обучающий модуль (РК)</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение шрифта Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Подключение иконок Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+        /* Кастомный скроллбар для тактического интерфейса */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .tab-active {
+            background-color: rgba(16, 185, 129, 0.15);
+            border-left: 4px solid #10b981;
+            color: #34d399;
+        }
+        .fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
+
+    <!-- Мобильная верхняя панель навигации -->
+    <header class="lg:hidden bg-slate-900 border-b border-slate-800 p-4 flex items-center justify-between sticky top-0 z-30">
+        <div class="flex items-center gap-2.5">
+            <div class="bg-emerald-600/20 border border-emerald-500/40 p-2 rounded-lg text-emerald-400">
+                <i data-lucide="shield-plus" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm leading-tight text-white">ТАКМЕД & ХИРУРГИЯ</h1>
+                <p class="text-[11px] text-slate-400">Протоколы МЗ РК / TCCC</p>
+            </div>
+        </div>
+        <button id="mobileMenuBtn" class="p-2 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 focus:outline-none">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+    </header>
+
+    <!-- Боковая панель навигации (Sidebar) -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-slate-900 border-r border-slate-800 transform -translate-x-full lg:translate-x-0 lg:static lg:flex-shrink-0 transition-transform duration-200 ease-in-out flex flex-col">
+        <!-- Логотип и заголовок -->
+        <div class="p-5 border-b border-slate-800 hidden lg:flex items-center gap-3">
+            <div class="bg-emerald-600/20 border border-emerald-500/40 p-2.5 rounded-xl text-emerald-400">
+                <i data-lucide="shield-plus" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-base tracking-tight text-white">ТАКМЕД & ХИРУРГИЯ</h1>
+                <p class="text-xs text-emerald-400 font-medium">Стандарты РК / Военная медицина</p>
+            </div>
+        </div>
+
+        <!-- Индикатор прогресса изучения -->
+        <div class="p-4 border-b border-slate-800 bg-slate-900/50">
+            <div class="flex justify-between items-center text-xs mb-1.5">
+                <span class="text-slate-400 font-medium">Прогресс изучения</span>
+                <span id="progressText" class="text-emerald-400 font-bold">1 / 9</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="progressBar" class="bg-emerald-500 h-2 rounded-full transition-all duration-300" style="width: 11%"></div>
+            </div>
+        </div>
+
+        <!-- Список модулей -->
+        <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-1" id="navMenu">
+            <!-- Пункты меню генерируются через JS -->
+        </nav>
+
+        <!-- Подвал сайдбара -->
+        <div class="p-4 border-t border-slate-800 text-[11px] text-slate-500">
+            <div class="flex items-center gap-1.5 text-slate-400 mb-1">
+                <i data-lucide="book-open-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+                <span>База: Клинические протоколы МЗ РК</span>
+            </div>
+            <p>Для подготовки медицинского состава и спасателей.</p>
+        </div>
+    </aside>
+
+    <!-- Затемнение фона для мобильного меню -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden"></div>
+
+    <!-- Основной контент -->
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-950">
+        <!-- Верхняя информационная плашка -->
+        <div class="bg-slate-900/60 border-b border-slate-800/80 px-4 sm:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-1" id="moduleBadge">
+                    МОДУЛЬ 1 ИЗ 9
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-white" id="moduleTitle">Базовый алгоритм приоритетов (MARCH)</h2>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="markCompletedBtn" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Отметить изученным</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Контейнер динамического контента блока -->
+        <div id="contentContainer" class="flex-1 p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6 fade-in">
+            <!-- Контент рендерится динамически -->
+        </div>
+
+        <!-- Нижняя навигация (Назад / Далее) -->
+        <footer class="border-t border-slate-800 bg-slate-900/40 px-4 sm:px-8 py-4 mt-8">
+            <div class="max-w-5xl mx-auto flex items-center justify-between">
+                <button id="prevBtn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none text-sm font-medium text-slate-200 flex items-center gap-2 transition">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Предыдущий блок</span>
+                </button>
+                <button id="nextBtn" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:pointer-events-none text-sm font-semibold text-white flex items-center gap-2 transition shadow-lg shadow-emerald-900/30">
+                    <span>Следующий блок</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // --- БАЗА ДАННЫХ ОБУЧАЮЩИХ МОДУЛЕЙ ---
+        const modules = [
+            {
+                id: 0,
+                shortTitle: "1. Алгоритм MARCH и сортировка",
+                title: "Базовый алгоритм приоритетов (Протокол MARCH и тактическая сортировка)",
+                badge: "МОДУЛЬ 1 • БАЗОВЫЙ АЛГОРИТМ",
+                icon: "layers",
+                render: () => `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+                        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+                            В условиях боевых действий и массовых санитарных потерь помощь оказывается строго по принципу предотвращения наиболее быстро наступающих причин смерти. Стандартный гражданский алгоритм ABCDE заменяется на протокол <strong class="text-emerald-400">MARCH</strong>.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-slate-900 border-l-4 border-red-500 rounded-xl p-5 shadow-md">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-2xl font-black text-red-500">M</span>
+                                <span class="text-xs bg-red-500/10 text-red-400 px-2 py-0.5 rounded font-semibold">1-й приоритет</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base mb-1">Massive Hemorrhage</h3>
+                            <p class="text-xs text-slate-400 font-medium mb-2">Массивное кровотечение</p>
+                            <p class="text-sm text-slate-300">Немедленная остановка жизнеугрожающего наружного кровотечения: наложение турникета (жгута), тугая тампонада раны гемостатиком и давящая повязка.</p>
+                        </div>
+
+                        <div class="bg-slate-900 border-l-4 border-amber-500 rounded-xl p-5 shadow-md">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-2xl font-black text-amber-500">A</span>
+                                <span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded font-semibold">2-й приоритет</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base mb-1">Airway</h3>
+                            <p class="text-xs text-slate-400 font-medium mb-2">Дыхательные пути</p>
+                            <p class="text-sm text-slate-300">Оценка и восстановление проходимости ВДП: выдвижение нижней челюсти, установка назофарингеального воздуховода, устойчивое боковое положение (при отсутствии травмы позвоночника).</p>
+                        </div>
+
+                        <div class="bg-slate-900 border-l-4 border-sky-500 rounded-xl p-5 shadow-md">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-2xl font-black text-sky-500">R</span>
+                                <span class="text-xs bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded font-semibold">3-й приоритет</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base mb-1">Respiration</h3>
+                            <p class="text-xs text-slate-400 font-medium mb-2">Дыхание и грудная клетка</p>
+                            <p class="text-sm text-slate-300">Герметизация проникающих ранений грудной клетки окклюзионным пластырем. Выявление и декомпрессия напряженного пневмоторакса.</p>
+                        </div>
+
+                        <div class="bg-slate-900 border-l-4 border-purple-500 rounded-xl p-5 shadow-md">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-2xl font-black text-purple-500">C</span>
+                                <span class="text-xs bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded font-semibold">4-й приоритет</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base mb-1">Circulation</h3>
+                            <p class="text-xs text-slate-400 font-medium mb-2">Кровообращение и шок</p>
+                            <p class="text-sm text-slate-300">Оценка пульса на лучевой/сонной артерии, ревизия ранее наложенных турникетов, сосудистый доступ (в/в или в/к), введение транексамовой кислоты и инфузия по протоколу.</p>
+                        </div>
+
+                        <div class="bg-slate-900 border-l-4 border-emerald-500 rounded-xl p-5 shadow-md md:col-span-2 lg:col-span-2">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-2xl font-black text-emerald-500">H</span>
+                                <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-semibold">5-й приоритет</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base mb-1">Hypothermia / Head Injury</h3>
+                            <p class="text-xs text-slate-400 font-medium mb-2">Профилактика гипотермии и оценка ЧМТ</p>
+                            <p class="text-sm text-slate-300">Активное согревание пострадавшего (термоодеяло, сухая одежда) для разрыва «летальной триады» (гипотермия + ацидоз + коагулопатия). Неврологический контроль (шкала AVPU / Глазго).</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+                        <h3 class="font-bold text-white text-lg mb-4 flex items-center gap-2">
+                            <i data-lucide="git-branch" class="w-5 h-5 text-emerald-400"></i>
+                            Медицинская сортировка (Triage) на этапах эвакуации
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <div class="bg-red-950/40 border border-red-800/60 p-3.5 rounded-xl">
+                                <span class="inline-block px-2 py-0.5 bg-red-600 text-white text-xs font-bold rounded mb-1.5">I ОЧЕРЕДЬ (Красный)</span>
+                                <p class="text-xs text-slate-300">Крайне тяжелые, требующие неотложных мероприятий по жизненным показаниям (продолжающееся кровотечение, асфиксия, напряженный пневмоторакс, шок II–III ст.).</p>
+                            </div>
+                            <div class="bg-amber-950/40 border border-amber-800/60 p-3.5 rounded-xl">
+                                <span class="inline-block px-2 py-0.5 bg-amber-500 text-slate-950 text-xs font-bold rounded mb-1.5">II ОЧЕРЕДЬ (Желтый)</span>
+                                <p class="text-xs text-slate-300">Тяжелые и средней тяжести, помощь которым может быть отсрочена на несколько часов без прямой угрозы жизни (переломы костей, ожоги 10–20%, ранения без активного кровотечения).</p>
+                            </div>
+                            <div class="bg-emerald-950/40 border border-emerald-800/60 p-3.5 rounded-xl">
+                                <span class="inline-block px-2 py-0.5 bg-emerald-600 text-white text-xs font-bold rounded mb-1.5">III ОЧЕРЕДЬ (Зеленый)</span>
+                                <p class="text-xs text-slate-300">Легкораненые («ходячие»), способные к самостоятельному передвижению и самопомощи.</p>
+                            </div>
+                            <div class="bg-slate-800/70 border border-slate-700 p-3.5 rounded-xl">
+                                <span class="inline-block px-2 py-0.5 bg-slate-600 text-white text-xs font-bold rounded mb-1.5">АГОНИРУЮЩИЕ (Черный)</span>
+                                <p class="text-xs text-slate-300">Повреждения, несовместимые с жизнью при массовом поступлении раненых (симптоматическая терапия и обезболивание).</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 1,
+                shortTitle: "2. Травматический и геморрагический шок",
+                title: "Травматический и геморрагический шок (Протоколы МЗ РК)",
+                badge: "МОДУЛЬ 2 • ПРОТИВОШОКОВАЯ ТЕРАПИЯ",
+                icon: "activity",
+                render: () => `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4">
+                        <h3 class="font-bold text-white text-lg">Определение и патогенез</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            <strong>Травматический и геморрагический шок</strong> — остро развивающееся критическое состояние, вызванное тяжелой механической травмой и острой кровопотерей, приводящее к критическому снижению перфузии тканей, гипоксии и полиорганной недостаточности.
+                        </p>
+
+                        <!-- Таблица степеней шока -->
+                        <div class="overflow-x-auto rounded-xl border border-slate-800">
+                            <table class="w-full text-left text-xs sm:text-sm">
+                                <thead class="bg-slate-800 text-slate-200 uppercase text-xs">
+                                    <tr>
+                                        <th class="p-3">Показатель</th>
+                                        <th class="p-3 text-emerald-400">I степень (легкий)</th>
+                                        <th class="p-3 text-amber-400">II степень (средний)</th>
+                                        <th class="p-3 text-red-400">III степень (тяжелый)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800 bg-slate-900/50 text-slate-300">
+                                    <tr>
+                                        <td class="p-3 font-semibold text-white">Дефицит ОЦК</td>
+                                        <td class="p-3">15–20% (до 1000 мл)</td>
+                                        <td class="p-3">25–35% (1200–1800 мл)</td>
+                                        <td class="p-3">&gt; 40% (&gt; 2000 мл)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-semibold text-white">Систолическое АД</td>
+                                        <td class="p-3">90–100 мм рт. ст.</td>
+                                        <td class="p-3">70–85 мм рт. ст.</td>
+                                        <td class="p-3">Ниже 60–70 мм рт. ст.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-semibold text-white">ЧСС (уд/мин)</td>
+                                        <td class="p-3">90–100</td>
+                                        <td class="p-3">110–130</td>
+                                        <td class="p-3">&gt; 130–140 (нитевидный)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-semibold text-white">Индекс Альговера (ЧСС/САД)</td>
+                                        <td class="p-3">0.8 – 1.0 (норма 0.5)</td>
+                                        <td class="p-3">1.1 – 1.5</td>
+                                        <td class="p-3">&gt; 1.5 – 2.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-semibold text-white">Сознание</td>
+                                        <td class="p-3">Сохранено, легкое возбуждение</td>
+                                        <td class="p-3">Заторможенность, бледность</td>
+                                        <td class="p-3">Сопор, кома, акроцианоз</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Специфика протоколов МЗ РК -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                            <div class="flex items-center gap-2 text-emerald-400 font-bold mb-3">
+                                <i data-lucide="droplets" class="w-5 h-5"></i>
+                                <h4>Инфузионная терапия (Протокол РК)</h4>
+                            </div>
+                            <ul class="space-y-2.5 text-sm text-slate-300 list-disc pl-5">
+                                <li><strong>Пермиссивная гипотензия:</strong> До окончательной хирургической остановки кровотечения целевое САД поддерживается на уровне <strong>80–90 мм рт. ст.</strong> (при отсутствии тяжелой ЧМТ!).</li>
+                                <li><strong>Стартовые растворы:</strong> Сбалансированные кристаллоиды (0,9% NaCl, р-р Рингера) подогретыми до 37–38°C. Избегать избыточной гемодилюции!</li>
+                                <li><strong>Антифибринолитики:</strong> Транексамовая кислота <strong>1000 мг в/в</strong> в первые 3 часа от момента травмы (затем 1000 мг в течение 8 часов).</li>
+                                <li><strong>Госпитальный этап:</strong> Трансфузия эритроцитарной взвеси и свежезамороженной плазмы (СЗП) в соотношении 1:1 по стандартам гемотрансфузии МЗ РК.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                            <div class="flex items-center gap-2 text-amber-400 font-bold mb-3">
+                                <i data-lucide="syringe" class="w-5 h-5"></i>
+                                <h4>Обезболивание и позиционирование (РК)</h4>
+                            </div>
+                            <ul class="space-y-2.5 text-sm text-slate-300 list-disc pl-5">
+                                <li><strong>Купирование болевого синдрома:</strong> В/в введение анальгетиков (трамадол, тримеперидин / промедол, фентанил) или кетамин (в субанестетических дозах 0.2–0.5 мг/кг при сохраненном дыхании).</li>
+                                <li><strong>Учет ЧМТ по протоколам РК:</strong> При тяжелой ЧМТ кетамин применяется с крайней осторожностью; предпочтение отдается препаратам, не повышающим внутричерепное давление и не угнетающим дыхание при отсутствии ИВЛ.</li>
+                                <li><strong>Позиционирование:</strong> При отсутствии травм позвоночника, костей таза и ЧМТ допускается приподнятие ножного конца на 15–30° для улучшения венозного возврата.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-950/30 border border-red-800/70 rounded-2xl p-4 flex items-start gap-3">
+                        <i data-lucide="alert-octagon" class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5"></i>
+                        <div class="text-sm text-red-200">
+                            <strong class="block text-red-400 font-bold mb-1">КРИТИЧЕСКИЙ ЗАПРЕТ:</strong>
+                            Внутримышечное введение анальгетиков и других препаратов при шоке II–III степени <strong>неэффективно и опасно</strong>! Из-за централизации кровообращения препарат не всасывается из мышц, а после восстановления перфузии происходит его резкий выброс в кровоток с развитием передозировки и остановки дыхания. Только <strong>внутривенный или внутрикостный</strong> доступ!
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                shortTitle: "3. Краш-синдром (СДС)",
+                title: "Синдром длительного сдавливания (Краш-синдром) и позиционное сдавление",
+                badge: "МОДУЛЬ 3 • КОМПРЕССИОННАЯ ТРАВМА",
+                icon: "minimize-2",
+                render: () => `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-3">
+                        <h3 class="font-bold text-white text-lg">Патогенез краш-синдрома (СДС)</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Развивается при длительном (свыше 15–30 минут) сдавлении мягких тканей конечностей обломками зданий, тяжелой техникой или собственной массой тела (позиционное сдавление при потере сознания/отравлении). В ишемизированных мышцах накапливаются <strong>миоглобин, ионы калия (K⁺), лактат, креатинфосфокиназа и гистамин</strong>.
+                        </p>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            После снятия компрессии происходит <strong>реперфузия</strong>: массивный залповый выброс токсинов в общий кровоток вызывает гиперкалиемическую остановку сердца, реперфузионный шок и закупорку почечных канальцев миоглобином с развитием <strong>острой почечной недостаточности (ОПН)</strong>.
+                        </p>
+                    </div>
+
+                    <div class="bg-red-950/40 border-2 border-red-600/80 rounded-2xl p-5 flex items-start gap-4 shadow-lg">
+                        <div class="bg-red-600/20 p-2.5 rounded-xl text-red-400 flex-shrink-0">
+                            <i data-lucide="shield-alert" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-red-400 text-base uppercase tracking-wide mb-1">Золотое правило декомпрессии!</h4>
+                            <p class="text-sm text-red-100 leading-relaxed">
+                                <strong>НИКОГДА не освобождайте конечность из-под завала до наложения кровоостанавливающего турникета (жгута) выше места сдавления</strong>, если время компрессии превышает 15–20 минут (или неизвестно)! Сначала жгут — затем подъем плиты/обломка.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+                        <h3 class="font-bold text-white text-lg mb-4">Пошаговый алгоритм помощи по протоколам РК</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 bg-slate-800/50 p-3.5 rounded-xl">
+                                <span class="bg-emerald-600 text-white font-bold text-xs px-2.5 py-1 rounded-lg">Шаг 1</span>
+                                <div class="text-sm text-slate-300">
+                                    <strong class="text-white block">Обезболивание и венозный доступ ДО извлечения:</strong> Катетеризация крупной вены, введение наркотических анальгетиков (фентанил, трамадол) и старт инфузии до снятия завала.
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-slate-800/50 p-3.5 rounded-xl">
+                                <span class="bg-emerald-600 text-white font-bold text-xs px-2.5 py-1 rounded-lg">Шаг 2</span>
+                                <div class="text-sm text-slate-300">
+                                    <strong class="text-white block">Наложение турникета и декомпрессия:</strong> Наложить турникет проксимальнее зоны сдавления. Освободить конечность, выполнить тугое эластичное бинтование конечности от периферии к центру (если конечность жизнеспособна и нет некроза) и транспортную иммобилизацию.
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-slate-800/50 p-3.5 rounded-xl">
+                                <span class="bg-emerald-600 text-white font-bold text-xs px-2.5 py-1 rounded-lg">Шаг 3</span>
+                                <div class="text-sm text-slate-300">
+                                    <strong class="text-white block">Инфузионная терапия и защита почек (Ощелачивание):</strong> Введение 0,9% NaCl и <strong>4% раствора гидрокарбоната натрия (соды)</strong> в/в для ощелачивания мочи (pH &gt; 6.5 предотвращает выпадение миоглобина в канальцах почек). При отсутствии рвоты и травм живота — обильное щелочное питье.
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-slate-800/50 p-3.5 rounded-xl">
+                                <span class="bg-emerald-600 text-white font-bold text-xs px-2.5 py-1 rounded-lg">Шаг 4</span>
+                                <div class="text-sm text-slate-300">
+                                    <strong class="text-white block">Локальное охлаждение и эвакуация:</strong> Охлаждение поврежденной конечности (пузырь со льдом поверх повязки, не допускать отморожения!) для снижения скорости всасывания токсинов. Экстренная эвакуация в стационар с отделением гемодиализа.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                shortTitle: "4. Массивные кровотечения",
+                title: "Массивные кровотечения и методы их временной остановки",
+                badge: "МОДУЛЬ 4 • ГЕМОСТАЗ",
+                icon: "heart-pulse",
+                render: () => `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                            <span class="text-xs font-bold uppercase text-red-400 bg-red-500/10 px-2.5 py-1 rounded">1. Артериальные (конечности)</span>
+                            <h4 class="font-bold text-white text-base mt-3 mb-2">Наложение турникета (жгута)</h4>
+                            <ul class="text-xs sm:text-sm text-slate-300 space-y-2 list-disc pl-4">
+                                <li>В «красной зоне» (под огнем) накладывается <strong>максимально высоко</strong> на конечность поверх одежды.</li>
+                                <li>В «желтой зоне» — на <strong>5–7 см выше раны</strong> (избегая суставов и карманов с предметами).</li>
+                                <li>Критерий эффективности: полная остановка кровотечения и исчезновение периферического пульса.</li>
+                                <li>Обязательна фиксация времени наложения (маркером на турникете и лбу раненого).</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                            <span class="text-xs font-bold uppercase text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded">2. Зоны перехода (пах, шея, подмышки)</span>
+                            <h4 class="font-bold text-white text-base mt-3 mb-2">Тугая тампонада гемостатиком</h4>
+                            <ul class="text-xs sm:text-sm text-slate-300 space-y-2 list-disc pl-4">
+                                <li>Применяется там, где невозможно наложить стандартный турникет.</li>
+                                <li>Очистить полость раны от сгустков крови и плотно заполнить раневой канал <strong>Z-сложенным гемостатическим бинтом</strong> (каолин/хитозан) непосредственно к источнику кровотечения.</li>
+                                <li>Осуществлять прямое ручное давление не менее <strong>3 минут</strong> (для гемостатика) или 10 минут (для обычного бинта).</li>
+                                <li>Зафиксировать давящей повязкой (Израильский бандаж).</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                            <span class="text-xs font-bold uppercase text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded">3. Паренхиматозные и внутренние</span>
+                            <h4 class="font-bold text-white text-base mt-3 mb-2">Некомпрессионные кровотечения</h4>
+                            <ul class="text-xs sm:text-sm text-slate-300 space-y-2 list-disc pl-4">
+                                <li>Кровотечения в грудную, брюшную полость, полость таза.</li>
+                                <li>На догоспитальном этапе окончательная остановка невозможна — требуется <strong>немедленная эвакуация</strong> для хирургии Damage Control.</li>
+                                <li>Введение <strong>транексамовой кислоты (1 г в/в)</strong>.</li>
+                                <li>При подозрении на перелом костей таза — наложение тазового бандажа (Pelvic Binder) на уровне больших вертелов бедренных костей.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+                        <h3 class="font-bold text-white text-base mb-3 flex items-center gap-2">
+                            <i data-lucide="refresh-cw" class="w-5 h-5 text-emerald-400"></i>
+                            Правила конверсии (замены) турникета на безопасном этапе
+                        </h3>
+                        <p class="text-sm text-slate-300 mb-3">
+                            Если время наложения турникета не превышает <strong>2 часов</strong>, и раненый находится в безопасной зоне под наблюдением медика, оценивается возможность конверсии турникета на тампонаду и давящую повязку:
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                            <div class="bg-emerald-950/30 border border-emerald-800/50 p-3.5 rounded-xl text-emerald-200">
+                                <strong class="block text-emerald-400 mb-1">Конверсия РАЗРЕШЕНА:</strong>
+                                Раненый в стабильном состоянии (нет шока III ст.), нет травматической ампутации конечности, прошло менее 2 часов с момента наложения.
+                            </div>
+                            <div class="bg-red-950/30 border border-red-800/50 p-3.5 rounded-xl text-red-200">
+                                <strong class="block text-red-400 mb-1">Конверсия ЗАПРЕЩЕНА:</strong>
+                                Прошло более 2 часов (риск реперфузионного токсикоза — снимает только хирург в операционной!), травматическая ампутация, глубокий шок, невозможность наблюдения за раненым.
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 4,
+                shortTitle: "5. Сочетанная травма, ЧМТ, грудь, живот",
+                title: "Тяжелая сочетанная травма, ЧМТ, травмы груди и живота",
+                badge: "МОДУЛЬ 5 • ПОЛОСТНЫЕ И СОЧЕТАННЫЕ ТРАВМЫ",
+                icon: "stethoscope",
+                render: () => `
+                    <div class="space-y-4">
+                        <!-- ЧМТ -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                            <div class="flex items-center gap-2.5 mb-3">
+                                <div class="bg-sky-500/20 text-sky-400 p-2 rounded-lg"><i data-lucide="brain" class="w-5 h-5"></i></div>
+                                <h3 class="font-bold text-white text-lg">Черепно-мозговая травма (ЧМТ)</h3>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-300">
+                                <div>
+                                    <p class="mb-2">Главная задача на догоспитальном этапе — предотвращение вторичного повреждения мозга от <strong>гипоксии (SpO₂ &lt; 90%)</strong> и <strong>артериальной гипотонии (САД &lt; 90 мм рт. ст.)</strong>.</p>
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        <li>Обеспечение проходимости дыхательных путей (санация ротоглотки, воздуховод).</li>
+                                        <li>При сохраненном дыхании и отсутствии травмы позвоночника — устойчивое боковое положение или приподнятие головного конца на 15–30° (улучшение венозного оттока из полости черепа).</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700">
+                                    <strong class="text-sky-400 block mb-1.5">Быстрая оценка сознания (Шкала AVPU):</strong>
+                                    <ul class="space-y-1 text-xs">
+                                        <li><strong>A (Alert):</strong> В сознании, ориентирован.</li>
+                                        <li><strong>V (Verbal):</strong> Реагирует только на голос.</li>
+                                        <li><strong>P (Pain):</strong> Реагирует только на болевой раздражитель.</li>
+                                        <li><strong>U (Unresponsive):</strong> Без сознания, не реагирует (требуется немедленная защита ВДП!).</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Травмы груди -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                            <div class="flex items-center gap-2.5 mb-3">
+                                <div class="bg-amber-500/20 text-amber-400 p-2 rounded-lg"><i data-lucide="wind" class="w-5 h-5"></i></div>
+                                <h3 class="font-bold text-white text-lg">Травмы грудной клетки и пневмоторакс</h3>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+                                    <h4 class="font-bold text-white mb-1.5">Открытый пневмоторакс («сосущая рана»)</h4>
+                                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                                        Воздух свободно входит и выходит через рану грудной стенки. <strong>Помощь:</strong> Немедленно наложить специальный <strong>окклюзионный пластырь</strong> (желательно вентилируемый с клапаном) на выдохе. Обязательно осмотреть спину на предмет выходного отверстия!
+                                    </p>
+                                </div>
+                                <div class="bg-red-950/20 p-4 rounded-xl border border-red-900/50">
+                                    <h4 class="font-bold text-red-400 mb-1.5">Напряженный (клапанный) пневмоторакс</h4>
+                                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                                        <strong>Признаки:</strong> Нарастающая одышка, цианоз, набухание шейных вен, отсутствие дыхательных шумов и тимпанит на стороне поражения, падение АД. <strong>Помощь:</strong> Игольная декомпрессия (торакоцентез) катетером 14G (длина 8 см) во <strong>2-м межреберье по среднеключичной линии</strong> или в <strong>4–5 межреберье по передней подмышечной линии</strong> (строго по верхнему краю нижележащего ребра!).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Травмы живота -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                            <div class="flex items-center gap-2.5 mb-3">
+                                <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5"></i></div>
+                                <h3 class="font-bold text-white text-lg">Травмы живота и эвентрация органов</h3>
+                            </div>
+                            <p class="text-sm text-slate-300 mb-3">
+                                При проникающих ранениях живота возможно выпадение петель кишечника или сальника наружу (эвентрация).
+                            </p>
+                            <div class="bg-amber-950/30 border border-amber-800/60 p-3.5 rounded-xl text-xs sm:text-sm text-amber-200">
+                                <strong>Правила помощи:</strong>
+                                <ul class="list-disc pl-5 mt-1 space-y-1">
+                                    <li><strong>КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО</strong> вправлять выпавшие органы обратно в брюшную полость!</li>
+                                    <li>Аккуратно накрыть выпавшие петли кишечника стерильными салфетками, обильно смоченными теплым физраствором (0,9% NaCl), сверху зафиксировать нетугой повязкой (или защитным куполом/пленкой от высыхания).</li>
+                                    <li>Не давать пить и есть. Транспортировка в положении на спине с согнутыми в коленях ногами.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 5,
+                shortTitle: "6. «Острый живот» и эвакуация",
+                title: "Синдром «Острого живота» в полевых условиях (Протоколы РК)",
+                badge: "МОДУЛЬ 6 • НЕОТЛОЖНАЯ АБДОМИНАЛЬНАЯ ХИРУРГИЯ",
+                icon: "alert-triangle",
+                render: () => `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+                        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+                            <strong>«Острый живот»</strong> — собирательное понятие, объединяющее острые хирургические заболевания органов брюшной полости, требующие <strong>экстренной эвакуации в хирургический стационар</strong> и оперативного вмешательства. В условиях автономности и боевых действий несвоевременная диагностика ведет к разлитому перитониту и сепсису.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-slate-800/50 border border-slate-700 p-4 rounded-xl">
+                                <h4 class="font-bold text-emerald-400 text-base mb-1.5">1. Острый аппендицит</h4>
+                                <p class="text-xs sm:text-sm text-slate-300">
+                                    Боль начинается в эпигастрии или околопупочной области, через несколько часов смещается в правую подвздошную область (симптом Кохера). Субфебрильная температура (37.2–38.0°C), однократная рвота, напряжение мышц и положительные симптомы раздражения брюшины (Щеткина–Блюмберга, Ровзинга).
+                                </p>
+                            </div>
+
+                            <div class="bg-slate-800/50 border border-slate-700 p-4 rounded-xl">
+                                <h4 class="font-bold text-red-400 text-base mb-1.5">2. Прободная (перфоративная) язва</h4>
+                                <p class="text-xs sm:text-sm text-slate-300">
+                                    Внезапная острейшая <strong>«кинжальная» боль</strong> в эпигастрии. Вынужденное положение на боку с поджатыми к животу коленями. <strong>«Доскообразный» живот</strong> (резкое напряжение мышц передней брюшной стенки), исчезновение печеночной тупости при перкуссии, брадикардия в первые часы.
+                                </p>
+                            </div>
+
+                            <div class="bg-slate-800/50 border border-slate-700 p-4 rounded-xl">
+                                <h4 class="font-bold text-amber-400 text-base mb-1.5">3. Ущемленная грыжа</h4>
+                                <p class="text-xs sm:text-sm text-slate-300">
+                                    Резкая боль в области грыжевого выпячивания (паховой, бедренной, пупочной), напряжение и резкая болезненность образования, <strong>невправимость</strong> ранее вправлявшейся грыжи, отсутствие симптома «кашлевого толчка».
+                                </p>
+                            </div>
+
+                            <div class="bg-slate-800/50 border border-slate-700 p-4 rounded-xl">
+                                <h4 class="font-bold text-purple-400 text-base mb-1.5">4. Острая кишечная непроходимость (ОКН)</h4>
+                                <p class="text-xs sm:text-sm text-slate-300">
+                                    Схваткообразные нарастающие боли в животе, неукротимая рвота (вначале желудочным содержимым, затем желчью и «каловая»), задержка стула и газов, асимметрия и вздутие живота, «шум плеска».
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Правило 3-х запретов -->
+                    <div class="bg-red-950/40 border border-red-700/80 rounded-2xl p-5">
+                        <h3 class="font-bold text-red-400 text-base uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <i data-lucide="ban" class="w-5 h-5"></i>
+                            Строгие запреты на догоспитальном этапе (Правило «Холод, голод и покой»)
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-red-900/50">
+                                <strong class="text-white block mb-1">1. НЕ ОБЕЗБОЛИВАТЬ</strong>
+                                <span class="text-slate-300">Запрещено вводить анальгетики и спазмолитики до осмотра хирурга — это «стирает» клинику перитонита и ведет к фатальной задержке операции.</span>
+                            </div>
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-red-900/50">
+                                <strong class="text-white block mb-1">2. НЕ КОРМИТЬ И НЕ ПОИТЬ</strong>
+                                <span class="text-slate-300">Стимуляция перистальтики усиливает выход содержимого в брюшную полость и повышает риск аспирации при наркозе.</span>
+                            </div>
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-red-900/50">
+                                <strong class="text-white block mb-1">3. НЕ ГРЕТЬ И НЕ ВПРАВЛЯТЬ</strong>
+                                <span class="text-slate-300">Запрещены грелки на живот, клизмы, слабительные и насильственное вправление ущемленной грыжи (риск вправления некротизированной кишки).</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 6,
+                shortTitle: "7. Ожоги и отморожения",
+                title: "Термические поражения тяжелой степени: ожоги и отморожения",
+                badge: "МОДУЛЬ 7 • ТЕРМИЧЕСКАЯ ТРАВМА",
+                icon: "flame",
+                render: () => `
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- ОЖОГИ -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="bg-orange-500/20 text-orange-400 p-2 rounded-lg"><i data-lucide="flame" class="w-5 h-5"></i></div>
+                                    <h3 class="font-bold text-white text-lg">Термические ожоги</h3>
+                                </div>
+                                <span class="text-xs bg-orange-500/10 text-orange-400 px-2.5 py-1 rounded font-semibold">Правило «девяток»</span>
+                            </div>
+
+                            <p class="text-xs sm:text-sm text-slate-300">
+                                Ожоговый шок развивается при площади глубоких ожогов более <strong>10–15%</strong> поверхности тела (ладонь пострадавшего ≈ 1% площади тела). Особо опасны ожоги дыхательных путей (опаление волос в носу, копоть в мокроте, осиплость голоса — риск молниеносного отека гортани!).
+                            </p>
+
+                            <div class="space-y-2 text-xs sm:text-sm text-slate-300">
+                                <strong class="text-white block">Алгоритм помощи:</strong>
+                                <ul class="list-disc pl-5 space-y-1.5">
+                                    <li>Прекратить действие поражающего фактора, погасить пламя.</li>
+                                    <li><strong>Охлаждение:</strong> Проточная прохладная вода (15–20°C) в течение 10–15 минут в первые 20 минут после травмы (при небольших площадях, избегая общей гипотермии!).</li>
+                                    <li><strong>Повязки:</strong> Наложить гидрогелевые противоожоговые повязки (BurnTec) или сухие стерильные нетугие повязки.</li>
+                                    <li><strong>Противошоковая терапия:</strong> Адекватное обезболивание (в/в), инфузия сбалансированных кристаллоидов (расчет по формуле Паркланда: 2–4 мл × масса тела (кг) × % ожога за 24 ч).</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-red-950/30 border border-red-800/50 p-3 rounded-xl text-xs text-red-200">
+                                <strong>Запрещено:</strong> отрывать прилипшую одежду (обрезать вокруг), вскрывать ожоговые пузыри, наносить масла, мази, спирт, лед.
+                            </div>
+                        </div>
+
+                        <!-- ОТМОРОЖЕНИЯ -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="bg-cyan-500/20 text-cyan-400 p-2 rounded-lg"><i data-lucide="snowflake" class="w-5 h-5"></i></div>
+                                    <h3 class="font-bold text-white text-lg">Отморожения и гипотермия</h3>
+                                </div>
+                                <span class="text-xs bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded font-semibold">Холодовая травма</span>
+                            </div>
+
+                            <p class="text-xs sm:text-sm text-slate-300">
+                                В дореактивном периоде (пока ткани заморожены) определить истинную глубину поражения невозможно. Самое опасное в полевых условиях — <strong>повторное замерзание уже отогретой конечности</strong> (ведет к тотальному некрозу и ампутации).
+                            </p>
+
+                            <div class="space-y-2 text-xs sm:text-sm text-slate-300">
+                                <strong class="text-white block">Алгоритм помощи:</strong>
+                                <ul class="list-disc pl-5 space-y-1.5">
+                                    <li><strong>На этапе эвакуации (если нет гарантии тепла):</strong> Наложить толстую <strong>теплоизолирующую ватно-марлевую повязку</strong> (термос-повязку) для предотвращения быстрого поверхностного оттаивания до поступления в теплое помещение.</li>
+                                    <li><strong>В теплом помещении / госпитале:</strong> Согревание изнутри (обильное теплое сладкое питье) и медленное согревание конечности (в воде начиная с 20°C с доведением до 37–40°C за 30–40 минут).</li>
+                                    <li><strong>Медикаментозно (РК):</strong> Обезболивание, спазмолитики, дезагреганты/реологические препараты для восстановления микроциркуляции.</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-red-950/30 border border-red-800/50 p-3 rounded-xl text-xs text-red-200">
+                                <strong>Запрещено:</strong> растирать пораженные участки снегом, шерстью или спиртом (микротравмы и тромбоз сосудов), согревать у открытого огня или горячих батарей.
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 7,
+                shortTitle: "8. Медицинская укладка (Аптечка)",
+                title: "Специализированная медицинская укладка при шоке и травме (TCCC / РК)",
+                badge: "МОДУЛЬ 8 • ТАБЕЛЬНОЕ ОСНАЩЕНИЕ",
+                icon: "briefcase-medical",
+                render: () => `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <h3 class="font-bold text-white text-lg">Состав противошоковой и тактической укладки</h3>
+                                <p class="text-xs sm:text-sm text-slate-400">Фильтруйте компоненты по этапам протокола MARCH и стандартам МЗ РК</p>
+                            </div>
+                            <!-- Фильтры категорий -->
+                            <div class="flex flex-wrap gap-1.5" id="kitFilters">
+                                <button onclick="filterKit('all')" class="kit-filter-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition" data-cat="all">Все средства (15)</button>
+                                <button onclick="filterKit('bleeding')" class="kit-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-cat="bleeding">M: Кровотечения</button>
+                                <button onclick="filterKit('airway')" class="kit-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-cat="airway">A/R: Дыхание</button>
+                                <button onclick="filterKit('shock')" class="kit-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-cat="shock">C: Шок и инфузия</button>
+                                <button onclick="filterKit('pain')" class="kit-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-cat="pain">H: Боль и ожоги</button>
+                            </div>
+                        </div>
+
+                        <!-- Сетка карточек аптечки -->
+                        <div id="kitGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Генерируется через JS -->
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 8,
+                shortTitle: "9. Клинический симулятор (Тест)",
+                title: "Интерактивный симулятор принятия решений (Ситуационные задачи)",
+                badge: "МОДУЛЬ 9 • ПРОВЕРКА ЗНАНИЙ",
+                icon: "check-square",
+                render: () => `
+                    <div id="quizContainer" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-8">
+                        <!-- Контент викторины рендерится динамически -->
+                    </div>
+                `
+            }
+        ];
+
+        // --- ДАННЫЕ МЕДИЦИНСКОЙ УКЛАДКИ ---
+        const kitItems = [
+            { cat: 'bleeding', tag: 'M • Гемостаз', tagColor: 'text-red-400 bg-red-500/10', name: 'Турникет кровоостанавливающий (CAT Gen 7 / аналог)', qty: '2–4 шт.', desc: 'Механический жгут с воротком для экстренной остановки артериального кровотечения на верхних и нижних конечностях.' },
+            { cat: 'bleeding', tag: 'M • Гемостаз', tagColor: 'text-red-400 bg-red-500/10', name: 'Гемостатический бинт Z-fold (QuikClot / Celox)', qty: '2 уп.', desc: 'Стерильный бинт, пропитанный каолином или хитозаном. Применяется для тугой тампонады глубоких ран в зонах перехода (пах, подмышки, шея).' },
+            { cat: 'bleeding', tag: 'M • Гемостаз', tagColor: 'text-red-400 bg-red-500/10', name: 'Бандаж компрессионный (Израильский бандаж 4" и 6")', qty: '2–3 шт.', desc: 'Эластичный перевязочный пакет с впитывающей подушечкой и пластиковым аппликатором давления для фиксации тампонады.' },
+            { cat: 'airway', tag: 'A • Дыхательные пути', tagColor: 'text-amber-400 bg-amber-500/10', name: 'Назофарингеальный воздуховод (размер 28–30 Fr) + лубрикант', qty: '1–2 шт.', desc: 'Восстанавливает проходимость верхних дыхательных путей при западении языка у раненых без сознания (не вызывает рвотный рефлекс).' },
+            { cat: 'airway', tag: 'R • Грудная клетка', tagColor: 'text-sky-400 bg-sky-500/10', name: 'Пластырь окклюзионный вентилируемый (Chest Seal)', qty: '2 шт. (пара)', desc: 'Герметизирует проникающие ранения грудной клетки (входное и выходное отверстия) при открытом пневмотораксе, выпуская воздух наружу.' },
+            { cat: 'airway', tag: 'R • Грудная клетка', tagColor: 'text-sky-400 bg-sky-500/10', name: 'Игла-катетер декомпрессионная (14G, длина 8.25 см)', qty: '1–2 шт.', desc: 'Для экстренного торакоцентеза при напряженном пневмотораксе во 2-м межреберье по среднеключичной или в 5-м по подмышечной линии.' },
+            { cat: 'shock', tag: 'C • Сосудистый доступ', tagColor: 'text-purple-400 bg-purple-500/10', name: 'Катетеры периферические венозные (14G, 16G, 18G) + система', qty: '2–3 компл.', desc: 'Обеспечение быстрого внутривенного доступа большого диаметра для струйной инфузии при геморрагическом шоке.' },
+            { cat: 'shock', tag: 'C • Сосудистый доступ', tagColor: 'text-purple-400 bg-purple-500/10', name: 'Набор для внутрикостного доступа (EZ-IO / ручной)', qty: '1 компл.', desc: 'Альтернативный сосудистый доступ в головку плечевой или проксимальный отдел большеберцовой кости при спадении периферических вен.' },
+            { cat: 'shock', tag: 'C • Инфузия (Протокол РК)', tagColor: 'text-purple-400 bg-purple-500/10', name: 'Сбалансированные кристаллоиды (0,9% NaCl / р-р Рингера)', qty: '500–1000 мл', desc: 'Восполнение ОЦК в режиме пермиссивной гипотензии (целевое САД 80–90 мм рт. ст.). Вводить подогретым!' },
+            { cat: 'shock', tag: 'C • Коагуляция (Протокол РК)', tagColor: 'text-purple-400 bg-purple-500/10', name: 'Транексамовая кислота (р-р 100 мг/мл, 10 мл)', qty: '2 ампулы (2 г)', desc: 'Антифибринолитик. Вводится 1000 мг в/в в первые 3 часа после травмы для снижения смертности от массивной кровопотери.' },
+            { cat: 'shock', tag: 'C • Краш-синдром (РК)', tagColor: 'text-purple-400 bg-purple-500/10', name: 'Натрия гидрокарбонат 4% (р-р для инфузий)', qty: '200–400 мл', desc: 'Ощелачивание плазмы и мочи при синдроме длительного сдавливания (СДС) для профилактики миоглобинурийного нефроза и ОПН.' },
+            { cat: 'pain', tag: 'H • Обезболивание (РК)', tagColor: 'text-emerald-400 bg-emerald-500/10', name: 'Анальгетики / анестетики (Трамадол, Фентанил, Кетамин)', qty: '2–3 дозы', desc: 'Купирование шокогенной болевой импульсации в/в или в/к (строго по учету и протоколам МЗ РК с учетом наличия ЧМТ).' },
+            { cat: 'pain', tag: 'H • Термическая травма', tagColor: 'text-orange-400 bg-orange-500/10', name: 'Повязки противоожоговые гидрогелевые (BurnTec)', qty: '2–3 шт.', desc: 'Стерильные охлаждающие повязки для закрытия ожоговых поверхностей, снижения боли и защиты от инфицирования.' },
+            { cat: 'pain', tag: 'H • Гипотермия', tagColor: 'text-emerald-400 bg-emerald-500/10', name: 'Покрывало спасательное изотермическое (термоодеяло)', qty: '2 шт.', desc: 'Защита пострадавшего от переохлаждения для профилактики коагулопатии и «летальной триады» шока.' },
+            { cat: 'bleeding', tag: 'Инструменты', tagColor: 'text-slate-300 bg-slate-700', name: 'Ножницы тактические атравматические, перчатки, маркер', qty: '1 компл.', desc: 'Быстрое разрезание экипировки, инфекционная безопасность и фиксация времени наложения турникета.' }
+        ];
+
+        // --- БАЗА ВОПРОСОВ СИМУЛЯТОРА ---
+        const quizQuestions = [
+            {
+                scenario: "Боец извлечен из-под бетонной плиты, которая придавливала его правое бедро в течение 2,5 часов. В сознании, бледен, АД 100/65 мм рт. ст., пульс 110 уд/мин. Плита только что поднята спасателями без предварительной подготовки. Какое ваше ПЕРВОЕ критическое действие?",
+                options: [
+                    "Немедленно начать энергичный массаж бедра для восстановления кровотока",
+                    "Срочно наложить турникет выше места сдавления, обеспечить венозный доступ, обезболить и начать инфузию с гидрокарбонатом натрия",
+                    "Ввести внутримышечно анальгин с димедролом и дать горячий чай",
+                    "Наложить согревающий компресс на правое бедро"
+                ],
+                correct: 1,
+                explanation: "При сдавлении конечности более 15–20 минут развивается краш-синдром. Турникет накладывается проксимальнее зоны сдавления (в идеале ДО снятия плиты!), чтобы предотвратить залповый выброс калия и миоглобина в кровоток, остановку сердца и ОПН. Внутримышечные инъекции при шоке неэффективны."
+            },
+            {
+                scenario: "У раненого осколочное ранение правой половины грудной клетки. Выраженная одышка, цианоз лица, набухание шейных вен, трахея смещена влево, справа дыхание не выслушивается, при перкуссии — коробочный звук. АД 75/40 мм рт. ст. Ваша тактика?",
+                options: [
+                    "Наложить тугую круговую давящую повязку на грудную клетку",
+                    "Уложить раненого на здоровый (левый) бок с опущенным головным концом",
+                    "Выполнить немедленную игольную декомпрессию (торакоцентез) справа во 2-м межреберье по среднеключичной линии",
+                    "Ввести кетамин в/в и ждать прибытия хирургической бригады"
+                ],
+                correct: 2,
+                explanation: "Клиническая картина классического напряженного (клапанного) пневмоторакса со смещением средостения и обструктивным шоком. Состояние смертельно опасно и требует немедленной декомпрессии плевральной полости."
+            },
+            {
+                scenario: "На этап эвакуации доставлен военнослужащий с жалобами на внезапную острейшую «кинжальную» боль в эпигастрии, возникшую 1 час назад. Лежит на боку с поджатыми ногами. Живот «доскообразный», резко болезненный. Что из перечисленного КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО делать?",
+                options: [
+                    "Экстренно эвакуировать в хирургический стационар",
+                    "Ввести наркотический или ненаркотический анальгетик для снятия болевого шока",
+                    "Положить холод на область живота",
+                    "Транспортировать в положении лежа с согнутыми в коленях ногами"
+                ],
+                correct: 1,
+                explanation: "При клинике «острого живота» (здесь — классическая прободная язва желудка/ДПК) введение обезболивающих препаратов до осмотра хирурга категорически запрещено, так как это маскирует симптомы перитонита и может привести к врачебной ошибке."
+            },
+            {
+                scenario: "У пострадавшего с тяжелой сочетанной травмой и продолжающимся внутренним кровотечением АД составляет 85/50 мм рт. ст., тяжелой ЧМТ нет. Какой уровень систолического АД следует поддерживать при инфузионной терапии на догоспитальном этапе согласно современным протоколам?",
+                options: [
+                    "130–140 мм рт. ст. за счет максимальной скорости струйной инфузии",
+                    "80–90 мм рт. ст. (концепция пермиссивной гипотензии) + введение транексамовой кислоты",
+                    "Не ниже 120 мм рт. ст. с обязательным введением дофамина",
+                    "Инфузионная терапия противопоказана до операционной"
+                ],
+                correct: 1,
+                explanation: "Согласно протоколам борьбы с геморрагическим шоком (при отсутствии тяжелой ЧМТ), до окончательной хирургической остановки кровотечения поддерживается пермиссивная гипотензия (САД 80–90 мм рт. ст.), чтобы не «выбить» формирующиеся тромбы высоким давлением и не вызвать гемодилюцию."
+            },
+            {
+                scenario: "В зимних условиях у бойца выявлено отморожение обеих стоп (кожа бледная, холодная, нечувствительная). До эвакуации в теплый медпункт остается около 3 часов пешего/транспортного перехода на морозе. Ваши действия?",
+                options: [
+                    "Растереть стопы снегом для стимуляции кровообращения",
+                    "Отогреть стопы у костра, затем снова надеть обувь",
+                    "Наложить толстую сухую теплоизолирующую (ватно-марлевую) повязку для предотвращения преждевременного оттаивания и повторного замерзания",
+                    "Вскрыть появившиеся пузыри и обработать спиртом"
+                ],
+                correct: 2,
+                explanation: "Повторное замерзание уже отогретой конечности приводит к необратимому тромбозу и гангрене. Если нет возможности сразу поместить пострадавшего в тепло до этапа госпиталя, накладывается термоизолирующая повязка."
+            }
+        ];
+
+        // --- СОСТОЯНИЕ ПРИЛОЖЕНИЯ ---
+        let currentModuleIndex = 0;
+        let completedModules = new Set([0]);
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+
+        // --- ИНИЦИАЛИЗАЦИЯ И РЕНДЕР ---
+        function init() {
+            renderSidebar();
+            loadModule(0);
+            setupEventListeners();
+        }
+
+        function renderSidebar() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.innerHTML = modules.map((mod, idx) => {
+                const isActive = idx === currentModuleIndex;
+                const isDone = completedModules.has(idx);
+                return `
+                    <button onclick="loadModule(${idx})" class="w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-between transition ${isActive ? 'tab-active font-semibold' : 'text-slate-300 hover:bg-slate-800/70 hover:text-white'}">
+                        <div class="flex items-center gap-2.5 truncate pr-2">
+                            <i data-lucide="${mod.icon}" class="w-4 h-4 flex-shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-400'}"></i>
+                            <span class="truncate">${mod.shortTitle}</span>
+                        </div>
+                        ${isDone ? '<i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0"></i>' : ''}
+                    </button>
+                `;
+            }).join('');
+
+            // Обновление прогресс-бара
+            const progressPercent = Math.round((completedModules.size / modules.length) * 100);
+            document.getElementById('progressText').textContent = `${completedModules.size} / ${modules.length}`;
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+            lucide.createIcons();
+        }
+
+        function loadModule(index) {
+            currentModuleIndex = index;
+            completedModules.add(index); // Автоматически засчитываем просмотр
+            const mod = modules[index];
+
+            document.getElementById('moduleBadge').textContent = mod.badge;
+            document.getElementById('moduleTitle').textContent = mod.title;
+
+            const container = document.getElementById('contentContainer');
+            container.classList.remove('fade-in');
+            void container.offsetWidth; // Перезапуск CSS-анимации
+            container.classList.add('fade-in');
+            container.innerHTML = mod.render();
+
+            // Инициализация специфических модулей
+            if (index === 7) {
+                filterKit('all');
+            } else if (index === 8) {
+                renderQuiz();
+            }
+
+            // Управление кнопками Назад/Далее
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === modules.length - 1;
+
+            // Закрытие мобильного меню при переходе
+            closeMobileMenu();
+            renderSidebar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- ЛОГИКА ФИЛЬТРАЦИИ АПТЕЧКИ (МОДУЛЬ 8) ---
+        function filterKit(category) {
+            const buttons = document.querySelectorAll('.kit-filter-btn');
+            buttons.forEach(btn => {
+                if (btn.dataset.cat === category) {
+                    btn.classList.remove('bg-slate-800', 'text-slate-300');
+                    btn.classList.add('bg-emerald-600', 'text-white');
+                } else {
+                    btn.classList.add('bg-slate-800', 'text-slate-300');
+                    btn.classList.remove('bg-emerald-600', 'text-white');
+                }
+            });
+
+            const filtered = category === 'all' ? kitItems : kitItems.filter(item => item.cat === category);
+            const grid = document.getElementById('kitGrid');
+            grid.innerHTML = filtered.map(item => `
+                <div class="bg-slate-800/50 border border-slate-700/80 hover:border-emerald-500/50 rounded-xl p-4 flex flex-col justify-between transition">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2.5">
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded ${item.tagColor}">${item.tag}</span>
+                            <span class="text-xs font-bold text-slate-200 bg-slate-900 px-2.5 py-0.5 rounded-md border border-slate-700">${item.qty}</span>
+                        </div>
+                        <h4 class="font-bold text-white text-sm mb-2 leading-snug">${item.name}</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- ЛОГИКА СИМУЛЯТОРА / ТЕСТИРОВАНИЯ (МОДУЛЬ 9) ---
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            if (currentQuizIndex >= quizQuestions.length) {
+                container.innerHTML = `
+                    <div class="text-center py-6 space-y-4">
+                        <div class="inline-flex p-4 rounded-full bg-emerald-500/20 text-emerald-400 mb-2">
+                            <i data-lucide="award" class="w-12 h-12"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Симуляция завершена!</h3>
+                        <p class="text-slate-300 text-base">Ваш результат: <strong class="text-emerald-400 text-xl">${quizScore} из ${quizQuestions.length}</strong> правильных клинических решений.</p>
+                        <div class="pt-4">
+                            <button onclick="restartQuiz()" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition inline-flex items-center gap-2">
+                                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                <span>Пройти симулятор заново</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const q = quizQuestions[currentQuizIndex];
+            quizAnswered = false;
+
+            container.innerHTML = `
+                <div class="flex items-center justify-between text-xs text-slate-400 mb-4 pb-3 border-b border-slate-800">
+                    <span class="font-semibold text-emerald-400">КЛИНИЧЕСКАЯ ЗАДАЧА ${currentQuizIndex + 1} ИЗ ${quizQuestions.length}</span>
+                    <span>Текущий счет: <strong class="text-white">${quizScore}</strong></span>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700 rounded-xl p-4 sm:p-5 mb-5">
+                    <p class="text-sm sm:text-base text-white font-medium leading-relaxed">${q.scenario}</p>
+                </div>
+                <div class="space-y-2.5" id="quizOptions">
+                    ${q.options.map((opt, i) => `
+                        <button onclick="selectAnswer(${i})" class="quiz-opt-btn w-full text-left p-4 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-slate-700 text-sm text-slate-200 transition flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">${String.fromCharCode(65 + i)}</span>
+                            <span>${opt}</span>
+                        </button>
+                    `).join('')}
+                </div>
+                <div id="quizFeedback" class="hidden mt-5 p-4 rounded-xl text-sm leading-relaxed"></div>
+                <div id="quizNextWrapper" class="hidden mt-5 flex justify-end">
+                    <button onclick="nextQuestion()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition flex items-center gap-2">
+                        <span>${currentQuizIndex === quizQuestions.length - 1 ? 'Завершить тест' : 'Следующая задача'}</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const q = quizQuestions[currentQuizIndex];
+            const isCorrect = selectedIndex === q.correct;
+            if (isCorrect) quizScore++;
+
+            const buttons = document.querySelectorAll('.quiz-opt-btn');
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === q.correct) {
+                    btn.classList.remove('bg-slate-800/40', 'border-slate-700');
+                    btn.classList.add('bg-emerald-950/60', 'border-emerald-500', 'text-emerald-200');
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.classList.remove('bg-slate-800/40', 'border-slate-700');
+                    btn.classList.add('bg-red-950/60', 'border-red-500', 'text-red-200');
+                } else {
+                    btn.classList.add('opacity-50');
+                }
+            });
+
+            const feedback = document.getElementById('quizFeedback');
+            feedback.classList.remove('hidden');
+            feedback.classList.add(isCorrect ? 'bg-emerald-950/40' : 'bg-red-950/40', 'border', isCorrect ? 'border-emerald-700' : 'border-red-700', isCorrect ? 'text-emerald-200' : 'text-red-200');
+            feedback.innerHTML = `
+                <strong class="block font-bold mb-1 ${isCorrect ? 'text-emerald-400' : 'text-red-400'}">
+                    ${isCorrect ? '✓ Верное клиническое решение!' : '✕ Ошибка тактики!'}
+                </strong>
+                ${q.explanation}
+            `;
+
+            document.getElementById('quizNextWrapper').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            renderQuiz();
+        }
+
+        function restartQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            renderQuiz();
+        }
+
+        // --- МОБИЛЬНОЕ МЕНЮ И СОБЫТИЯ ---
+        function openMobileMenu() {
+            document.getElementById('sidebar').classList.remove('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.remove('hidden');
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        }
+
+        function setupEventListeners() {
+            document.getElementById('mobileMenuBtn').addEventListener('click', openMobileMenu);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeMobileMenu);
+
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                if (currentModuleIndex > 0) loadModule(currentModuleIndex - 1);
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                if (currentModuleIndex < modules.length - 1) loadModule(currentModuleIndex + 1);
+            });
+
+            document.getElementById('markCompletedBtn').addEventListener('click', () => {
+                completedModules.add(currentModuleIndex);
+                renderSidebar();
+                if (currentModuleIndex < modules.length - 1) {
+                    loadModule(currentModuleIndex + 1);
+                }
+            });
+        }
+
+        // Запуск при загрузке страницы
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
