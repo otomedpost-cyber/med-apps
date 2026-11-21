@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отморожения: помощь, степени и укладка — Модуль для фельдшеров</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение шрифта Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Подключение иконок Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1120;
+            color: #f1f5f9;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        .fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Стили для кастомных чекбоксов укладки */
+        .kit-checkbox:checked + div {
+            background-color: rgba(14, 165, 233, 0.12);
+            border-color: rgba(56, 189, 248, 0.5);
+        }
+        .kit-checkbox:checked + div .check-icon {
+            background-color: #0284c7;
+            border-color: #38bdf8;
+            color: white;
+        }
+        .kit-checkbox:checked + div .item-title {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Верхняя шапка приложения -->
+    <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="bg-sky-500/20 border border-sky-400/40 p-2.5 rounded-xl text-sky-400 shadow-inner">
+                    <i data-lucide="snowflake" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">ХОЛОДОВАЯ ТРАВМА & ОТМОРОЖЕНИЯ</h1>
+                        <span class="hidden md:inline-block text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">Полевая медицина</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Алгоритмы помощи, клиника степеней и табельная укладка для фельдшеров</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-300 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 self-start sm:self-auto">
+                <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i>
+                <span>Режим: Полевые занятия / Стрельбы</span>
+            </div>
+        </div>
+
+        <!-- Навигация по 4 основным разделам (вкладки) -->
+        <nav class="max-w-6xl mx-auto px-4 sm:px-6 flex overflow-x-auto gap-1.5 pb-2.5 pt-1 no-scrollbar" id="mainTabs">
+            <button onclick="switchTab('algorithm')" data-tab="algorithm" class="tab-btn active flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap bg-sky-600 text-white shadow-lg shadow-sky-900/40 transition">
+                <i data-lucide="first-aid-kit" class="w-4 h-4"></i>
+                <span>1. Алгоритм помощи</span>
+            </button>
+            <button onclick="switchTab('degrees')" data-tab="degrees" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i data-lucide="thermometer-snowflake" class="w-4 h-4"></i>
+                <span>2. Степени и лечение (I–IV)</span>
+            </button>
+            <button onclick="switchTab('kit')" data-tab="kit" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i data-lucide="briefcase-medical" class="w-4 h-4"></i>
+                <span>3. Укладка (Чек-лист)</span>
+            </button>
+            <button onclick="switchTab('prevention')" data-tab="prevention" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                <span>4. Профилактика и тренажер</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Основной контейнер контента -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6">
+        
+        <!-- ==================== РАЗДЕЛ 1: АЛГОРИТМ ПОМОЩИ ==================== -->
+        <section id="tab-algorithm" class="tab-content space-y-6 fade-in">
+            <!-- Главный закон догоспитального этапа -->
+            <div class="bg-gradient-to-r from-sky-950/90 to-slate-900 border border-sky-700/60 rounded-2xl p-5 flex items-start gap-4 shadow-lg">
+                <div class="bg-sky-500/20 p-3 rounded-xl text-sky-400 flex-shrink-0">
+                    <i data-lucide="info" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-white text-base sm:text-lg mb-1">Главный закон догоспитального этапа на полигоне</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        Если отморожение произошло на морозе, <strong class="text-sky-300">категорически нельзя допускать оттаивания тканей прямо на холоде</strong>. Если боец будет снова наступать на оттаявшую стопу или конечность замерзнет повторно при транспортировке — разовьется тотальный некроз и гангрена. <strong class="text-white">Сначала эвакуация в тепло и термоизоляция — и только потом согревание!</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Пошаговый алгоритм действий медработника -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Шаг 1 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-lg bg-sky-500/15 text-sky-400 font-bold text-xs uppercase tracking-wider">Шаг 1 • Эвакуация и доступ</span>
+                        <i data-lucide="scissors" class="w-5 h-5 text-slate-500"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base mb-2">Прекращение действия холода и снятие обуви</h3>
+                    <ul class="space-y-2 text-xs sm:text-sm text-slate-300 list-disc pl-4">
+                        <li>Немедленно перевести или вынести пострадавшего из зоны холода в отапливаемую палатку, кунг, БТР/МТ-ЛБ или санитарный транспорт.</li>
+                        <li><strong>Снять влажную и промерзшую одежду, обувь и носки.</strong></li>
+                        <li>Если обувь или одежда примерзли к коже — <strong>не срывать силой!</strong> Аккуратно разрезать атравматическими ножницами по швам, чтобы не содрать эпидермис.</li>
+                        <li>Снять кольца, часы, браслеты с пальцев и запястий до развития нарастающего отека.</li>
+                    </ul>
+                </div>
+
+                <!-- Шаг 2 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-lg bg-sky-500/15 text-sky-400 font-bold text-xs uppercase tracking-wider">Шаг 2 • Термоизоляция</span>
+                        <i data-lucide="layers" class="w-5 h-5 text-slate-500"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base mb-2">Пассивное согревание (в полевых условиях)</h3>
+                    <ul class="space-y-2 text-xs sm:text-sm text-slate-300 list-disc pl-4">
+                        <li>Применяется на позициях и при транспортировке. Цель — согревание тканей <strong>изнутри за счет собственного кровотока</strong>, а не снаружи.</li>
+                        <li>Наложить толстую <strong>теплоизолирующую ватно-марлевую повязку</strong> («кокон» / «чулок»): слой стерильного бинта → толстый слой ваты → снова бинт → клеенка или фольгированное термоодеяло сверху.</li>
+                        <li>Укутать всего пострадавшего в спасательное термоодеяло (серебристой стороной внутрь) и спальный мешок.</li>
+                    </ul>
+                </div>
+
+                <!-- Шаг 3 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-lg bg-sky-500/15 text-sky-400 font-bold text-xs uppercase tracking-wider">Шаг 3 • Активное согревание</span>
+                        <i data-lucide="flame" class="w-5 h-5 text-slate-500"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base mb-2">Правила активного согревания (только в тепле!)</h3>
+                    <ul class="space-y-2 text-xs sm:text-sm text-slate-300 list-disc pl-4">
+                        <li>Проводится <strong>только в теплом помещении/медпункте</strong>, если повторное замерзание полностью исключено.</li>
+                        <li><strong>Внутреннее согревание:</strong> обильное теплое сладкое питье (чай, компот, теплый бульон) при сохраненном сознании.</li>
+                        <li><strong>Водяная баня (при локальном отморожении I–II ст.):</strong> погрузить конечность в воду с начальной температурой <strong>+20 °C</strong> и постепенно (за 20–30 мин) довести до <strong>+37…+39 °C</strong>, аккуратно массируя ткани по направлению к центру.</li>
+                    </ul>
+                </div>
+
+                <!-- Шаг 4 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-lg bg-sky-500/15 text-sky-400 font-bold text-xs uppercase tracking-wider">Шаг 4 • Медикаменты и эвакуация</span>
+                        <i data-lucide="ambulance" class="w-5 h-5 text-slate-500"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base mb-2">Иммобилизация, анальгезия и транспорт</h3>
+                    <ul class="space-y-2 text-xs sm:text-sm text-slate-300 list-disc pl-4">
+                        <li><strong>Иммобилизация:</strong> Зафиксировать пораженную конечность транспортной шиной (Крамера или SAM Splint) — замерзшие ткани хрупки и легко травмируются при тряске.</li>
+                        <li><strong>Обезболивание:</strong> Ввести анальгетики (по табелю/протоколу), так как при оттаивании возникает сильнейший болевой синдром.</li>
+                        <li><strong>Медикаментозно (по назначению врача):</strong> спазмолитики (дротаверин/папаверин), дезагреганты (аспирин), инфузия подогретых растворов.</li>
+                        <li><strong>Эвакуация:</strong> Все пострадавшие со II–IV степенями подлежат обязательной эвакуации в хирургический стационар в положении лежа.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ОТДЕЛЬНЫЙ КРАСНЫЙ ПРЕДУПРЕЖДАЮЩИЙ БЛОК -->
+            <div class="bg-red-950/50 border-2 border-red-600/80 rounded-2xl p-5 sm:p-6 shadow-xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-red-600 text-white p-2 rounded-xl">
+                        <i data-lucide="ban" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-red-400 text-base sm:text-lg uppercase tracking-wide">Категорически запрещено при отморожении!</h3>
+                        <p class="text-xs text-red-200/80">Ошибки первой помощи, приводящие к некрозу и ампутации</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs sm:text-sm">
+                    <div class="bg-slate-950/70 border border-red-800/60 p-3.5 rounded-xl">
+                        <strong class="text-red-400 block mb-1">1. Растирание снегом и спиртом</strong>
+                        <span class="text-slate-300">Кристаллы льда в снегу микротравмируют замерзшую кожу, заносят инфекцию и вызывают тромбоз поверхностных сосудов.</span>
+                    </div>
+                    <div class="bg-slate-950/70 border border-red-800/60 p-3.5 rounded-xl">
+                        <strong class="text-red-400 block mb-1">2. Вскрытие пузырей</strong>
+                        <span class="text-slate-300">Запрещено прокалывать или срезать пузыри на полевом этапе — это открывает ворота для гнойной инфекции и влажной гангрены.</span>
+                    </div>
+                    <div class="bg-slate-950/70 border border-red-800/60 p-3.5 rounded-xl">
+                        <strong class="text-red-400 block mb-1">3. Открытый огонь и печки</strong>
+                        <span class="text-slate-300">Нельзя греть руки/ноги у костра, буржуйки или горячих батарей: из-за потери чувствительности боец получит глубокий ожог поверх отморожения.</span>
+                    </div>
+                    <div class="bg-slate-950/70 border border-red-800/60 p-3.5 rounded-xl">
+                        <strong class="text-red-400 block mb-1">4. Оттаивание на морозе</strong>
+                        <span class="text-slate-300">Если нет возможности сразу доставить бойца в тепло — не отогревать ноги на позиции! Повторное замерзание вызывает необратимую гибель тканей.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== РАЗДЕЛ 2: СТЕПЕНИ ОТМОРОЖЕНИЯ ==================== -->
+        <section id="tab-degrees" class="tab-content hidden space-y-6 fade-in">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="font-bold text-white text-lg">Клиническая классификация степеней отморожения</h2>
+                    <p class="text-xs sm:text-sm text-slate-400">Выберите степень для детального просмотра или сравните все 4 степени</p>
+                </div>
+                <!-- Переключатель вида: Все карточки / По одной степени -->
+                <div class="flex flex-wrap gap-1.5" id="degreeFilterBtns">
+                    <button onclick="filterDegrees('all')" data-deg="all" class="deg-btn active px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white transition">Все степени (I–IV)</button>
+                    <button onclick="filterDegrees('1')" data-deg="1" class="deg-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-emerald-400 hover:bg-slate-700 transition">I степень</button>
+                    <button onclick="filterDegrees('2')" data-deg="2" class="deg-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-amber-400 hover:bg-slate-700 transition">II степень</button>
+                    <button onclick="filterDegrees('3')" data-deg="3" class="deg-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-orange-400 hover:bg-slate-700 transition">III степень</button>
+                    <button onclick="filterDegrees('4')" data-deg="4" class="deg-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-red-400 hover:bg-slate-700 transition">IV степень</button>
+                </div>
+            </div>
+
+            <!-- Сетка карточек степеней -->
+            <div id="degreesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <!-- Генерируется через JS -->
+            </div>
+
+            <!-- Сводная таблица быстрого сравнения -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 overflow-x-auto">
+                <h3 class="font-bold text-white text-base mb-3 flex items-center gap-2">
+                    <i data-lucide="table" class="w-4 h-4 text-sky-400"></i>
+                    Экспресс-таблица дифференциальной диагностики (в реактивном периоде)
+                </h3>
+                <table class="w-full text-left text-xs sm:text-sm min-w-[640px]">
+                    <thead class="bg-slate-800 text-slate-200 uppercase text-xs">
+                        <tr>
+                            <th class="p-3 rounded-tl-lg">Признак</th>
+                            <th class="p-3 text-emerald-400">I степень</th>
+                            <th class="p-3 text-amber-400">II степень</th>
+                            <th class="p-3 text-orange-400">III степень</th>
+                            <th class="p-3 text-red-400 rounded-tr-lg">IV степень</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-slate-300">
+                        <tr>
+                            <td class="p-3 font-semibold text-white">Цвет кожи</td>
+                            <td class="p-3">Багрово-красный / синюшный</td>
+                            <td class="p-3">Багровый, выраженный отек</td>
+                            <td class="p-3">Сине-багровый, черный</td>
+                            <td class="p-3">Мраморно-синюшный, черный</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold text-white">Пузыри</td>
+                            <td class="p-3">Отсутствуют</td>
+                            <td class="p-3 font-medium text-amber-300">С прозрачной / желтоватой жидкостью</td>
+                            <td class="p-3 font-medium text-orange-300">С темно-кровянистым содержимым</td>
+                            <td class="p-3">Могут отсутствовать или мелкие геморрагические</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold text-white">Болевая чувствительность</td>
+                            <td class="p-3">Сохранена (зуд, жжение)</td>
+                            <td class="p-3">Дно пузырей болезненно</td>
+                            <td class="p-3 text-red-400 font-semibold">Отсутствует (анестезия)</td>
+                            <td class="p-3 text-red-400 font-semibold">Полностью отсутствует</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold text-white">Исход и тактика</td>
+                            <td class="p-3">Полное заживление за 5–7 дней</td>
+                            <td class="p-3">Заживление за 2–3 нед. без рубцов</td>
+                            <td class="p-3">Некроз кожи, некрэктомия, пластика</td>
+                            <td class="p-3">Гангрена, ампутация сегмента</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== РАЗДЕЛ 3: УКЛАДКА (ЧЕК-ЛИСТ) ==================== -->
+        <section id="tab-kit" class="tab-content hidden space-y-6 fade-in">
+            <!-- Панель управления чек-листом -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                    <div>
+                        <h2 class="font-bold text-white text-lg">Противоотморозочная укладка (Контроль перед выездом)</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">Отмечайте проверенные позиции перед выходом подразделения на полигон или стрельбы</p>
+                    </div>
+                    <button onclick="resetKitChecklist()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-2 self-start sm:self-auto transition">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4 text-sky-400"></i>
+                        <span>Сбросить проверку</span>
+                    </button>
+                </div>
+
+                <!-- Прогресс-бар укомплектованности -->
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
+                    <div class="flex justify-between items-center text-xs sm:text-sm mb-2">
+                        <span class="text-slate-300 font-medium">Готовность укладки к выезду:</span>
+                        <span id="kitProgressText" class="font-extrabold text-sky-400">0 из 9 (0%)</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden">
+                        <div id="kitProgressBar" class="bg-gradient-to-r from-sky-500 to-emerald-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div id="kitReadyAlert" class="hidden mt-3 text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                        <span>Укладка полностью проверена и укомплектована для работы в зимних условиях!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Список позиций укладки -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="kitChecklistContainer">
+                <!-- Генерируется через JS -->
+            </div>
+        </section>
+
+        <!-- ==================== РАЗДЕЛ 4: ПРОФИЛАКТИКА И ТРЕНАЖЕР ==================== -->
+        <section id="tab-prevention" class="tab-content hidden space-y-6 fade-in">
+            <!-- Памятка для фельдшеров и командиров -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+                <div class="flex items-center gap-2.5 mb-4">
+                    <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-lg">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-white text-lg">Памятка профилактики на полевых занятиях и стрельбах</h2>
+                        <p class="text-xs text-slate-400">Обязательный инструктаж командиров подразделений и личного состава</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-800/50 border border-slate-700/80 p-4 rounded-xl">
+                        <span class="inline-block text-xs font-bold text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded mb-2">1. Экипировка</span>
+                        <h3 class="font-bold text-white text-sm mb-1.5">«Правило капусты» и сухости</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Одежда должна быть многослойной, свободной и сухой. <strong>Тесная обувь — главная причина отморожения стоп</strong> (пережимаются сосуды, нарушается кровоток). Обязательны сухие шерстяные/термоноски и запасная пара в вещмешке.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-800/50 border border-slate-700/80 p-4 rounded-xl">
+                        <span class="inline-block text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded mb-2">2. Режим на позициях</span>
+                        <h3 class="font-bold text-white text-sm mb-1.5">Контроль в статике каждые 15–20 мин</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            При длительном ожидании стрельб в окопах или на броне бойцы не должны стоять неподвижно. Каждые 15–20 минут — активное шевеление пальцами ног и рук, приседания, взаимоконтроль в «двойках» (побеление кончика носа, ушей, щек).
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-800/50 border border-slate-700/80 p-4 rounded-xl">
+                        <span class="inline-block text-xs font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded mb-2">3. Режим и питание</span>
+                        <h3 class="font-bold text-white text-sm mb-1.5">Строгий запрет на алкоголь и курение</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Алкоголь вызывает расширение периферических сосудов, создавая иллюзию тепла при <strong>катастрофической потере тепла организмом</strong> и потере контроля над холодом. Никотин вызывает резкий спазм сосудов пальцев рук и ног.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Интерактивный мини-тренажер (Ситуационные задачи) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+                <div class="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
+                    <div class="bg-sky-500/20 text-sky-400 p-2 rounded-lg">
+                        <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-lg">Мини-тренажер: Ситуационные задачи на полигоне</h3>
+                        <p class="text-xs text-slate-400">Проверьте правильность тактических решений фельдшера в зимних условиях</p>
+                    </div>
+                </div>
+
+                <div id="quizBox">
+                    <!-- Контент теста генерируется через JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Подвал -->
+    <footer class="border-t border-slate-800/80 bg-slate-900/40 py-4 px-4 sm:px-6 mt-8">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+            <span>Учебный модуль для медицинского персонала подразделений • Холодовая травма</span>
+            <span>Подготовлено для быстрой работы на мобильных устройствах и ПК</span>
+        </div>
+    </footer>
+
+    <script>
+        // --- ДАННЫЕ ПО СТЕПЕНЯМ ОТМОРОЖЕНИЯ (РАЗДЕЛ 2) ---
+        const degreesData = [
+            {
+                deg: '1',
+                title: 'I степень (Легкая — «Оледенение»)',
+                badgeColor: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+                borderColor: 'border-emerald-800/60',
+                beforeWarm: 'Кожа бледная или слегка синюшная (цианотичная), холодная на ощупь. Чувствительность снижена или временно отсутствует.',
+                afterWarm: 'Через несколько часов кожа становится отечной, багрово-красной или синюшной. Появляется сильный зуд, жжение, покалывание и ноющая боль.',
+                depth: 'Поверхностное обратимое повреждение только верхнего слоя эпидермиса без гибели клеток.',
+                treatment: 'Быстрое согревание (теплое помещение, согревание в воде +35…+38 °C или сухим теплом), сухая асептическая повязка, анальгетики при боли. Полное заживление через 5–7 дней (возможно легкое шелушение).'
+            },
+            {
+                deg: '2',
+                title: 'II степень (Средняя — «Образование пузырей»)',
+                badgeColor: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+                borderColor: 'border-amber-800/60',
+                beforeWarm: 'Кожа резко бледная, плотная, ледяная на ощупь, болевая и тактильная чувствительность полностью отсутствует.',
+                afterWarm: 'В первые 1–2 суток образуются напряженные пузыри, наполненные прозрачной или светло-желтой жидкостью. Дно пузырей ярко-розовое и резко болезненное! Выраженный отек.',
+                depth: 'Гибель эпидермиса до сосочкового слоя дермы (ростковый слой сохранен).',
+                treatment: 'Аккуратное согревание. Пузыри НЕ вскрывать! Наложить стерильную сухую или антисептическую повязку, обезболить, дать теплое питье. Эвакуация в медпункт/стационар. Заживление за 2–3 недели без грубых рубцов.'
+            },
+            {
+                deg: '3',
+                title: 'III степень (Тяжелая — «Некроз кожи»)',
+                badgeColor: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
+                borderColor: 'border-orange-800/60',
+                beforeWarm: 'Ткани «деревянистой» плотности, кожа мраморно-белая или сине-черная, абсолютно нечувствительная.',
+                afterWarm: 'На 2–5 сутки появляются пузыри с темно-кровянистым (геморрагическим) содержимым. Дно пузырей сине-багровое или черное, полностью нечувствительное к уколу/боли. Массивный отек.',
+                depth: 'Тотальная гибель всех слоев кожи и подкожно-жировой клетчатки с развитием сухого или влажного некроза.',
+                treatment: 'На полевом этапе: сухая термоизолирующая асептическая повязка, иммобилизация шиной, обезболивание, экстренная эвакуация в хирургический стационар. В госпитале: инфузии, антибиотики, некрэктомия и кожная пластика.'
+            },
+            {
+                deg: '4',
+                title: 'IV степень (Крайне тяжелая — «Гангрена»)',
+                badgeColor: 'bg-red-500/15 text-red-400 border-red-500/30',
+                borderColor: 'border-red-800/60',
+                beforeWarm: 'Конечность ледяная, каменной твердости, активные и пассивные движения в суставах невозможны.',
+                afterWarm: 'Кожа синюшно-мраморная, быстро чернеет (мумификация). Пузыри часто отсутствуют. Отек развивается выше зоны омертвения. Полная потеря всех видов чувствительности.',
+                depth: 'Омертвение всех мягких тканей, мышц, сухожилий, суставов и костей.',
+                treatment: 'Термоизолирующая повязка, транспортная иммобилизация, противошоковая терапия, мощное обезболивание и немедленная эвакуация в хирургический стационар высшего уровня. Хирургическое лечение — ампутация/экзартикуляция сегмента после формирования демаркационной линии.'
+            }
+        ];
+
+        // --- ДАННЫЕ ПРОТИВООТМОРОЗОЧНОЙ УКЛАДКИ (РАЗДЕЛ 3) ---
+        const frostbiteKit = [
+            { id: 'item1', name: 'Термоодеяло фольгированное (изотермическое)', qty: '2–3 шт.', category: 'Термоизоляция', note: 'Для укутывания пострадавшего (серебристой стороной к телу) и защиты от общей гипотермии.' },
+            { id: 'item2', name: 'Химические грелки одноразовые (для тела/ног)', qty: '4–6 шт.', category: 'Локальное тепло', note: 'ВАЖНО: Применять строго через слой одежды или повязки! Не прикладывать к голой замерзшей коже.' },
+            { id: 'item3', name: 'Асептические сухие повязки / широкие стерильные бинты', qty: '3–5 шт.', category: 'Перевязочный материал', note: 'Для формирования защитных слоев термоизолирующих повязок на стопы и кисти.' },
+            { id: 'item4', name: 'Вата медицинская гигроскопическая (или ватно-марлевый утеплитель)', qty: '2 уп.', category: 'Термоизоляция', note: 'Основной теплоизолирующий слой для «ватно-марлевого кокона», предотвращающего преждевременное оттаивание.' },
+            { id: 'item5', name: 'Транспортные шины (проволочные Крамера или гибкие SAM Splint)', qty: '1–2 шт.', category: 'Иммобилизация', note: 'Обязательная фиксация отмороженной конечности при эвакуации (замерзшие ткани хрупкие).' },
+            { id: 'item6', name: 'Ножницы атравматические медицинские (изогнутые)', qty: '1 шт.', category: 'Инструменты', note: 'Для безопасного разрезания примерзшей или промерзшей обуви и зимнего обмундирования.' },
+            { id: 'item7', name: 'Термос с горячим сладким чаем', qty: '1–1.5 л', category: 'Внутреннее согревание', note: 'В рюкзаке сопровождения: для согревания пострадавшего изнутри (при сохраненном сознании).' },
+            { id: 'item8', name: 'Обезболивающие препараты (анальгетики по табелю/протоколу)', qty: 'По норме', category: 'Медикаменты', note: 'Купирование интенсивного болевого синдрома, возникающего в фазе отогревания тканей.' },
+            { id: 'item9', name: 'Перчатки медицинские нитриловые (прочные)', qty: '2 пары', category: 'Защита медика', note: 'Инфекционная безопасность и защита рук медработника при работе на холоде.' }
+        ];
+
+        // --- ДАННЫЕ ТРЕНАЖЕРА / СИТУАЦИОННЫХ ЗАДАЧ (РАЗДЕЛ 4) ---
+        const quizData = [
+            {
+                question: "На зимних стрельбах боец пожаловался на потерю чувствительности в пальцах обеих стоп. При осмотре в окопе: стопы ледяные, бледные. До отапливаемого медпункта — 40 минут езды в неотапливаемом кузове грузовика. Ваши действия?",
+                options: [
+                    "Растереть стопы снегом или спиртом, затем надеть обратно берцы",
+                    "Снять промерзшую обувь, наложить толстую сухую ватно-марлевую термоизолирующую повязку, укутать термоодеялом и эвакуировать в тепло",
+                    "Погреть стопы над портативной газовой горелкой прямо на позиции, чтобы вернуть чувствительность",
+                    "Смазать стопы гусиным жиром или вазелином и заставить бойца активно бегать на месте"
+                ],
+                correct: 1,
+                explanation: "Верно! Пока пострадавший не доставлен в стабильное тепло, нельзя отогревать конечность снаружи (повторное замерзание в кузове убьет ткани). Накладывается термоизолирующая повязка, и боец эвакуируется в медпункт."
+            },
+            {
+                question: "В отапливаемый медпункт доставлен военнослужащий через 3 часа после переохлаждения. На тыле кистей и пальцах обнаружены крупные напряженные пузыри с прозрачным содержимым, кожа вокруг отечная, багровая, резко болезненная. Какая это степень отморожения и что делать с пузырями?",
+                options: [
+                    "I степень; проколоть пузыри стерильной иглой и смазать йодом",
+                    "II степень; пузыри НЕ вскрывать, наложить сухую стерильную повязку, обезболить и эвакуировать",
+                    "III степень; срезать покрышку пузырей ножницами и наложить мазь Вишневского",
+                    "IV степень; срочно погрузить кисти в горячую воду (+50 °C)"
+                ],
+                correct: 1,
+                explanation: "Верно! Пузыри с прозрачным (серозным) содержимым и болезненным дном — классический признак II степени отморожения. Вскрывать пузыри категорически запрещено из-за риска инфицирования."
+            },
+            {
+                question: "При осмотре пострадавшего на полигоне вы обнаружили, что его зимний берц буквально примерз к коже голеностопа и стопы. Как правильно освободить ногу?",
+                options: [
+                    "Резким движением сдернуть сапог, чтобы быстрее начать согревание",
+                    "Полить сапог кипятком из термоса, чтобы лед растаял",
+                    "Аккуратно разрезать обувь и носок атравматическими ножницами по швам, не отрывая примерзшие участки от кожи",
+                    "Оставить обувь на ноге до приезда в областной госпиталь"
+                ],
+                correct: 2,
+                explanation: "Верно! При грубом стягивании примерзшей обуви вместе с ней срывается замороженный эпидермис. Обувь аккуратно разрезается атравматическими ножницами."
+            },
+            {
+                question: "Через сутки после глубокого отморожения стоп у пациента появились пузыри с темно-кровянистым (геморрагическим) содержимым, кожа под ними сине-черная, болевая чувствительность при покалывании полностью отсутствует. Какая это степень?",
+                options: [
+                    "I степень",
+                    "II степень",
+                    "III степень",
+                    "Поверхностное оледенение"
+                ],
+                correct: 2,
+                explanation: "Верно! Геморрагические (кровянистые) пузыри и полная потеря болевой чувствительности (анестезия) дна указывают на гибель всей толщи кожи — это III степень отморожения, требующая лечения в хирургическом стационаре."
+            }
+        ];
+
+        // --- СОСТОЯНИЕ ТРЕНАЖЕРА ---
+        let currentQ = 0;
+        let score = 0;
+        let answered = false;
+
+        // --- ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ---
+        function initApp() {
+            renderDegrees('all');
+            renderKitChecklist();
+            renderQuiz();
+            lucide.createIcons();
+        }
+
+        // --- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
+        function switchTab(tabName) {
+            // Скрываем все секции
+            document.querySelectorAll('.tab-content').forEach(sec => {
+                sec.classList.add('hidden');
+            });
+            // Показываем нужную секцию
+            const target = document.getElementById(`tab-${tabName}`);
+            target.classList.remove('hidden');
+            target.classList.remove('fade-in');
+            void target.offsetWidth;
+            target.classList.add('fade-in');
+
+            // Обновляем активную кнопку вкладки
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.dataset.tab === tabName) {
+                    btn.classList.remove('bg-slate-800/80', 'text-slate-300');
+                    btn.classList.add('bg-sky-600', 'text-white', 'shadow-lg', 'shadow-sky-900/40');
+                } else {
+                    btn.classList.add('bg-slate-800/80', 'text-slate-300');
+                    btn.classList.remove('bg-sky-600', 'text-white', 'shadow-lg', 'shadow-sky-900/40');
+                }
+            });
+            lucide.createIcons();
+        }
+
+        // --- РЕНДЕР КАРТОЧЕК СТЕПЕНЕЙ ОТМОРОЖЕНИЯ ---
+        function filterDegrees(deg) {
+            document.querySelectorAll('.deg-btn').forEach(btn => {
+                if (btn.dataset.deg === deg) {
+                    btn.classList.add('bg-sky-600', 'text-white');
+                    btn.classList.remove('bg-slate-800');
+                } else {
+                    btn.classList.remove('bg-sky-600', 'text-white');
+                    btn.classList.add('bg-slate-800');
+                }
+            });
+            renderDegrees(deg);
+        }
+
+        function renderDegrees(filter) {
+            const container = document.getElementById('degreesContainer');
+            const filtered = filter === 'all' ? degreesData : degreesData.filter(d => d.deg === filter);
+
+            container.innerHTML = filtered.map(item => `
+                <div class="bg-slate-900 border ${item.borderColor} rounded-2xl p-5 space-y-3.5 shadow-md">
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <h3 class="font-extrabold text-white text-base sm:text-lg">${item.title}</h3>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-lg border ${item.badgeColor}">Степень ${item.deg}</span>
+                    </div>
+                    <div class="space-y-2.5 text-xs sm:text-sm">
+                        <div class="bg-slate-800/50 p-3 rounded-xl">
+                            <span class="text-sky-400 font-bold block mb-0.5">❄ Внешний вид ДО согревания:</span>
+                            <p class="text-slate-300">${item.beforeWarm}</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-3 rounded-xl">
+                            <span class="text-amber-400 font-bold block mb-0.5">🔥 Внешний вид и симптомы ПОСЛЕ согревания:</span>
+                            <p class="text-slate-300">${item.afterWarm}</p>
+                        </div>
+                        <div class="px-1">
+                            <span class="text-slate-400 font-semibold">Глубина поражения: </span>
+                            <span class="text-slate-200">${item.depth}</span>
+                        </div>
+                        <div class="bg-emerald-950/25 border border-emerald-800/40 p-3 rounded-xl">
+                            <span class="text-emerald-400 font-bold block mb-0.5">🩺 Тактика и способы лечения:</span>
+                            <p class="text-slate-200 leading-relaxed">${item.treatment}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- РЕНДЕР И ЛОГИКА ЧЕК-ЛИСТА УКЛАДКИ ---
+        function renderKitChecklist() {
+            const container = document.getElementById('kitChecklistContainer');
+            container.innerHTML = frostbiteKit.map(item => `
+                <label class="cursor-pointer block select-none">
+                    <input type="checkbox" class="kit-checkbox hidden" onchange="updateKitProgress()">
+                    <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-4 transition flex items-start gap-3.5 h-full">
+                        <div class="check-icon w-6 h-6 rounded-lg border-2 border-slate-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-transparent transition">
+                            <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-sky-400">${item.category}</span>
+                                <span class="text-xs font-extrabold text-white bg-slate-800 px-2.5 py-0.5 rounded-md border border-slate-700">${item.qty}</span>
+                            </div>
+                            <h4 class="item-title font-bold text-white text-sm mb-1 transition">${item.name}</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">${item.note}</p>
+                        </div>
+                    </div>
+                </label>
+            `).join('');
+            updateKitProgress();
+        }
+
+        function updateKitProgress() {
+            const checkboxes = document.querySelectorAll('.kit-checkbox');
+            const total = checkboxes.length;
+            let checkedCount = 0;
+            checkboxes.forEach(cb => { if (cb.checked) checkedCount++; });
+
+            const percent = Math.round((checkedCount / total) * 100);
+            document.getElementById('kitProgressText').textContent = `${checkedCount} из ${total} (${percent}%)`;
+            document.getElementById('kitProgressBar').style.width = `${percent}%`;
+
+            const readyAlert = document.getElementById('kitReadyAlert');
+            if (checkedCount === total) {
+                readyAlert.classList.remove('hidden');
+            } else {
+                readyAlert.classList.add('hidden');
+            }
+        }
+
+        function resetKitChecklist() {
+            document.querySelectorAll('.kit-checkbox').forEach(cb => cb.checked = false);
+            updateKitProgress();
+        }
+
+        // --- РЕНДЕР И ЛОГИКА МИНИ-ТРЕНАЖЕРА ---
+        function renderQuiz() {
+            const box = document.getElementById('quizBox');
+            if (currentQ >= quizData.length) {
+                box.innerHTML = `
+                    <div class="text-center py-6 space-y-4">
+                        <div class="inline-flex p-3.5 rounded-full bg-sky-500/20 text-sky-400">
+                            <i data-lucide="award" class="w-10 h-10"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-white">Тренировка завершена!</h4>
+                        <p class="text-sm text-slate-300">Правильных решений: <strong class="text-sky-400 text-lg">${score} из ${quizData.length}</strong></p>
+                        <button onclick="restartQuiz()" class="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs sm:text-sm transition inline-flex items-center gap-2">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                            <span>Пройти задачи заново</span>
+                        </button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const q = quizData[currentQ];
+            answered = false;
+
+            box.innerHTML = `
+                <div class="flex justify-between items-center text-xs text-slate-400 mb-3">
+                    <span class="font-bold text-sky-400">ЗАДАЧА ${currentQ + 1} ИЗ ${quizData.length}</span>
+                    <span>Счет: <strong class="text-white">${score}</strong></span>
+                </div>
+                <div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4 mb-4 text-sm text-white font-medium leading-relaxed">
+                    ${q.question}
+                </div>
+                <div class="space-y-2.5">
+                    ${q.options.map((opt, idx) => `
+                        <button onclick="handleAnswer(${idx})" class="q-opt w-full text-left p-3.5 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-200 transition flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center flex-shrink-0">${idx + 1}</span>
+                            <span>${opt}</span>
+                        </button>
+                    `).join('')}
+                </div>
+                <div id="qFeedback" class="hidden mt-4 p-4 rounded-xl text-xs sm:text-sm leading-relaxed"></div>
+                <div id="qNextWrap" class="hidden mt-4 flex justify-end">
+                    <button onclick="nextQ()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5">
+                        <span>${currentQ === quizData.length - 1 ? 'Показать итог' : 'Следующая задача'}</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function handleAnswer(idx) {
+            if (answered) return;
+            answered = true;
+            const q = quizData[currentQ];
+            const isCorrect = idx === q.correct;
+            if (isCorrect) score++;
+
+            document.querySelectorAll('.q-opt').forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === q.correct) {
+                    btn.classList.remove('bg-slate-800/40', 'border-slate-700');
+                    btn.classList.add('bg-emerald-950/60', 'border-emerald-500', 'text-emerald-200');
+                } else if (i === idx && !isCorrect) {
+                    btn.classList.remove('bg-slate-800/40', 'border-slate-700');
+                    btn.classList.add('bg-red-950/60', 'border-red-500', 'text-red-200');
+                } else {
+                    btn.classList.add('opacity-50');
+                }
+            });
+
+            const fb = document.getElementById('qFeedback');
+            fb.classList.remove('hidden');
+            fb.classList.add(isCorrect ? 'bg-emerald-950/40' : 'bg-red-950/40', 'border', isCorrect ? 'border-emerald-700' : 'border-red-700', isCorrect ? 'text-emerald-200' : 'text-red-200');
+            fb.innerHTML = `<strong class="block mb-1 ${isCorrect ? 'text-emerald-400' : 'text-red-400'}">${isCorrect ? '✓ Верно!' : '✕ Ошибка тактики!'}</strong>${q.explanation}`;
+
+            document.getElementById('qNextWrap').classList.remove('hidden');
+        }
+
+        function nextQ() {
+            currentQ++;
+            renderQuiz();
+        }
+
+        function restartQuiz() {
+            currentQ = 0;
+            score = 0;
+            renderQuiz();
+        }
+
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
