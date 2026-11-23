@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ОКС: Укладка, Алгоритм и Тренажер • КП МЗ РК</title>
+  <!-- Подключение Tailwind CSS для адаптивной верстки и современных стилей -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Шрифт Inter для высокой читаемости на мобильных устройствах -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Базовые настройки шрифта и плавной прокрутки */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Стили для печати чистого отчета по укладке */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      #tab-kit {
+        display: block !important;
+      }
+      body {
+        background-color: #ffffff !important;
+        padding-bottom: 0 !important;
+      }
+      .print-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        break-inside: avoid;
+      }
+      input[type="text"] {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-weight: 700 !important;
+      }
+    }
+  </style>
+</head>
+<body class="pb-12">
+
+  <!-- Основной контейнер мобильной ширины -->
+  <div class="max-w-xl mx-auto px-4 pt-4">
+
+    <!-- Шапка приложения -->
+    <header class="flex items-center gap-3.5 mb-4">
+      <div class="w-12 h-12 rounded-2xl bg-teal-700 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-teal-700/20 shrink-0">
+        ♥
+      </div>
+      <div>
+        <h1 class="text-xl font-extrabold text-slate-900 leading-tight">Острый коронарный синдром</h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Контроль укладки, алгоритм помощи и тест • КП МЗ РК</p>
+      </div>
+    </header>
+
+    <!-- Навигационные вкладки (3 модуля) -->
+    <nav class="no-print grid grid-cols-3 gap-1 bg-slate-200/80 p-1 rounded-2xl mb-4" role="tablist">
+      <button type="button" id="nav-kit" onclick="switchTab('kit')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-teal-700 text-white shadow-sm">
+        Проверка укладки
+      </button>
+      <button type="button" id="nav-algo" onclick="switchTab('algo')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+        Алгоритм помощи
+      </button>
+      <button type="button" id="nav-quiz" onclick="switchTab('quiz')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+        Тест-тренажер
+      </button>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 1: ДИНАМИЧЕСКИЙ АУДИТ УКЛАДКИ ПРИ ОКС -->
+    <!-- ===================================================================== -->
+    <section id="tab-kit" class="tab-section space-y-4">
+      
+      <!-- Карточка статуса, реквизитов проверки и сводки -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+          <h2 class="text-lg font-bold text-slate-900">Аудит кардиологической укладки</h2>
+          <span id="status-badge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+            Требуется проверка
+          </span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed mb-3.5 no-print">
+          Отметьте наличие каждой позиции и введите срок годности с упаковки в формате <strong>ММ.ГГ</strong> (точка подставится автоматически).
+        </p>
+
+        <!-- Блок данных проверяющего и даты проверки -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 mb-3.5">
+          <div class="sm:col-span-2">
+            <label for="auditor-name" class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
+              Проверяющий (ФИО / подразделение)
+            </label>
+            <input type="text" id="auditor-name" oninput="saveAuditMeta()" placeholder="Например: м/с Иванова А.С., процедурный каб." class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-teal-700">
+          </div>
+          <div>
+            <label for="audit-date-input" class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
+              Дата проверки
+            </label>
+            <input
+              type="date"
+              id="audit-date-input"
+              value="2026-11-23"
+              onchange="handleAuditDateChange(this.value)"
+              oninput="handleAuditDateChange(this.value)"
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:border-teal-700"
+            >
+          </div>
+        </div>
+
+        <!-- Кнопки управления проверкой -->
+        <div class="no-print flex flex-wrap gap-2 mb-4">
+          <button type="button" onclick="toggleAllPresence(true)" class="px-3 py-2 rounded-xl text-xs font-semibold border border-teal-700 text-teal-700 bg-white hover:bg-teal-50 active:scale-95 transition">
+            Отметить наличие всех
+          </button>
+          <button type="button" onclick="resetKitAudit()" class="px-3 py-2 rounded-xl text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            Сбросить всё
+          </button>
+          <button type="button" onclick="window.print()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-white hover:bg-slate-900 active:scale-95 transition ml-auto">
+            🖨 Печать / Отчет
+          </button>
+        </div>
+
+        <!-- Сводка по годным, просроченным и отсутствующим позициям -->
+        <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+          <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div id="stat-valid" class="text-base sm:text-lg font-extrabold text-emerald-700">0</div>
+            <div class="text-[11px] font-semibold text-emerald-800">Годных из 16</div>
+          </div>
+          <div class="p-2 rounded-xl bg-red-50 border border-red-200">
+            <div id="stat-expired" class="text-base sm:text-lg font-extrabold text-red-700">0</div>
+            <div class="text-[11px] font-semibold text-red-800">Просрочено</div>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-100 border border-slate-200">
+            <div id="stat-missing" class="text-base sm:text-lg font-extrabold text-slate-700">16</div>
+            <div class="text-[11px] font-semibold text-slate-600">Отсутствует</div>
+          </div>
+        </div>
+
+        <!-- Индикатор прогресса годной укомплектованности -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold mb-1.5">
+            <span id="progress-text" class="text-slate-700">Годных позиций: 0 из 16</span>
+            <span id="progress-percent" class="text-teal-700 font-bold">0%</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+            <div id="progress-fill" class="h-full bg-teal-700 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Раздел 1: Лекарственные средства (ЛС) -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-700"></span>
+            1. Лекарственные средства (ЛС)
+          </h3>
+          <span id="count-ls" class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+            0 / 9
+          </span>
+        </div>
+        <div id="list-ls" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Раздел 2: Изделия медицинского назначения (ИМН) -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-700"></span>
+            2. Изделия мед. назначения (ИМН)
+          </h3>
+          <span id="count-imn" class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+            0 / 7
+          </span>
+        </div>
+        <div id="list-imn" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Блок подписи для печатной формы отчета -->
+      <div class="hidden print-only bg-white rounded-2xl p-4 border border-slate-300 mt-4">
+        <div class="flex justify-between items-end text-xs text-slate-800 pt-4">
+          <div>Подпись ответственного лица: _______________________</div>
+          <div>Дата: <span id="print-footer-date"></span></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 2: ПОШАГОВЫЙ АЛГОРИТМ ОКАЗАНИЯ ПОМОЩИ (КП МЗ РК) -->
+    <!-- ===================================================================== -->
+    <section id="tab-algo" class="tab-section hidden space-y-4">
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 space-y-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Пошаговый протокол помощи при ОКС</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Действия медицинского работника на догоспитальном этапе согласно клиническому протоколу МЗ РК.
+          </p>
+        </div>
+
+        <!-- Шаг 1 -->
+        <div class="border-l-4 border-red-600 pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-red-600">0–10 минут • Первичный контакт</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">1. Оценка состояния и регистрация ЭКГ</h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Уложить пациента с приподнятым головным концом (при отсутствии гипотонии), обеспечить полный физический и эмоциональный покой.</li>
+            <li><strong>Снять ЭКГ в 12 отведениях в течение первых 10 минут</strong> от первого медицинского контакта (оценка подъема/депрессии ST, остро возникшей блокады ножек пучка Гиса).</li>
+            <li>Измерить АД на обеих руках (исключение расслоения аорты), подсчитать ЧСС, измерить сатурацию (SpO₂).</li>
+            <li>Установить периферический венозный катетер (18G–20G) и подключить NaCl 0,9% 200 мл для поддержания венозного доступа.</li>
+          </ul>
+        </div>
+
+        <!-- Шаг 2 -->
+        <div class="border-l-4 border-teal-700 pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-teal-700">Респираторная поддержка</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">2. Оксигенотерапия (строго по показаниям)</h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Подача увлажненного кислорода (4–8 л/мин) <strong>только при гипоксемии (SpO₂ &lt; 90%)</strong> или признаках острой левожелудочковой недостаточности.</li>
+            <li>При SpO₂ ≥ 90% кислород рутинно <strong>не подается</strong> (гипероксия вызывает спазм коронарных артерий и увеличивает зону ишемии).</li>
+          </ul>
+        </div>
+
+        <!-- Шаг 3 -->
+        <div class="border-l-4 border-teal-700 pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-teal-700">Купирование ишемии и болевого синдрома</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">3. Нитраты, обезболивание и бета-блокаторы</h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li><strong>Нитроглицерин:</strong> спрей 0,4 мг (1–2 дозы) или табл. 0,5 мг сублингвально до 3 раз с интервалом 5 минут под контролем АД (при САД &gt; 90 мм рт. ст.).</li>
+            <li><strong>Обезболивание:</strong> при сохранении боли после нитратов — морфин 2–4 мг в/в дробно каждые 5–15 мин. При отсутствии опиоидов в первичной укладке — трамадол 100 мг в/в медленно (строгий спецучет).</li>
+            <li><strong>Бета-адреноблокатор:</strong> метопролол 25 мг или бисопролол 2,5 мг внутрь при тахикардии и артериальной гипертензии (при отсутствии противопоказаний).</li>
+          </ul>
+          <div class="mt-2.5 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-900">
+            <strong>Внимание! Нитраты противопоказаны при:</strong> САД &lt; 90 мм рт. ст., ЧСС &lt; 50 или &gt; 100 уд./мин, инфаркте правого желудочка, приеме силденафила (ингибиторов ФДЭ-5) в последние 24–48 часов.
+          </div>
+        </div>
+
+        <!-- Шаг 4 -->
+        <div class="border-l-4 border-red-600 pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-red-600">Антитромботическая терапия</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">4. Двойная антиагрегантная терапия и антикоагулянты</h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li><strong>Ацетилсалициловая кислота:</strong> нагрузочная доза <strong>150–300 мг</strong> разжевать как можно раньше (½ табл. от 500 мг = 250 мг).</li>
+            <li><strong>Клопидогрел:</strong> нагрузочная доза <strong>300 мг</strong> (4 табл. по 75 мг) или <strong>600 мг</strong> (8 табл. по 75 мг) перед первичным ЧКВ у пациентов ≤ 75 лет.</li>
+            <li><strong>Антикоагулянт:</strong> Гепарин натрия 60–70 МЕ/кг в/в болюсно (макс. 4000–5000 МЕ) <em>или</em> Эноксапарин натрия 30 мг в/в болюсно + 1 мг/кг п/к.</li>
+          </ul>
+        </div>
+
+        <!-- Шаг 5 -->
+        <div class="border-l-4 border-teal-700 pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-teal-700">Маршрутизация и эвакуация</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">5. Реперфузионная тактика и транспортировка</h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>При <strong>ОКС с подъемом сегмента ST</strong> — немедленная экстренная доставка в ЧКВ-центр (целевое время до 90–120 мин) либо проведение догоспитального тромболизиса при невозможности быстрой доставки.</li>
+            <li>Транспортировка осуществляется <strong>строго на носилках</strong> под постоянным мониторингом АД, ЧСС, SpO₂ и готовностью к дефибрилляции.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 3: ИНТЕРАКТИВНЫЙ ТЕСТ-ТРЕНАЖЕР (15 ВОПРОСОВ) -->
+    <!-- ===================================================================== -->
+    <section id="tab-quiz" class="tab-section hidden space-y-4">
+      
+      <!-- Панель выбора режима и навигации по вопросам -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="grid grid-cols-2 gap-1 bg-slate-200/80 p-1 rounded-xl mb-3.5">
+          <button type="button" id="mode-learn" onclick="setQuizMode('learn')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-teal-700 text-white shadow-sm transition">
+            Режим обучения
+          </button>
+          <button type="button" id="mode-exam" onclick="setQuizMode('exam')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition">
+            Режим экзамена
+          </button>
+        </div>
+
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+          <span id="quiz-counter" class="text-xs sm:text-sm font-bold text-slate-800">Отвечено: 0 из 15</span>
+          <span id="mode-desc" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200">
+            Обучение: разбор сразу после ответа
+          </span>
+        </div>
+
+        <!-- Сетка номеров вопросов -->
+        <div id="q-grid" class="grid grid-cols-5 gap-1.5"></div>
+      </div>
+
+      <!-- Карточка текущего вопроса -->
+      <div id="quiz-card" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex justify-between items-center gap-2 mb-3">
+          <span id="q-topic" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-50 text-teal-800 border border-teal-200">
+            ДИАГНОСТИКА
+          </span>
+          <span id="q-step-label" class="text-xs font-medium text-slate-500">Вопрос 1 из 15</span>
+        </div>
+
+        <div id="q-text" class="text-sm sm:text-base font-bold text-slate-900 leading-snug mb-4"></div>
+
+        <div id="q-options" class="space-y-2"></div>
+
+        <div id="q-explanation" class="hidden mt-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed"></div>
+
+        <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-100">
+          <button type="button" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            ← Назад
+          </button>
+          <button type="button" id="next-btn" onclick="nextQuestion()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-teal-700 text-teal-700 bg-white hover:bg-teal-50 active:scale-95 transition">
+            Далее →
+          </button>
+        </div>
+      </div>
+
+      <!-- Карточка итогов экзамена -->
+      <div id="exam-result-card" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center text-2xl mx-auto font-bold">
+          ✓
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Результат тестирования</h3>
+        <p id="exam-score-text" class="text-base sm:text-lg font-extrabold text-teal-700"></p>
+        <p id="exam-feedback-text" class="text-xs sm:text-sm text-slate-600"></p>
+        <div class="pt-2">
+          <button type="button" onclick="resetQuiz()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-teal-700 text-white hover:bg-teal-800 active:scale-95 transition">
+            Пройти тест заново
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. ДАННЫЕ СТАНДАРТНОЙ УКЛАДКИ ПРИ ОКС (16 ПОЗИЦИЙ)
+    // =========================================================================
+    const kitItems = [
+      // Раздел 1. Лекарственные средства (ЛС) — 9 позиций
+      {
+        id: 'ls1',
+        group: 'ls',
+        name: 'Метопролол 25 мг / Бисопролол 2,5 мг',
+        norm: 'Норма: 2 шт. • Таблетки'
+      },
+      {
+        id: 'ls2',
+        group: 'ls',
+        name: 'Нитроглицерин спрей 0,4 мг/доза 10 мл',
+        norm: 'Норма: 1 уп. • Сублингвально'
+      },
+      {
+        id: 'ls3',
+        group: 'ls',
+        name: 'Нитроглицерин таблетки 0,5 мг №40',
+        norm: 'Норма: 1 уп. • Сублингвально'
+      },
+      {
+        id: 'ls4',
+        group: 'ls',
+        name: 'Ацетилсалициловая кислота 500 мг №10',
+        norm: 'Норма: 1 уп. • Нагрузочная доза 150–300 мг'
+      },
+      {
+        id: 'ls5',
+        group: 'ls',
+        name: 'Клопидогрел 75 мг №28',
+        norm: 'Норма: 1 уп. • Нагрузочная доза 300–600 мг'
+      },
+      {
+        id: 'ls6',
+        group: 'ls',
+        name: 'Гепарин натрия 5000 МЕ (5 амп.) или Эноксапарин натрия 0,4 мл (1 шпр.)',
+        norm: 'Норма: 5 амп. / 1 шпр. • Антикоагулянт'
+      },
+      {
+        id: 'ls7',
+        group: 'ls',
+        name: 'Натрия хлорид 0,9% — 200,0 мл',
+        norm: 'Норма: 4 флакона • Инфузионный раствор'
+      },
+      {
+        id: 'ls8',
+        group: 'ls',
+        name: 'Раствор Кеторолака 30 мг/мл — 1 мл',
+        norm: 'Норма: 5 ампул • Анальгетик'
+      },
+      {
+        id: 'ls9',
+        group: 'ls',
+        name: '*Трамадол 100 мг / 2 мл №5',
+        norm: 'Норма: 1 уп. • Спецучет / обезболивание'
+      },
+
+      // Раздел 2. Изделия медицинского назначения (ИМН) — 7 позиций
+      {
+        id: 'imn1',
+        group: 'imn',
+        name: 'Система для внутривенных инфузий',
+        norm: 'Норма: 4 шт. • Стерильно'
+      },
+      {
+        id: 'imn2',
+        group: 'imn',
+        name: 'Шприц для инъекций 2,0 мл',
+        norm: 'Норма: 5 шт. • Стерильно'
+      },
+      {
+        id: 'imn3',
+        group: 'imn',
+        name: 'Шприц для инъекций 5,0 мл',
+        norm: 'Норма: 2 шт. • Стерильно'
+      },
+      {
+        id: 'imn4',
+        group: 'imn',
+        name: 'Шприц для инъекций 10,0 мл',
+        norm: 'Норма: 2 шт. • Стерильно'
+      },
+      {
+        id: 'imn5',
+        group: 'imn',
+        name: 'Спиртовые салфетки антисептические',
+        norm: 'Норма: 20 шт.'
+      },
+      {
+        id: 'imn6',
+        group: 'imn',
+        name: 'Перчатки медицинские нестерильные',
+        norm: 'Норма: 2 пары'
+      },
+      {
+        id: 'imn7',
+        group: 'imn',
+        name: 'Периферический венозный катетер (18G–20G) + венозный жгут + лейкопластырь',
+        norm: 'Норма: набор для венозного доступа'
+      }
+    ];
+
+    // Состояние аудита: { [id]: { present: boolean, expiry: string } }
+    let auditState = {};
+    let auditDate = '2026-11-23';
+    const STORAGE_KEY = 'oks_kit_audit_v2';
+
+    // Получение опорного года и месяца из выбранной даты проверки (YYYY-MM-DD)
+    function getReferenceYearMonth() {
+      const fallback = new Date(2026, 10, 23); // 2026-11-23
+      if (!auditDate || !/^\d{4}-\d{2}-\d{2}$/.test(auditDate)) {
+        return {
+          year: fallback.getFullYear(),
+          month: fallback.getMonth() + 1,
+          formatted: '23.11.2026'
+        };
+      }
+      const parts = auditDate.split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parts[2];
+      const mmStr = parts[1];
+      return {
+        year: year,
+        month: month,
+        formatted: `${day}.${mmStr}.${year}`
+      };
+    }
+
+    // Загрузка сохраненных данных из localStorage (если есть)
+    function loadAuditState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          auditState = parsed.items || {};
+          if (parsed.auditor) {
+            document.getElementById('auditor-name').value = parsed.auditor;
+          }
+          if (parsed.auditDate && /^\d{4}-\d{2}-\d{2}$/.test(parsed.auditDate)) {
+            auditDate = parsed.auditDate;
+          }
+        }
+      } catch (e) {
+        auditState = {};
+      }
+      const dateInput = document.getElementById('audit-date-input');
+      if (dateInput) {
+        dateInput.value = auditDate;
+      }
+      kitItems.forEach(item => {
+        if (!auditState[item.id]) {
+          auditState[item.id] = { present: false, expiry: '' };
+        }
+      });
+      syncPrintDate();
+    }
+
+    function saveAuditMeta() {
+      try {
+        const auditor = document.getElementById('auditor-name').value;
+        const dateInput = document.getElementById('audit-date-input');
+        if (dateInput && dateInput.value) {
+          auditDate = dateInput.value;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          auditor: auditor,
+          auditDate: auditDate,
+          items: auditState
+        }));
+      } catch (e) {}
+    }
+
+    // Обработчик изменения редактируемой даты проверки
+    function handleAuditDateChange(newDateVal) {
+      if (newDateVal && /^\d{4}-\d{2}-\d{2}$/.test(newDateVal)) {
+        auditDate = newDateVal;
+      }
+      saveAuditMeta();
+      syncPrintDate();
+      kitItems.forEach(item => updateItemVisuals(item.id));
+      updateSummaryStats();
+    }
+
+    // Синхронизация выбранной даты проверки с блоком печатного отчета
+    function syncPrintDate() {
+      const ref = getReferenceYearMonth();
+      const footerDate = document.getElementById('print-footer-date');
+      if (footerDate) footerDate.textContent = ref.formatted;
+    }
+
+    // Определение статуса срока годности относительно выбранной даты проверки
+    function evaluateExpiry(expiryStr) {
+      const clean = (expiryStr || '').trim();
+      if (!clean) {
+        return { code: 'empty', label: 'Укажите срок (ММ.ГГ)' };
+      }
+
+      const match = clean.match(/^(\d{2})\.(\d{2})$/);
+      if (!match) {
+        return { code: 'invalid', label: 'Формат: ММ.ГГ' };
+      }
+
+      const month = parseInt(match[1], 10);
+      const yearShort = parseInt(match[2], 10);
+
+      if (month < 1 || month > 12) {
+        return { code: 'invalid', label: 'Неверный месяц (01–12)' };
+      }
+
+      const fullYear = 2000 + yearShort;
+      const ref = getReferenceYearMonth();
+
+      // Сравнение по месяцу и году выбранной даты проверки:
+      // diffMonths < 0 -> срок истек до месяца проверки
+      // diffMonths === 0 -> истекает в текущем месяце проверки
+      // diffMonths > 0 -> актуален
+      const diffMonths = (fullYear - ref.year) * 12 + (month - ref.month);
+
+      if (diffMonths < 0) {
+        return { code: 'expired', label: `ПРОСРОЧЕНО (${clean})` };
+      } else if (diffMonths === 0) {
+        return { code: 'expiring', label: `Истекает в мес. проверки (${clean})` };
+      } else {
+        return { code: 'valid', label: `Актуален (до ${clean})` };
+      }
+    }
+
+    // Автоформатирование ввода срока годности: "0528" -> "05.28"
+    function handleExpiryInput(id, inputEl) {
+      let digits = inputEl.value.replace(/\D/g, '').slice(0, 4);
+      let formatted = digits;
+      if (digits.length > 2) {
+        formatted = digits.slice(0, 2) + '.' + digits.slice(2);
+      }
+      inputEl.value = formatted;
+      auditState[id].expiry = formatted;
+      saveAuditMeta();
+      updateItemVisuals(id);
+      updateSummaryStats();
+    }
+
+    // Переключение чекбокса наличия позиции
+    function handlePresenceChange(id, isChecked) {
+      auditState[id].present = isChecked;
+      saveAuditMeta();
+      updateItemVisuals(id);
+      updateSummaryStats();
+    }
+
+    // Обновление внешнего вида одной карточки без перерисовки инпутов (чтобы не терять фокус на мобильном)
+    function updateItemVisuals(id) {
+      const card = document.getElementById(`card-${id}`);
+      const badge = document.getElementById(`badge-${id}`);
+      if (!card || !badge) return;
+
+      const state = auditState[id];
+      const expStatus = evaluateExpiry(state.expiry);
+
+      let cardClasses = 'p-3 rounded-xl border transition ';
+      let badgeClasses = 'inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border ';
+      let badgeText = expStatus.label;
+
+      if (!state.present) {
+        cardClasses += 'border-slate-200 bg-slate-50/60';
+        badgeClasses += 'bg-slate-100 text-slate-600 border-slate-200';
+        badgeText = expStatus.code === 'expired'
+          ? `Нет в наличии • ${expStatus.label}`
+          : 'Нет в наличии';
+      } else {
+        if (expStatus.code === 'expired') {
+          cardClasses += 'border-red-400 bg-red-50/50';
+          badgeClasses += 'bg-red-100 text-red-800 border-red-300';
+        } else if (expStatus.code === 'expiring') {
+          cardClasses += 'border-amber-400 bg-amber-50/40';
+          badgeClasses += 'bg-amber-100 text-amber-800 border-amber-300';
+        } else if (expStatus.code === 'valid') {
+          cardClasses += 'border-teal-400 bg-teal-50/40';
+          badgeClasses += 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        } else if (expStatus.code === 'invalid') {
+          cardClasses += 'border-amber-300 bg-white';
+          badgeClasses += 'bg-amber-50 text-amber-700 border-amber-200';
+        } else {
+          cardClasses += 'border-teal-300 bg-white';
+          badgeClasses += 'bg-slate-100 text-slate-600 border-slate-200';
+        }
+      }
+
+      card.className = cardClasses;
+      badge.className = badgeClasses;
+      badge.textContent = badgeText;
+    }
+
+    // Первичная отрисовка списка укладки
+    function renderKit() {
+      const lsContainer = document.getElementById('list-ls');
+      const imnContainer = document.getElementById('list-imn');
+      lsContainer.innerHTML = '';
+      imnContainer.innerHTML = '';
+
+      kitItems.forEach((item, idx) => {
+        const state = auditState[item.id] || { present: false, expiry: '' };
+        const div = document.createElement('div');
+        div.id = `card-${item.id}`;
+
+        div.innerHTML = `
+          <div class="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="chk-${item.id}"
+              ${state.present ? 'checked' : ''}
+              onchange="handlePresenceChange('${item.id}', this.checked)"
+              class="w-5 h-5 mt-0.5 rounded accent-teal-700 shrink-0 cursor-pointer"
+              aria-label="В наличии: ${item.name}"
+            >
+            <div class="flex-1 min-w-0">
+              <label for="chk-${item.id}" class="block text-xs sm:text-sm font-semibold text-slate-900 leading-snug cursor-pointer">
+                ${item.name}
+              </label>
+              <div class="text-[11px] sm:text-xs text-slate-500 mt-0.5">${item.norm}</div>
+
+              <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5">
+                  <label for="exp-${item.id}" class="text-[11px] font-semibold text-slate-600">Срок:</label>
+                  <input
+                    type="text"
+                    id="exp-${item.id}"
+                    inputmode="numeric"
+                    maxlength="5"
+                    placeholder="ММ.ГГ"
+                    value="${state.expiry}"
+                    oninput="handleExpiryInput('${item.id}', this)"
+                    class="w-20 px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-bold text-center text-slate-900 focus:outline-none focus:border-teal-700"
+                  >
+                </div>
+                <span id="badge-${item.id}"></span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (item.group === 'ls') lsContainer.appendChild(div);
+        else imnContainer.appendChild(div);
+
+        updateItemVisuals(item.id);
+      });
+
+      updateSummaryStats();
+    }
+
+    // Массовая отметка наличия
+    function toggleAllPresence(isPresent) {
+      kitItems.forEach(item => {
+        auditState[item.id].present = isPresent;
+      });
+      saveAuditMeta();
+      renderKit();
+    }
+
+    // Полный сброс проверки (и наличия, и дат)
+    function resetKitAudit() {
+      kitItems.forEach(item => {
+        auditState[item.id] = { present: false, expiry: '' };
+      });
+      saveAuditMeta();
+      renderKit();
+    }
+
+    // Пересчет общей статистики и прогресс-бара
+    function updateSummaryStats() {
+      const total = kitItems.length;
+      let validCount = 0;
+      let expiredCount = 0;
+      let missingCount = 0;
+      let lsValid = 0;
+      let imnValid = 0;
+
+      kitItems.forEach(item => {
+        const st = auditState[item.id];
+        const exp = evaluateExpiry(st.expiry);
+
+        if (!st.present) {
+          missingCount++;
+          if (exp.code === 'expired') expiredCount++;
+        } else {
+          if (exp.code === 'expired') {
+            expiredCount++;
+          } else {
+            // В наличии и не просрочено (актуально, истекает или дата еще не введена)
+            validCount++;
+            if (item.group === 'ls') lsValid++;
+            else imnValid++;
+          }
+        }
+      });
+
+      const lsTotal = kitItems.filter(i => i.group === 'ls').length;
+      const imnTotal = kitItems.filter(i => i.group === 'imn').length;
+      const pct = Math.round((validCount / total) * 100);
+
+      document.getElementById('stat-valid').textContent = validCount;
+      document.getElementById('stat-expired').textContent = expiredCount;
+      document.getElementById('stat-missing').textContent = missingCount;
+
+      document.getElementById('progress-text').textContent = `Годных позиций: ${validCount} из ${total}`;
+      document.getElementById('progress-percent').textContent = `${pct}%`;
+      document.getElementById('progress-fill').style.width = `${pct}%`;
+      document.getElementById('count-ls').textContent = `${lsValid} / ${lsTotal}`;
+      document.getElementById('count-imn').textContent = `${imnValid} / ${imnTotal}`;
+
+      const badge = document.getElementById('status-badge');
+      if (expiredCount > 0) {
+        badge.textContent = `Внимание: просрочено (${expiredCount})`;
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800';
+      } else if (validCount === total) {
+        badge.textContent = 'Укладка укомплектована (100%)';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-100 text-teal-800';
+      } else if (validCount > 0) {
+        badge.textContent = 'Идет проверка...';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+      } else {
+        badge.textContent = 'Требуется проверка';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600';
+      }
+    }
+
+    // Установка текущей даты в шапке и футере печати
+    function initCurrentDate() {
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const yyyy = now.getFullYear();
+      const formattedDate = `${dd}.${mm}.${yyyy}`;
+      document.getElementById('audit-date-display').textContent = formattedDate;
+      const footerDate = document.getElementById('print-footer-date');
+      if (footerDate) footerDate.textContent = formattedDate;
+    }
+
+    // =========================================================================
+    // 2. БАЗА ТЕСТОВЫХ ВОПРОСОВ ПО ОКС (15 ВОПРОСОВ СОГЛАСНО КП МЗ РК)
+    // =========================================================================
+    const questions = [
+      {
+        topic: 'ДИАГНОСТИКА • ЭКГ',
+        q: 'В течение какого максимального времени от первого медицинского контакта должна быть зарегистрирована и оценена ЭКГ в 12 отведениях при подозрении на ОКС?',
+        options: ['В течение 10 минут', 'В течение 20 минут', 'В течение 30 минут', 'После введения обезболивающих препаратов'],
+        correct: 0,
+        exp: 'Согласно протоколу МЗ РК, регистрация и интерпретация ЭКГ в 12 отведениях должны быть выполнены не позднее 10 минут от первого контакта с пациентом.'
+      },
+      {
+        topic: 'АНТИАГРЕГАНТНАЯ ТЕРАПИЯ',
+        q: 'Какова нагрузочная доза ацетилсалициловой кислоты (АСК) на догоспитальном этапе при ОКС?',
+        options: ['50–75 мг проглотить целиком', '150–300 мг разжевать', '500 мг растворить в воде', '1000 мг внутривенно'],
+        correct: 1,
+        exp: 'Пациенту дают разжевать 150–300 мг обычной (не кишечнорастворимой) АСК как можно раньше (½ таблетки по 500 мг = 250 мг).'
+      },
+      {
+        topic: 'ДВОЙНАЯ АНТИАГРЕГАНТНАЯ ТЕРАПИЯ',
+        q: 'Какая нагрузочная доза клопидогрела назначается пациенту с ОКС (моложе 75 лет) перед проведением первичного ЧКВ?',
+        options: ['75 мг (1 таблетка)', '150 мг (2 таблетки)', '300–600 мг (4–8 таблеток по 75 мг)', '1200 мг'],
+        correct: 2,
+        exp: 'Нагрузочная доза клопидогрела составляет 300 мг (4 табл. по 75 мг), а при планировании первичного ЧКВ — 600 мг (8 табл. по 75 мг).'
+      },
+      {
+        topic: 'ОКСИГЕНОТЕРАПИЯ',
+        q: 'При каком уровне сатурации (SpO₂) показана оксигенотерапия пациенту с ОКС без признаков отека легких?',
+        options: ['Всем пациентам независимо от SpO₂', 'При SpO₂ < 90%', 'При SpO₂ < 98%', 'Только при остановке дыхания'],
+        correct: 1,
+        exp: 'Кислород показан только при гипоксемии (SpO₂ < 90%). Рутинная подача кислорода при нормальной сатурации вызывает вазоконстрикцию коронарных сосудов.'
+      },
+      {
+        topic: 'ПРОТИВОПОКАЗАНИЯ К НИТРАТАМ',
+        q: 'При каком уровне систолического АД введение нитроглицерина категорически противопоказано?',
+        options: ['Ниже 130 мм рт. ст.', 'Ниже 110 мм рт. ст.', 'Ниже 90 мм рт. ст.', 'Выше 160 мм рт. ст.'],
+        correct: 2,
+        exp: 'Нитраты противопоказаны при систолическом АД < 90 мм рт. ст., выраженной брадикардии (< 50), тахикардии (> 100) и подозрении на инфаркт правого желудочка.'
+      },
+      {
+        topic: 'АНТИКОАГУЛЯНТЫ',
+        q: 'Какая стартовая внутривенная болюсная доза нефракционированного гепарина применяется при ОКС?',
+        options: ['10–20 МЕ/кг', '60–70 МЕ/кг (макс. 4000–5000 МЕ)', '200 МЕ/кг', '10 000 МЕ одномоментно'],
+        correct: 1,
+        exp: 'Гепарин натрия вводится в/в болюсно в дозе 60–70 МЕ/кг (не более 4000–5000 МЕ).'
+      },
+      {
+        topic: 'НИТРОГЛИЦЕРИН • КРАТНОСТЬ',
+        q: 'Сколько раз и с каким интервалом допускается повторное применение спрея или таблеток нитроглицерина под язык при сохранении боли и стабильном АД?',
+        options: ['До 3 раз с интервалом 5 минут', 'До 5 раз каждую минуту', 'Однократно, повтор запрещен', 'Каждые 30 минут'],
+        correct: 0,
+        exp: 'Нитроглицерин (0,4 мг спрей или 0,5 мг табл.) применяется сублингвально до 3 раз с интервалом 5 минут под контролем АД и ЧСС.'
+      },
+      {
+        topic: 'ЭКГ-ДИАГНОСТИКА',
+        q: 'Какой признак на ЭКГ является показанием к немедленной реперфузионной терапии (ЧКВ или тромболизис)?',
+        options: ['Синусовая тахикардия 105 уд./мин', 'Стойкий подъем сегмента ST в двух и более смежных отведениях', 'Одиночные предсердные экстрасистолы', 'Удлинение интервала PQ'],
+        correct: 1,
+        exp: 'Стойкий подъем сегмента ST (> 20 мин) в двух и более смежных отведениях или остро возникшая полная блокада ЛНПГ указывают на острую окклюзию коронарной артерии.'
+      },
+      {
+        topic: 'БЕТА-БЛОКАТОРЫ',
+        q: 'В каком из перечисленных случаев назначение метопролола / бисопролола при ОКС ПРОТИВОПОКАЗАНО?',
+        options: ['АД 150/90 мм рт. ст., ЧСС 96 уд./мин', 'Влажные хрипы в легких (острая левожелудочковая недостаточность) и ЧСС 52 уд./мин', 'Ангинозная боль, купированная нитроглицерином', 'Возраст пациента 62 года'],
+        correct: 1,
+        exp: 'Бета-блокаторы противопоказаны при признаках острой сердечной недостаточности, брадикардии (ЧСС < 60), гипотонии (САД < 100) и АВ-блокаде II–III ст.'
+      },
+      {
+        topic: 'ОБЕЗБОЛИВАНИЕ',
+        q: 'Какой препарат является «золотым стандартом» обезболивания при выраженном ангинозном приступе, не купируемом нитратами?',
+        options: ['Кеторолак 30 мг в/м', 'Морфин 2–4 мг в/в дробно', 'Анальгин с димедролом в/м', 'Дротаверин 40 мг в/в'],
+        correct: 1,
+        exp: 'Препаратом выбора для купирования боли при ОИМ является морфин (в/в дробно по 2–4 мг). НПВС (кеторолак и др.) не заменяют опиоиды и повышают риск осложнений.'
+      },
+      {
+        topic: 'ТАКТИКА РЕПЕРФУЗИИ',
+        q: 'Какова оптимальная тактика при ОКС с подъемом сегмента ST, если транспортировка в ЧКВ-центр занимает более 120 минут?',
+        options: ['Ожидание стабилизации состояния на месте в течение суток', 'Проведение догоспитальной тромболитической терапии (при отсутствии противопоказаний) с последующей доставкой в ЧКВ-центр', 'Назначение только таблетированных препаратов', 'Плановая госпитализация на следующий день'],
+        correct: 1,
+        exp: 'Если первичное ЧКВ невозможно выполнить в течение 120 минут от момента постановки диагноза, показан немедленный тромболизис (фармакоинвазивная стратегия).'
+      },
+      {
+        topic: 'ЛЕКАРСТВЕННЫЕ ВЗАИМОДЕЙСТВИЯ',
+        q: 'Прием какого препарата пациентом за последние 24–48 часов является абсолютным противопоказанием к введению нитроглицерина?',
+        options: ['Аторвастатин', 'Силденафил (ингибиторы ФДЭ-5)', 'Омепразол', 'Метформин'],
+        correct: 1,
+        exp: 'Сочетание нитратов и ингибиторов фосфодиэстеразы-5 (силденафил, тадалафил) вызывает фатальную неуправляемую артериальную гипотензию.'
+      },
+      {
+        topic: 'КОНТРОЛЬ УКЛАДКИ',
+        q: 'Каковы действия медицинского работника, если при плановой проверке укладки обнаружен антикоагулянт с истекшим в прошлом месяце сроком годности?',
+        options: ['Оставить в укладке до конца текущего квартала', 'Немедленно изъять препарат из укладки как просроченный, оформить списание и подать заявку на пополнение', 'Использовать только при отсутствии других препаратов', 'Переложить в общий шкаф для плановых процедур'],
+        correct: 1,
+        exp: 'Применение и хранение в укладках экстренной помощи лекарственных средств с истекшим сроком годности строго запрещено; препарат подлежит немедленному изъятию и замене.'
+      },
+      {
+        topic: 'КЛИНИЧЕСКАЯ КАРТИНА',
+        q: 'У какой категории пациентов чаще всего встречаются атипичные (безболевые, абдоминальные, астматические) формы ОКС?',
+        options: ['У молодых мужчин до 25 лет', 'У пациентов с сахарным диабетом и лиц пожилого возраста', 'Только у пациентов с гипертонической болезнью I стадии', 'У спортсменов'],
+        correct: 1,
+        exp: 'Диабетическая автономная нейропатия и возрастные изменения приводят к стертой или безболевой симптоматике инфаркта миокарда.'
+      },
+      {
+        topic: 'ТРАНСПОРТИРОВКА',
+        q: 'Как должна осуществляться эвакуация пациента с подозрением на ОКС в стационар?',
+        options: ['Пешком до машины скорой помощи в сопровождении фельдшера', 'Строго на носилках с непрерывным мониторингом витальных функций', 'На попутном транспорте в положении сидя', 'Самостоятельно после стихания боли'],
+        correct: 1,
+        exp: 'Любая физическая нагрузка увеличивает потребность миокарда в кислороде и риск фибрилляции желудочков; транспортировка проводится строго на носилках.'
+      }
+    ];
+
+    let currentQ = 0;
+    let quizMode = 'learn'; // 'learn' | 'exam'
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function setQuizMode(mode) {
+      quizMode = mode;
+      const btnLearn = document.getElementById('mode-learn');
+      const btnExam = document.getElementById('mode-exam');
+
+      if (mode === 'learn') {
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-teal-700 text-white shadow-sm transition';
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Обучение: разбор сразу после ответа';
+      } else {
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-teal-700 text-white shadow-sm transition';
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Экзамен: оценка в конце теста';
+      }
+      resetQuiz();
+    }
+
+    function resetQuiz() {
+      currentQ = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      document.getElementById('exam-result-card').classList.add('hidden');
+      document.getElementById('quiz-card').classList.remove('hidden');
+      renderQuiz();
+    }
+
+    function renderQuiz() {
+      // Отрисовка сетки вопросов
+      const grid = document.getElementById('q-grid');
+      grid.innerHTML = '';
+
+      questions.forEach((_, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        let classes = 'py-1.5 rounded-lg border text-xs font-bold transition ';
+
+        if (idx === currentQ) {
+          classes += 'ring-2 ring-teal-700 border-teal-700 text-teal-800 ';
+        } else {
+          classes += 'border-slate-200 ';
+        }
+
+        if (userAnswers[idx] !== null) {
+          if (quizMode === 'learn') {
+            classes += userAnswers[idx] === questions[idx].correct
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-400'
+              : 'bg-red-50 text-red-700 border-red-400';
+          } else {
+            classes += 'bg-teal-50 text-teal-800 border-teal-300';
+          }
+        } else {
+          classes += 'bg-white text-slate-700 hover:bg-slate-50';
+        }
+
+        btn.className = classes;
+        btn.textContent = idx + 1;
+        btn.onclick = () => {
+          currentQ = idx;
+          renderQuiz();
+        };
+        grid.appendChild(btn);
+      });
+
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      document.getElementById('quiz-counter').textContent = `Отвечено: ${answeredCount} из ${questions.length}`;
+
+      // Отрисовка текущего вопроса
+      const qObj = questions[currentQ];
+      document.getElementById('q-topic').textContent = qObj.topic;
+      document.getElementById('q-step-label').textContent = `Вопрос ${currentQ + 1} из ${questions.length}`;
+      document.getElementById('q-text').textContent = qObj.q;
+
+      const optsDiv = document.getElementById('q-options');
+      optsDiv.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      const selected = userAnswers[currentQ];
+
+      qObj.options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+
+        let btnClass = 'w-full text-left p-3 rounded-xl border text-xs sm:text-sm font-medium transition flex items-center gap-3 ';
+        let letterClass = 'w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ';
+
+        if (selected !== null) {
+          if (quizMode === 'learn') {
+            if (i === qObj.correct) {
+              btnClass += 'border-emerald-500 bg-emerald-50 text-emerald-950';
+              letterClass += 'border-emerald-600 bg-emerald-600 text-white';
+            } else if (i === selected) {
+              btnClass += 'border-red-500 bg-red-50 text-red-950';
+              letterClass += 'border-red-600 bg-red-600 text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-500 opacity-75';
+              letterClass += 'border-slate-300 text-slate-400';
+            }
+          } else {
+            if (i === selected) {
+              btnClass += 'border-teal-700 bg-teal-50/70 text-teal-950';
+              letterClass += 'border-teal-700 bg-teal-700 text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50';
+              letterClass += 'border-slate-300 text-slate-500';
+            }
+          }
+        } else {
+          btnClass += 'border-slate-200 bg-white text-slate-800 hover:border-teal-600 hover:bg-teal-50/30';
+          letterClass += 'border-slate-300 text-slate-600';
+        }
+
+        btn.className = btnClass;
+        btn.innerHTML = `<span class="${letterClass}">${letters[i]}</span><span class="leading-snug">${optText}</span>`;
+        btn.onclick = () => selectOption(i);
+        optsDiv.appendChild(btn);
+      });
+
+      // Блок пояснения
+      const expDiv = document.getElementById('q-explanation');
+      if (quizMode === 'learn' && selected !== null) {
+        expDiv.classList.remove('hidden');
+        expDiv.innerHTML = `<strong class="text-teal-800">Разбор по протоколу МЗ РК:</strong> ${qObj.exp}`;
+      } else {
+        expDiv.classList.add('hidden');
+      }
+
+      // Кнопка «Далее / Завершить»
+      const nextBtn = document.getElementById('next-btn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = quizMode === 'exam' ? 'Завершить экзамен ✓' : 'В начало ↺';
+      } else {
+        nextBtn.textContent = 'Далее →';
+      }
+    }
+
+    function selectOption(idx) {
+      if (quizMode === 'learn' && userAnswers[currentQ] !== null) return;
+      userAnswers[currentQ] = idx;
+      renderQuiz();
+    }
+
+    function prevQuestion() {
+      if (currentQ > 0) {
+        currentQ--;
+        renderQuiz();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQ < questions.length - 1) {
+        currentQ++;
+        renderQuiz();
+      } else {
+        if (quizMode === 'exam') {
+          finishExam();
+        } else {
+          currentQ = 0;
+          renderQuiz();
+        }
+      }
+    }
+
+    function finishExam() {
+      let score = 0;
+      questions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) score++;
+      });
+      const pct = Math.round((score / questions.length) * 100);
+
+      document.getElementById('quiz-card').classList.add('hidden');
+      const resCard = document.getElementById('exam-result-card');
+      resCard.classList.remove('hidden');
+
+      document.getElementById('exam-score-text').textContent = `Правильных ответов: ${score} из ${questions.length} (${pct}%)`;
+      document.getElementById('exam-feedback-text').textContent = pct >= 80
+        ? 'Отличный результат! Знания клинического протокола МЗ РК по ОКС усвоены на высоком уровне.'
+        : 'Рекомендуется повторить раздел «Алгоритм помощи» и пройти тест в режиме обучения.';
+    }
+
+    // =========================================================================
+    // 3. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    // =========================================================================
+    function switchTab(tabName) {
+      ['kit', 'algo', 'quiz'].forEach(name => {
+        const btn = document.getElementById(`nav-${name}`);
+        const sec = document.getElementById(`tab-${name}`);
+
+        if (name === tabName) {
+          btn.className = 'tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-teal-700 text-white shadow-sm';
+          sec.classList.remove('hidden');
+        } else {
+          btn.className = 'tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900';
+          sec.classList.add('hidden');
+        }
+      });
+    }
+
+    // Инициализация при загрузке
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAuditState();
+      renderKit();
+      renderQuiz();
+    });
+  </script>
+</body>
+</html>
