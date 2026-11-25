@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Острые кровотечения: Укладка, Алгоритм и Тренажер • КП МЗ РК</title>
+  <!-- Подключение Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Шрифт Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Стили для формирования чистого печатного отчета */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      #tab-kit {
+        display: block !important;
+      }
+      body {
+        background-color: #ffffff !important;
+        padding-bottom: 0 !important;
+      }
+      .print-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        break-inside: avoid;
+      }
+      input[type="text"],
+      input[type="date"] {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-weight: 700 !important;
+      }
+    }
+  </style>
+</head>
+<body class="pb-12">
+
+  <!-- Основной контейнер мобильной ширины -->
+  <div class="max-w-[640px] mx-auto px-4 pt-4">
+
+    <!-- Шапка приложения -->
+    <header class="flex items-center gap-3.5 mb-4">
+      <div class="w-12 h-12 rounded-2xl bg-[#0f766e] text-white flex items-center justify-center shadow-md shadow-teal-900/20 shrink-0">
+        <!-- Иконка капли с медицинским крестом SVG -->
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.75C12 2.75 5.5 9.8 5.5 14.5a6.5 6.5 0 0 0 13 0C18.5 9.8 12 2.75 12 2.75Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 11.5v5M9.5 14h5" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-tight">
+          Острые кровотечения
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+          Контроль укладки, алгоритм помощи и тест • КП МЗ РК
+        </p>
+      </div>
+    </header>
+
+    <!-- Навигационные вкладки (3 модуля) -->
+    <nav class="no-print grid grid-cols-3 gap-1 bg-slate-200/80 p-1 rounded-2xl mb-4" role="tablist">
+      <button type="button" id="nav-kit" onclick="switchTab('kit')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-[#0f766e] text-white shadow-sm">
+        Проверка укладки
+      </button>
+      <button type="button" id="nav-algo" onclick="switchTab('algo')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+        Алгоритм помощи
+      </button>
+      <button type="button" id="nav-quiz" onclick="switchTab('quiz')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+        Тест-тренажер
+      </button>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 1: ДИНАМИЧЕСКИЙ АУДИТ УКЛАДКИ ПРИ КРОВОТЕЧЕНИИ -->
+    <!-- ===================================================================== -->
+    <section id="tab-kit" class="space-y-4">
+
+      <!-- Карточка статуса, реквизитов проверки и сводки -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Аудит укладки «При кровотечении»</h2>
+          <span id="status-badge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+            Требуется проверка
+          </span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed mb-3.5 no-print">
+          Отметьте наличие каждой позиции и введите срок годности с упаковки в формате <strong>ММ.ГГ</strong> (точка подставится автоматически). Для бессрочных ИМН отметьте исправность.
+        </p>
+
+        <!-- Блок ФИО проверяющего и редактируемой даты проверки -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 mb-3.5">
+          <div class="sm:col-span-2">
+            <label for="auditor-name" class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
+              ФИО проверяющего / подразделение
+            </label>
+            <input
+              type="text"
+              id="auditor-name"
+              oninput="saveAuditMeta()"
+              placeholder="Например: фельдшер Сериков А.М., медпункт"
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0f766e]"
+            >
+          </div>
+          <div>
+            <label for="audit-date-input" class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
+              Дата проверки
+            </label>
+            <input
+              type="date"
+              id="audit-date-input"
+              value="2026-11-25"
+              onchange="handleAuditDateChange(this.value)"
+              oninput="handleAuditDateChange(this.value)"
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0f766e]"
+            >
+          </div>
+        </div>
+
+        <!-- Кнопки управления проверкой -->
+        <div class="no-print flex flex-wrap gap-2 mb-4">
+          <button type="button" onclick="toggleAllPresence(true)" class="px-3 py-2 rounded-xl text-xs font-semibold border border-[#0f766e] text-[#0f766e] bg-white hover:bg-teal-50 active:scale-95 transition">
+            Отметить всё
+          </button>
+          <button type="button" onclick="resetKitAudit()" class="px-3 py-2 rounded-xl text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            Сбросить проверку
+          </button>
+          <button type="button" onclick="window.print()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-white hover:bg-slate-900 active:scale-95 transition ml-auto">
+            🖨 Печать / Отчет
+          </button>
+        </div>
+
+        <!-- Сводка по годным, истекающим, просроченным и отсутствующим позициям -->
+        <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+          <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div id="stat-valid" class="text-base sm:text-lg font-extrabold text-emerald-700">0</div>
+            <div class="text-[11px] font-semibold text-emerald-800">Годных из 15</div>
+          </div>
+          <div class="p-2 rounded-xl bg-red-50 border border-red-200">
+            <div id="stat-expired" class="text-base sm:text-lg font-extrabold text-red-700">0</div>
+            <div class="text-[11px] font-semibold text-red-800">Просрочено</div>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-100 border border-slate-200">
+            <div id="stat-missing" class="text-base sm:text-lg font-extrabold text-slate-700">15</div>
+            <div class="text-[11px] font-semibold text-slate-600">Отсутствует</div>
+          </div>
+        </div>
+
+        <!-- Индикатор прогресса укомплектованности -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold mb-1.5">
+            <span id="progress-text" class="text-slate-700">Укомплектованность: 0 из 15 позиций</span>
+            <span id="progress-percent" class="text-[#0f766e] font-bold">0%</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+            <div id="progress-fill" class="h-full bg-[#0f766e] rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Раздел 1: Лекарственные средства и растворы (ЛС) -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0f766e]"></span>
+            1. Лекарственные средства и растворы (ЛС)
+          </h3>
+          <span id="count-ls" class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+            0 / 4
+          </span>
+        </div>
+        <div id="list-ls" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Раздел 2: Перевязочные средства, жгут и ИМН -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0f766e]"></span>
+            2. Перевязочные средства, жгут и ИМН
+          </h3>
+          <span id="count-imn" class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+            0 / 11
+          </span>
+        </div>
+        <div id="list-imn" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Печатная сводная таблица-отчет (видна только при печати) -->
+      <div class="hidden print-only bg-white rounded-2xl p-4 border border-slate-300 mt-4 space-y-3">
+        <div class="text-sm font-bold text-slate-900">Сводный лист аудита укладки «При кровотечении»</div>
+        <table class="w-full text-left border-collapse text-xs border border-slate-300">
+          <thead>
+            <tr class="bg-slate-100">
+              <th class="border border-slate-300 p-1.5">№</th>
+              <th class="border border-slate-300 p-1.5">Наименование</th>
+              <th class="border border-slate-300 p-1.5">Наличие</th>
+              <th class="border border-slate-300 p-1.5">Срок / Состояние</th>
+              <th class="border border-slate-300 p-1.5">Статус</th>
+            </tr>
+          </thead>
+          <tbody id="print-table-body"></tbody>
+        </table>
+        <div class="flex justify-between items-end text-xs text-slate-800 pt-4">
+          <div>Подпись ответственного лица: _______________________</div>
+          <div>Дата проверки: <span id="print-footer-date" class="font-bold"></span></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 2: ПОШАГОВЫЙ АЛГОРИТМ ОКАЗАНИЯ ПОМОЩИ (КП МЗ РК) -->
+    <!-- ===================================================================== -->
+    <section id="tab-algo" class="hidden space-y-4">
+
+      <!-- Интерактивный мини-справочник: Оценка тяжести кровопотери -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Оценка тяжести кровопотери и шока</h2>
+          <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-50 text-[#0f766e] border border-teal-200">
+            Экспресс-памятка
+          </span>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">
+          Выберите ориентировочный дефицит ОЦК или клиническую картину пациента:
+        </p>
+
+        <div class="grid grid-cols-3 gap-1.5 mb-3">
+          <button type="button" id="shock-btn-1" onclick="selectShockStage(1)" class="py-2 px-2 rounded-xl text-xs font-bold border transition bg-[#0f766e] text-white border-[#0f766e]">
+            I ст. (&lt; 15–20%)
+          </button>
+          <button type="button" id="shock-btn-2" onclick="selectShockStage(2)" class="py-2 px-2 rounded-xl text-xs font-bold border transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-amber-50">
+            II ст. (20–40%)
+          </button>
+          <button type="button" id="shock-btn-3" onclick="selectShockStage(3)" class="py-2 px-2 rounded-xl text-xs font-bold border transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-red-50">
+            III ст. (&gt; 40%)
+          </button>
+        </div>
+
+        <div id="shock-stage-panel" class="p-3.5 rounded-xl border transition-all"></div>
+      </div>
+
+      <!-- Пошаговый алгоритм оказания помощи -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 space-y-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Пошаговый протокол помощи при кровотечении</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Последовательность действий на догоспитальном этапе (КП МЗ РК / тактическая медицина).
+          </p>
+        </div>
+
+        <!-- Шаг 1 -->
+        <div class="border-l-4 border-[#dc2626] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#dc2626]">0–1 минута • Приоритет №1</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">
+            1. Немедленная остановка жизнеугрожающего кровотечения
+          </h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Надеть медицинские перчатки (личная инфекционная безопасность).</li>
+            <li>Выполнить <strong>прямое давление на рану</strong> стерильной салфеткой/бинтом или прижатие магистральной артерии.</li>
+            <li>При массивном артериальном кровотечении на конечности — немедленно наложить <strong>кровоостанавливающий жгут / турникет</strong>:
+              <ul class="list-circle pl-4 mt-1 space-y-1 text-xs text-slate-700">
+                <li><strong>Место наложения:</strong> на <strong>5–7 см выше раны</strong> поверх одежды/ткани, до полной остановки кровотечения и исчезновения периферического пульса.</li>
+                <li><strong>Запретные зоны:</strong> нельзя накладывать на <strong>среднюю треть плеча</strong> (риск травмы и паралича лучевого нерва) и в области суставов.</li>
+                <li><strong>Контроль времени:</strong> обязательно записать точное время наложения перманентным маркером. Максимальная безопасная экспозиция — <strong>до 60 минут</strong>.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Шаг 2 -->
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">Клиническая идентификация</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">
+            2. Дифференциация вида и локализации кровотечения
+          </h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li><strong>Артериальное:</strong> ярко-алая кровь бьет пульсирующей струей; молниеносная кровопотеря.</li>
+            <li><strong>Венозное:</strong> темно-вишневая кровь течет непрерывной струей. При ранении крупных вен шеи (яремная, подключичная) — высокий риск <strong>воздушной эмболии</strong> (немедленно закрыть рану герметичной/давящей повязкой!).</li>
+            <li><strong>Капиллярное и паренхиматозное:</strong> кровоточит вся раневая поверхность; паренхиматозное (печень, селезенка) требует экстренного хирургического гемостаза.</li>
+            <li><strong>Внутреннее и скрытое:</strong> кровоизлияние в полости (гемоторакс, гемоперитонеум) или просвет ЖКТ/дыхательных путей (рвота «кофейной гущей», мелена, кровохарканье).</li>
+            <li><strong>Носовое кровотечение (ЛОР-профиль):</strong> переднее (зона Киссельбаха — прижатие крыла носа, холод на переносицу, передняя тампонада) и заднее (профузное, стекание по задней стенке глотки, риск аспирации — требует задней тампонады и госпитализации).</li>
+          </ul>
+        </div>
+
+        <!-- Шаг 3 -->
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">Мониторинг витальных функций</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">
+            3. Оценка гемодинамики и ранних признаков шока
+          </h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Измерить <strong>ЧСС, АД, ЧД, SpO₂</strong>, оценить цвет/влажность кожи и симптом «белого пятна» (замедление капиллярного наполнения &gt; 2 сек).</li>
+            <li>Помнить: в <strong>ранней компенсированной стадии</strong> (до 15–20% ОЦК) систолическое АД может оставаться нормальным за счет спазма сосудов, но уже появляется <strong>тахикардия (90–100 уд./мин)</strong>, бледность и тревожность.</li>
+          </ul>
+        </div>
+
+        <!-- Шаг 4 -->
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">Местный и системный гемостаз</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">
+            4. Давящая повязка, холод и медикаментозная поддержка
+          </h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li><strong>Давящая повязка / тампонада:</strong> накладывается при венозном/капиллярном кровотечении; после наложения проверяется пульс и чувствительность дистальнее повязки.</li>
+            <li><strong>Местный холод:</strong> пузырь со льдом прикладывается <strong>только через ткань или поверх повязки</strong> (не на открытую рану и не на голую кожу!).</li>
+            <li><strong>Венозный доступ и инфузия:</strong> катетеризация периферической вены (18G–20G), инфузия <strong>Натрия хлорида 0,9%</strong> при признаках гиповолемии и шока.</li>
+            <li><strong>Гемостатическая терапия (по протоколу и назначению):</strong>
+              <ul class="list-circle pl-4 mt-1 space-y-1 text-xs text-slate-700">
+                <li><strong>Этамзилат 12,5% (2,0 мл):</strong> в/в или в/м для улучшения адгезии тромбоцитов и снижения проницаемости капилляров.</li>
+                <li><strong>Аминокапроновая кислота 5% (100,0 мл):</strong> в/в капельно (антифибринолитик) по показаниям при усиленном фибринолизе и паренхиматозных/слизистых кровотечениях с контролем гемодинамики.</li>
+              </ul>
+            </li>
+          </ul>
+          <div class="mt-2.5 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950">
+            <strong>Важно! Перекись водорода 3%</strong> применяется исключительно для антисептической обработки и механического очищения загрязненных поверхностных ссадин/ран. Она <strong>не останавливает</strong> массивное артериальное или глубокое венозное кровотечение!
+          </div>
+        </div>
+
+        <!-- Шаг 5 -->
+        <div class="border-l-4 border-[#dc2626] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#dc2626]">Маршрутизация</div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5 mb-1.5">
+            5. Обезболивание, иммобилизация и экстренная эвакуация
+          </h3>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>При сопутствующих переломах или обширных травмах выполнить адекватное обезболивание и транспортную иммобилизацию.</li>
+            <li>Экстренная транспортировка в хирургический / травматологический стационар <strong>лежа на носилках</strong> (при шоке — с приподнятыми ногами, если нет противопоказаний) с непрерывным контролем жгута и витальных показателей.</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 3: ТЕСТ-ТРЕНАЖЕР (15 ВОПРОСОВ) -->
+    <!-- ===================================================================== -->
+    <section id="tab-quiz" class="hidden space-y-4">
+
+      <!-- Панель выбора режима и сетка вопросов -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="grid grid-cols-2 gap-1 bg-slate-200/80 p-1 rounded-xl mb-3.5">
+          <button type="button" id="mode-learn" onclick="setQuizMode('learn')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition">
+            Режим обучения
+          </button>
+          <button type="button" id="mode-exam" onclick="setQuizMode('exam')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition">
+            Режим экзамена
+          </button>
+        </div>
+
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+          <span id="quiz-counter" class="text-xs sm:text-sm font-bold text-slate-800">Отвечено: 0 из 15</span>
+          <span id="mode-desc" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 text-[#0f766e] border border-teal-200">
+            Обучение: разбор сразу после ответа
+          </span>
+        </div>
+
+        <div id="q-grid" class="grid grid-cols-5 gap-1.5"></div>
+      </div>
+
+      <!-- Карточка текущего вопроса -->
+      <div id="quiz-card" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex justify-between items-center gap-2 mb-3">
+          <span id="q-topic" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-50 text-[#0f766e] border border-teal-200">
+            ОСТАНОВКА КРОВОТЕЧЕНИЯ
+          </span>
+          <span id="q-step-label" class="text-xs font-medium text-slate-500">Вопрос 1 из 15</span>
+        </div>
+
+        <div id="q-text" class="text-sm sm:text-base font-bold text-slate-900 leading-snug mb-4"></div>
+
+        <div id="q-options" class="space-y-2"></div>
+
+        <div id="q-explanation" class="hidden mt-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed"></div>
+
+        <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-100">
+          <button type="button" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            ← Назад
+          </button>
+          <button type="button" id="next-btn" onclick="nextQuestion()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-[#0f766e] text-[#0f766e] bg-white hover:bg-teal-50 active:scale-95 transition">
+            Далее →
+          </button>
+        </div>
+      </div>
+
+      <!-- Карточка результатов экзамена -->
+      <div id="exam-result-card" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-teal-50 text-[#0f766e] flex items-center justify-center text-2xl mx-auto font-bold">
+          ✓
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Результат тестирования</h3>
+        <p id="exam-score-text" class="text-base sm:text-lg font-extrabold text-[#0f766e]"></p>
+        <p id="exam-feedback-text" class="text-xs sm:text-sm text-slate-600"></p>
+        <div class="pt-2">
+          <button type="button" onclick="resetQuiz()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#0f766e] text-white hover:bg-teal-800 active:scale-95 transition">
+            Пройти тест заново
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. ДАННЫЕ СТАНДАРТНОЙ УКЛАДКИ «ПРИ КРОВОТЕЧЕНИИ» (15 ПОЗИЦИЙ)
+    // =========================================================================
+    const kitItems = [
+      // Раздел 1. Лекарственные средства и растворы (ЛС) — 4 позиции
+      {
+        id: 'ls1',
+        group: 'ls',
+        name: 'Этамзилат 12,5% — 2,0 мл №10',
+        norm: 'Норма: 1 упаковка • Гемостатик',
+        hasExpiry: true
+      },
+      {
+        id: 'ls2',
+        group: 'ls',
+        name: 'Аминокапроновая кислота 5% — 100,0 мл',
+        norm: 'Норма: 2 флакона • Антифибринолитик (в/в кап.)',
+        hasExpiry: true
+      },
+      {
+        id: 'ls3',
+        group: 'ls',
+        name: 'Перекись водорода 3%',
+        norm: 'Норма: 1–2 флакона • Обработка поверхностных ран',
+        hasExpiry: true
+      },
+      {
+        id: 'ls4',
+        group: 'ls',
+        name: 'Натрия хлорид 0,9% — 200,0 мл',
+        norm: 'Норма: 2 флакона • Дополнение для инфузий при гиповолемии',
+        hasExpiry: true
+      },
+
+      // Раздел 2. Перевязочные средства, жгут и ИМН — 11 позиций
+      {
+        id: 'imn1',
+        group: 'imn',
+        name: 'Бинт стерильный / ППИ',
+        norm: 'Норма: 5 штук • Перевязка и тампонада',
+        hasExpiry: true
+      },
+      {
+        id: 'imn2',
+        group: 'imn',
+        name: 'Вата медицинская 100,0 г',
+        norm: 'Норма: 1 упаковка',
+        hasExpiry: true
+      },
+      {
+        id: 'imn3',
+        group: 'imn',
+        name: 'Перчатки медицинские нестерильные',
+        norm: 'Норма: 4 пары • Средства защиты',
+        hasExpiry: true
+      },
+      {
+        id: 'imn4',
+        group: 'imn',
+        name: 'Жгут кровоостанавливающий / турникет',
+        norm: 'Норма: 1 штука • Проверка целостности и эластичности',
+        hasExpiry: false
+      },
+      {
+        id: 'imn5',
+        group: 'imn',
+        name: 'Маркер перманентный для записи времени наложения жгута',
+        norm: 'Норма: 1 штука • Проверка работоспособности',
+        hasExpiry: false
+      },
+      {
+        id: 'imn6',
+        group: 'imn',
+        name: 'Система для внутривенных инфузий',
+        norm: 'Норма: 2 штуки • Стерильно',
+        hasExpiry: true
+      },
+      {
+        id: 'imn7',
+        group: 'imn',
+        name: 'Шприц для инъекций 2,0 мл',
+        norm: 'Норма: 5 штук • Стерильно',
+        hasExpiry: true
+      },
+      {
+        id: 'imn8',
+        group: 'imn',
+        name: 'Спиртовые салфетки антисептические',
+        norm: 'Норма: 40 штук',
+        hasExpiry: true
+      },
+      {
+        id: 'imn9',
+        group: 'imn',
+        name: 'Лейкопластырь фиксирующий',
+        norm: 'Норма: 1 штука • Фиксация повязок и катетера',
+        hasExpiry: true
+      },
+      {
+        id: 'imn10',
+        group: 'imn',
+        name: 'Пузырь для льда',
+        norm: 'Норма: 1 штука • Проверка герметичности',
+        hasExpiry: false
+      },
+      {
+        id: 'imn11',
+        group: 'imn',
+        name: 'Периферический венозный катетер 18G–20G',
+        norm: 'Норма: 2 штуки • Дополнение для венозного доступа',
+        hasExpiry: true
+      }
+    ];
+
+    // Состояние аудита: { [id]: { present: boolean, expiry: string } }
+    let auditState = {};
+    let auditDate = '2026-11-25';
+    const STORAGE_KEY = 'bleeding_kit_audit_v1';
+
+    function getReferenceYearMonth() {
+      const fallback = new Date(2026, 10, 25); // 2026-11-25
+      if (!auditDate || !/^\d{4}-\d{2}-\d{2}$/.test(auditDate)) {
+        return {
+          year: fallback.getFullYear(),
+          month: fallback.getMonth() + 1,
+          formatted: '25.11.2026'
+        };
+      }
+      const parts = auditDate.split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parts[2];
+      return {
+        year: year,
+        month: month,
+        formatted: `${day}.${parts[1]}.${year}`
+      };
+    }
+
+    function loadAuditState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          auditState = parsed.items || {};
+          if (parsed.auditor) {
+            document.getElementById('auditor-name').value = parsed.auditor;
+          }
+          if (parsed.auditDate && /^\d{4}-\d{2}-\d{2}$/.test(parsed.auditDate)) {
+            auditDate = parsed.auditDate;
+          }
+        }
+      } catch (e) {
+        auditState = {};
+      }
+      const dateInput = document.getElementById('audit-date-input');
+      if (dateInput) dateInput.value = auditDate;
+
+      kitItems.forEach(item => {
+        if (!auditState[item.id]) {
+          auditState[item.id] = { present: false, expiry: '' };
+        }
+      });
+      syncPrintDate();
+    }
+
+    function saveAuditMeta() {
+      try {
+        const auditor = document.getElementById('auditor-name').value;
+        const dateInput = document.getElementById('audit-date-input');
+        if (dateInput && dateInput.value) {
+          auditDate = dateInput.value;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          auditor: auditor,
+          auditDate: auditDate,
+          items: auditState
+        }));
+      } catch (e) {}
+    }
+
+    function handleAuditDateChange(newDateVal) {
+      if (newDateVal && /^\d{4}-\d{2}-\d{2}$/.test(newDateVal)) {
+        auditDate = newDateVal;
+      }
+      saveAuditMeta();
+      syncPrintDate();
+      kitItems.forEach(item => updateItemVisuals(item.id));
+      updateSummaryStats();
+    }
+
+    function syncPrintDate() {
+      const ref = getReferenceYearMonth();
+      const footerDate = document.getElementById('print-footer-date');
+      if (footerDate) footerDate.textContent = ref.formatted;
+    }
+
+    // Проверка срока годности относительно выбранной даты проверки
+    function evaluateItemStatus(item, state) {
+      if (!item.hasExpiry) {
+        return state.present
+          ? { code: 'valid', label: 'Исправно / В наличии' }
+          : { code: 'missing', label: 'Не проверено / Отсутствует' };
+      }
+
+      const clean = (state.expiry || '').trim();
+      if (!clean) {
+        return { code: 'empty', label: 'Укажите срок (ММ.ГГ)' };
+      }
+
+      const match = clean.match(/^(\d{2})\.(\d{2})$/);
+      if (!match) {
+        return { code: 'invalid', label: 'Формат: ММ.ГГ' };
+      }
+
+      const month = parseInt(match[1], 10);
+      const yearShort = parseInt(match[2], 10);
+
+      if (month < 1 || month > 12) {
+        return { code: 'invalid', label: 'Неверный месяц (01–12)' };
+      }
+
+      const fullYear = 2000 + yearShort;
+      const ref = getReferenceYearMonth();
+      const diffMonths = (fullYear - ref.year) * 12 + (month - ref.month);
+
+      if (diffMonths < 0) {
+        return { code: 'expired', label: `ПРОСРОЧЕНО! Заменить (${clean})` };
+      } else if (diffMonths === 0 || diffMonths === 1) {
+        return { code: 'expiring', label: `Истекает срок (${clean})` };
+      } else {
+        return { code: 'valid', label: `Срок актуален (до ${clean})` };
+      }
+    }
+
+    function handleExpiryInput(id, inputEl) {
+      let digits = inputEl.value.replace(/\D/g, '').slice(0, 4);
+      let formatted = digits;
+      if (digits.length > 2) {
+        formatted = digits.slice(0, 2) + '.' + digits.slice(2);
+      }
+      inputEl.value = formatted;
+      auditState[id].expiry = formatted;
+      saveAuditMeta();
+      updateItemVisuals(id);
+      updateSummaryStats();
+    }
+
+    function handlePresenceChange(id, isChecked) {
+      auditState[id].present = isChecked;
+      saveAuditMeta();
+      updateItemVisuals(id);
+      updateSummaryStats();
+    }
+
+    function updateItemVisuals(id) {
+      const item = kitItems.find(i => i.id === id);
+      const card = document.getElementById(`card-${id}`);
+      const badge = document.getElementById(`badge-${id}`);
+      if (!item || !card || !badge) return;
+
+      const state = auditState[id];
+      const status = evaluateItemStatus(item, state);
+
+      let cardClasses = 'p-3 rounded-xl border transition ';
+      let badgeClasses = 'inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border ';
+      let badgeText = status.label;
+
+      if (!state.present) {
+        cardClasses += 'border-slate-200 bg-slate-50/60';
+        badgeClasses += 'bg-slate-100 text-slate-600 border-slate-200';
+        badgeText = status.code === 'expired'
+          ? `Нет в наличии • ${status.label}`
+          : 'Нет в наличии';
+      } else {
+        if (status.code === 'expired') {
+          cardClasses += 'border-[#dc2626] bg-red-50/50';
+          badgeClasses += 'bg-red-100 text-red-800 border-red-300';
+        } else if (status.code === 'expiring') {
+          cardClasses += 'border-[#d97706] bg-amber-50/40';
+          badgeClasses += 'bg-amber-100 text-amber-800 border-amber-300';
+        } else if (status.code === 'valid') {
+          cardClasses += 'border-teal-400 bg-teal-50/40';
+          badgeClasses += 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        } else if (status.code === 'invalid') {
+          cardClasses += 'border-amber-300 bg-white';
+          badgeClasses += 'bg-amber-50 text-amber-700 border-amber-200';
+        } else {
+          cardClasses += 'border-teal-300 bg-white';
+          badgeClasses += 'bg-slate-100 text-slate-600 border-slate-200';
+        }
+      }
+
+      card.className = cardClasses;
+      badge.className = badgeClasses;
+      badge.textContent = badgeText;
+      renderPrintTable();
+    }
+
+    function renderKit() {
+      const lsContainer = document.getElementById('list-ls');
+      const imnContainer = document.getElementById('list-imn');
+      lsContainer.innerHTML = '';
+      imnContainer.innerHTML = '';
+
+      kitItems.forEach(item => {
+        const state = auditState[item.id] || { present: false, expiry: '' };
+        const div = document.createElement('div');
+        div.id = `card-${item.id}`;
+
+        const expiryControl = item.hasExpiry
+          ? `<div class="flex items-center gap-1.5">
+              <label for="exp-${item.id}" class="text-[11px] font-semibold text-slate-600">Срок:</label>
+              <input
+                type="text"
+                id="exp-${item.id}"
+                inputmode="numeric"
+                maxlength="5"
+                placeholder="ММ.ГГ"
+                value="${state.expiry}"
+                oninput="handleExpiryInput('${item.id}', this)"
+                class="w-20 px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-bold text-center text-slate-900 focus:outline-none focus:border-[#0f766e]"
+              >
+            </div>`
+          : `<span class="text-[11px] font-medium text-slate-500">Срок годности не ограничен (осмотр целостности)</span>`;
+
+        div.innerHTML = `
+          <div class="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="chk-${item.id}"
+              ${state.present ? 'checked' : ''}
+              onchange="handlePresenceChange('${item.id}', this.checked)"
+              class="w-5 h-5 mt-0.5 rounded accent-[#0f766e] shrink-0 cursor-pointer"
+              aria-label="В наличии: ${item.name}"
+            >
+            <div class="flex-1 min-w-0">
+              <label for="chk-${item.id}" class="block text-xs sm:text-sm font-semibold text-slate-900 leading-snug cursor-pointer">
+                ${item.name}
+              </label>
+              <div class="text-[11px] sm:text-xs text-slate-500 mt-0.5">${item.norm}</div>
+
+              <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+                ${expiryControl}
+                <span id="badge-${item.id}"></span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (item.group === 'ls') lsContainer.appendChild(div);
+        else imnContainer.appendChild(div);
+
+        updateItemVisuals(item.id);
+      });
+
+      updateSummaryStats();
+    }
+
+    function renderPrintTable() {
+      const tbody = document.getElementById('print-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      kitItems.forEach((item, index) => {
+        const st = auditState[item.id] || { present: false, expiry: '' };
+        const status = evaluateItemStatus(item, st);
+        const tr = document.createElement('tr');
+        const expText = item.hasExpiry ? (st.expiry || '—') : 'Бессрочно';
+        tr.innerHTML = `
+          <td class="border border-slate-300 p-1.5 text-center">${index + 1}</td>
+          <td class="border border-slate-300 p-1.5 font-medium">${item.name}</td>
+          <td class="border border-slate-300 p-1.5 text-center">${st.present ? 'Да' : 'Нет'}</td>
+          <td class="border border-slate-300 p-1.5 text-center">${expText}</td>
+          <td class="border border-slate-300 p-1.5">${st.present ? status.label : 'Отсутствует'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleAllPresence(isPresent) {
+      kitItems.forEach(item => {
+        auditState[item.id].present = isPresent;
+      });
+      saveAuditMeta();
+      renderKit();
+    }
+
+    function resetKitAudit() {
+      kitItems.forEach(item => {
+        auditState[item.id] = { present: false, expiry: '' };
+      });
+      saveAuditMeta();
+      renderKit();
+    }
+
+    function updateSummaryStats() {
+      const total = kitItems.length;
+      let validCount = 0;
+      let expiredCount = 0;
+      let missingCount = 0;
+      let lsValid = 0;
+      let imnValid = 0;
+
+      kitItems.forEach(item => {
+        const st = auditState[item.id];
+        const status = evaluateItemStatus(item, st);
+
+        if (!st.present) {
+          missingCount++;
+          if (status.code === 'expired') expiredCount++;
+        } else {
+          if (status.code === 'expired') {
+            expiredCount++;
+          } else {
+            validCount++;
+            if (item.group === 'ls') lsValid++;
+            else imnValid++;
+          }
+        }
+      });
+
+      const lsTotal = kitItems.filter(i => i.group === 'ls').length;
+      const imnTotal = kitItems.filter(i => i.group === 'imn').length;
+      const pct = Math.round((validCount / total) * 100);
+
+      document.getElementById('stat-valid').textContent = validCount;
+      document.getElementById('stat-expired').textContent = expiredCount;
+      document.getElementById('stat-missing').textContent = missingCount;
+
+      document.getElementById('progress-text').textContent = `Укомплектованность: ${validCount} из ${total} позиций`;
+      document.getElementById('progress-percent').textContent = `${pct}%`;
+      document.getElementById('progress-fill').style.width = `${pct}%`;
+      document.getElementById('count-ls').textContent = `${lsValid} / ${lsTotal}`;
+      document.getElementById('count-imn').textContent = `${imnValid} / ${imnTotal}`;
+
+      const badge = document.getElementById('status-badge');
+      if (expiredCount > 0) {
+        badge.textContent = `Внимание: просрочено (${expiredCount})`;
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800';
+      } else if (validCount === total) {
+        badge.textContent = 'Укладка укомплектована (100%)';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-100 text-teal-800';
+      } else if (validCount > 0) {
+        badge.textContent = 'Идет проверка...';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+      } else {
+        badge.textContent = 'Требуется проверка';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600';
+      }
+    }
+
+    // =========================================================================
+    // 2. ИНТЕРАКТИВНЫЙ МИНИ-СПРАВОЧНИК ТЯЖЕСТИ КРОВОПОТЕРИ (ВКЛАДКА 2)
+    // =========================================================================
+    const shockStages = {
+      1: {
+        title: 'I стадия • Ранняя компенсированная кровопотеря (дефицит ОЦК до 15–20%)',
+        badge: 'Компенсация за счет спазма сосудов',
+        style: 'border-teal-300 bg-teal-50/50',
+        badgeStyle: 'bg-teal-100 text-[#0f766e]',
+        clinic: 'Сознание ясное, возможны тревога и беспокойство. Кожа бледная, умеренно прохладная. Систолическое АД обычно в пределах нормы или слегка повышено, но появляется тахикардия (ЧСС 90–100 уд./мин).',
+        tactic: 'Остановка источника кровотечения, покой, контроль АД и ЧСС в динамике, обеспечение венозного доступа и подготовка к эвакуации.'
+      },
+      2: {
+        title: 'II стадия • Выраженный геморрагический шок / декомпенсация (дефицит ОЦК 20–40%)',
+        badge: 'Декомпенсация гемодинамики',
+        style: 'border-amber-300 bg-amber-50/60',
+        badgeStyle: 'bg-amber-100 text-[#d97706]',
+        clinic: 'Заторможенность, головокружение, сухость во рту, жажда. Резкая бледность, мраморность кожи, холодный липкий пот, симптом «белого пятна» > 2 сек. Тахикардия 100–120+ уд./мин, снижение САД < 90 мм рт. ст., одышка, олигурия.',
+        tactic: 'Немедленный гемостаз (турникет/тампонада), катетеризация периферической вены (18G), инфузия NaCl 0,9%, гемостатики по протоколу, согревание (профилактика гипотермии) и экстренная эвакуация лежа.'
+      },
+      3: {
+        title: 'III стадия • Критическая кровопотеря / глубокий шок (дефицит ОЦК > 40%)',
+        badge: 'Критическое жизнеугрожающее состояние',
+        style: 'border-red-400 bg-red-50/70',
+        badgeStyle: 'bg-red-100 text-[#dc2626]',
+        clinic: 'Сопор или кома, адинамия. Пульс на периферических артериях нитевидный или не определяется, выраженная гипотензия, поверхностное/агональное дыхание, высокий риск остановки кровообращения.',
+        tactic: 'Мгновенная остановка наружного кровотечения, обеспечение проходимости дыхательных путей, оксигенотерапия, внутривенная инфузионная реанимация, готовность к СЛР и экстренная доставка в ОРИТ/операционную.'
+      }
+    };
+
+    function selectShockStage(stage) {
+      [1, 2, 3].forEach(num => {
+        const btn = document.getElementById(`shock-btn-${num}`);
+        if (num === stage) {
+          btn.className = 'py-2 px-2 rounded-xl text-xs font-bold border transition bg-[#0f766e] text-white border-[#0f766e] shadow-sm';
+        } else {
+          btn.className = 'py-2 px-2 rounded-xl text-xs font-bold border transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100';
+        }
+      });
+
+      const data = shockStages[stage];
+      const panel = document.getElementById('shock-stage-panel');
+      panel.className = `p-3.5 rounded-xl border transition-all ${data.style}`;
+      panel.innerHTML = `
+        <span class="inline-block px-2 py-0.5 rounded-md text-[11px] font-bold ${data.badgeStyle} mb-1.5">
+          ${data.badge}
+        </span>
+        <div class="text-xs sm:text-sm font-extrabold text-slate-900 mb-1.5">${data.title}</div>
+        <div class="text-xs text-slate-800 mb-1.5"><strong>Клиника:</strong> ${data.clinic}</div>
+        <div class="text-xs text-slate-800"><strong>Тактика:</strong> ${data.tactic}</div>
+      `;
+    }
+
+    // =========================================================================
+    // 3. ТЕСТ-ТРЕНАЖЕР (15 ВОПРОСОВ ПО ПРОТОКОЛУ МЗ РК И ТАКМЕДУ)
+    // =========================================================================
+    const questions = [
+      {
+        topic: 'НАЛОЖЕНИЕ ЖГУТА / ТУРНИКЕТА',
+        q: 'На каком расстоянии от раны следует накладывать кровоостанавливающий жгут при массивном артериальном кровотечении на конечности?',
+        options: [
+          'На 5–7 см выше (проксимальнее) раны',
+          'Непосредственно на края открытой раны',
+          'На 10 см ниже (дистальнее) раны',
+          'Строго на область ближайшего сустава'
+        ],
+        correct: 0,
+        exp: 'Кровоостанавливающий жгут/турникет накладывается на 5–7 см выше (проксимальнее) места ранения поверх одежды или мягкой подкладки до полной остановки кровотечения.'
+      },
+      {
+        topic: 'ЗАПРЕТНЫЕ ЗОНЫ ЖГУТА',
+        q: 'Почему наложение кровоостанавливающего жгута на среднюю треть плеча противопоказано?',
+        options: [
+          'В этой зоне невозможно пережать плечевую артерию',
+          'Высокий риск сдавления и травмы лучевого нерва с развитием паралича кисти',
+          'В средней трети плеча проходят только мелкие капилляры',
+          'Жгут в этой зоне не держится из-за анатомии мышц'
+        ],
+        correct: 1,
+        exp: 'В средней трети плеча лучевой нерв прилежит непосредственно к плечевой кости; сдавление его жгутом приводит к невриту и параличу разгибателей кисти.'
+      },
+      {
+        topic: 'ВРЕМЯ ЭКСПОЗИЦИИ ЖГУТА',
+        q: 'Каково максимальное безопасное время непрерывного наложения кровоостанавливающего жгута на конечность и какое обязательное действие выполняется сразу после затягивания?',
+        options: [
+          'До 3 часов; записывать время не обязательно',
+          'До 60 минут; обязательно зафиксировать точное время наложения маркером на видном месте',
+          'До 15 минут; после чего жгут навсегда снимают',
+          'До 6 часов в летнее время'
+        ],
+        correct: 1,
+        exp: 'Максимальное безопасное время непрерывной ишемии при наложении жгута — до 60 минут. Точное время наложения обязательно записывается перманентным маркером.'
+      },
+      {
+        topic: 'РАНЕНИЕ КРУПНЫХ ВЕН ШЕИ',
+        q: 'Какое жизнеугрожающее осложнение может возникнуть при зияющем ранении крупных вен шеи (яремной, подключичной) на вдохе пациента?',
+        options: [
+          'Воздушная эмболия правых отделов сердца и легочной артерии',
+          'Острый панкреатит',
+          'Спонтанный пневмоторакс стопы',
+          'Гипергликемическая кома'
+        ],
+        correct: 0,
+        exp: 'Из-за отрицательного давления в грудной клетке на вдохе воздух засасывается в просвет поврежденной крупной вены шеи, вызывая смертельную воздушную эмболию. Рану нужно немедленно герметизировать!'
+      },
+      {
+        topic: 'ДИФФЕРЕНЦИАЦИЯ КРОВОТЕЧЕНИЙ',
+        q: 'Какие клинические признаки характерны для наружного артериального кровотечения?',
+        options: [
+          'Темно-вишневая кровь медленно сочится по поверхности кожи',
+          'Ярко-алая кровь истекает сильной пульсирующей струей',
+          'Кровь имеет вид «кофейной гущи»',
+          'Кровотечение останавливается самостоятельно через 30 секунд'
+        ],
+        correct: 1,
+        exp: 'Для артериального кровотечения характерны ярко-алый цвет крови (насыщенной кислородом) и пульсирующая струя в такт сердечным сокращениям.'
+      },
+      {
+        topic: 'ГЕМОРРАГИЧЕСКИЙ ШОК • РАННЯЯ СТАДИЯ',
+        q: 'Какой гемодинамический показатель раньше всего сигнализирует о скрытой или компенсированной кровопотере (I стадия шока, дефицит ОЦК до 15–20%), когда систолическое АД еще остается нормальным?',
+        options: [
+          'Выраженная брадикардия (ЧСС 45 уд./мин)',
+          'Умеренная тахикардия (ЧСС 90–100 уд./мин), бледность кожи и тревожность',
+          'Повышение температуры тела до 40 °C',
+          'Резкое покраснение лица и шеи'
+        ],
+        correct: 1,
+        exp: 'В компенсированной стадии кровопотери выброс катехоламинов поддерживает АД за счет спазма сосудов, но тахикардия и бледность появляются уже на раннем этапе.'
+      },
+      {
+        topic: 'ПРИМЕНЕНИЕ МЕСТНОГО ХОЛОДА',
+        q: 'Как правильно применять пузырь со льдом из укладки при кровотечении или закрытой травме?',
+        options: [
+          'Приложить непосредственно на открытую рану',
+          'Приложить через сухую ткань или поверх повязки (не на голую кожу и не на открытую рану)',
+          'Оставить на коже непрерывно на 4 часа',
+          'Заполнить пузырь кипятком'
+        ],
+        correct: 1,
+        exp: 'Пузырь со льдом прикладывается через прослойку ткани или поверх повязки с перерывами, чтобы вызвать спазм сосудов и избежать холодового поражения тканей.'
+      },
+      {
+        topic: 'РОЛЬ ПЕРЕКИСИ ВОДОРОДА 3%',
+        q: 'Каково истинное назначение раствора перекиси водорода 3% в укладке при кровотечении?',
+        options: [
+          'Остановка массивного артериального кровотечения из бедренной артерии',
+          'Антисептическая и механическая очистка загрязненных поверхностных ран и ссадин',
+          'Внутривенное введение при геморрагическом шоке',
+          'Замена кровоостанавливающего жгута'
+        ],
+        correct: 1,
+        exp: 'Перекись водорода 3% выделяет атомарный кислород, механически очищая и обеззараживая поверхностные загрязненные раны, но она не способна остановить артериальное или глубокое кровотечение.'
+      },
+      {
+        topic: 'ГЕМОСТАТИЧЕСКИЕ ПРЕПАРАТЫ',
+        q: 'Каким механизмом действия обладает Этамзилат (12,5% раствор) при введении пациенту с кровотечением?',
+        options: [
+          'Блокирует бета-адренорецепторы сердца',
+          'Уменьшает проницаемость капилляров и стимулирует адгезию тромбоцитов в месте повреждения сосуда',
+          'Растворяет уже сформировавшиеся тромбы (тромболитик)',
+          'Вызывает расширение коронарных артерий'
+        ],
+        correct: 1,
+        exp: 'Этамзилат улучшает микроциркуляцию, снижает ломкость капилляров и стимулирует образование первичного тромбоцитарного тромба без гиперкоагуляции.'
+      },
+      {
+        topic: 'АНТИФИБРИНОЛИТИЧЕСКАЯ ТЕРАПИЯ',
+        q: 'Как вводится Аминокапроновая кислота 5% (100,0 мл) при показаниях к системной гемостатической терапии?',
+        options: [
+          'Внутривенно капельно с контролем скорости введения и гемодинамики',
+          'Внутримышечно в объеме 100 мл одномоментно',
+          'Только в виде ингаляций через небулайзер',
+          'Подкожно в переднюю брюшную стенку'
+        ],
+        correct: 0,
+        exp: 'Раствор аминокапроновой кислоты 5% (100 мл) вводится внутривенно капельно по показаниям (повышенный фибринолиз, паренхиматозные и слизистые кровотечения).'
+      },
+      {
+        topic: 'ЛОР-ТАКТИКА • НОСОВОЕ КРОВОТЕЧЕНИЕ',
+        q: 'Какое положение следует придать пациенту в сознании при переднем носовом кровотечении (из зоны Киссельбаха)?',
+        options: [
+          'Запрокинуть голову максимально назад и уложить на спину',
+          'Усадить с легким наклоном головы вперед, прижать крылья носа к перегородке и приложить холод на переносицу',
+          'Уложить на живот без прижатия крыльев носа',
+          'Попросить активно сморкаться каждые 10 секунд'
+        ],
+        correct: 1,
+        exp: 'При запрокидывании головы кровь стекает по задней стенке глотки, маскируя объем кровопотери и вызывая рвоту или аспирацию. Голову наклоняют слегка вперед и прижимают крылья носа.'
+      },
+      {
+        topic: 'ЗАДНЕЕ НОСОВОЕ КРОВОТЕЧЕНИЕ',
+        q: 'Чем опасно заднее носовое кровотечение (из ветвей клиновидно-небной артерии) и какова тактика при его выявлении?',
+        options: [
+          'Оно всегда проходит само без осмотра врача',
+          'Профузное кровотечение и затекание крови в глотку с риском аспирации; требует задней тампонады и экстренной госпитализации в ЛОР-отделение',
+          'Лечится только закапыванием сосудосуживающих капель на ночь',
+          'Не сопровождается кровопотерей'
+        ],
+        correct: 1,
+        exp: 'Задние носовые кровотечения отличаются интенсивностью, не останавливаются передним прижатием крыльев носа и требуют проведения задней тампонады и госпитализации.'
+      },
+      {
+        topic: 'ДАВЯЩАЯ ПОВЯЗКА',
+        q: 'Что необходимо обязательно проверить у пациента сразу после наложения давящей повязки на конечность?',
+        options: [
+          'Наличие пульсации, чувствительности и окраску кожи дистальнее (ниже) повязки',
+          'Остроту зрения на оба глаза',
+          'Уровень глюкозы крови',
+          'Рефлекс Бабинского'
+        ],
+        correct: 0,
+        exp: 'Слишком тугая давящая повязка может передавить сосуды и нервы; после ее наложения обязательно оценивают пульс, теплоту и чувствительность дистальных отделов конечности.'
+      },
+      {
+        topic: 'АУДИТ УКЛАДКИ',
+        q: 'При проверке укладки «При кровотечении» обнаружен лейкопластырь, срок годности которого истек в прошлом месяце. Каковы действия медработника?',
+        options: [
+          'Оставить в укладке, так как это перевязочный материал',
+          'Изъять просроченную позицию, оформить списание и пополнить укладку изделием с актуальным сроком годности',
+          'Использовать только для фиксации жгута',
+          'Исправить дату ручкой на упаковке'
+        ],
+        correct: 1,
+        exp: 'Все лекарственные средства и ИМН в укладках экстренной помощи должны иметь актуальный срок годности; просроченные позиции подлежат немедленному изъятию и замене.'
+      },
+      {
+        topic: 'ТРАНСПОРТИРОВКА ПРИ ШОКЕ',
+        q: 'В каком положении осуществляется транспортировка пациента с признаками геморрагического шока (при отсутствии ЧМТ, отека легких и травм таза/позвоночника)?',
+        options: [
+          'Сидя в кресле автомобиля СМП',
+          'Лежа на носилках с приподнятым ножным концом (положение Тренделенбурга / аутотрансфузия) с контролем жгута и АД',
+          'Пешком с поддержкой под руки',
+          'В положении полусидя с опущенными ногами'
+        ],
+        correct: 1,
+        exp: 'Горизонтальное положение с приподнятыми ногами улучшает венозный возврат крови к сердцу и перфузию жизненно важных органов при гиповолемическом шоке.'
+      }
+    ];
+
+    let currentQ = 0;
+    let quizMode = 'learn';
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function setQuizMode(mode) {
+      quizMode = mode;
+      const btnLearn = document.getElementById('mode-learn');
+      const btnExam = document.getElementById('mode-exam');
+
+      if (mode === 'learn') {
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition';
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Обучение: разбор сразу после ответа';
+      } else {
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition';
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Экзамен: оценка в конце теста';
+      }
+      resetQuiz();
+    }
+
+    function resetQuiz() {
+      currentQ = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      document.getElementById('exam-result-card').classList.add('hidden');
+      document.getElementById('quiz-card').classList.remove('hidden');
+      renderQuiz();
+    }
+
+    function renderQuiz() {
+      const grid = document.getElementById('q-grid');
+      grid.innerHTML = '';
+
+      questions.forEach((_, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        let classes = 'py-1.5 rounded-lg border text-xs font-bold transition ';
+
+        if (idx === currentQ) {
+          classes += 'ring-2 ring-[#0f766e] border-[#0f766e] text-[#0f766e] ';
+        } else {
+          classes += 'border-slate-200 ';
+        }
+
+        if (userAnswers[idx] !== null) {
+          if (quizMode === 'learn') {
+            classes += userAnswers[idx] === questions[idx].correct
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-400'
+              : 'bg-red-50 text-red-700 border-red-400';
+          } else {
+            classes += 'bg-teal-50 text-teal-800 border-teal-300';
+          }
+        } else {
+          classes += 'bg-white text-slate-700 hover:bg-slate-50';
+        }
+
+        btn.className = classes;
+        btn.textContent = idx + 1;
+        btn.onclick = () => {
+          currentQ = idx;
+          renderQuiz();
+        };
+        grid.appendChild(btn);
+      });
+
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      document.getElementById('quiz-counter').textContent = `Отвечено: ${answeredCount} из ${questions.length}`;
+
+      const qObj = questions[currentQ];
+      document.getElementById('q-topic').textContent = qObj.topic;
+      document.getElementById('q-step-label').textContent = `Вопрос ${currentQ + 1} из ${questions.length}`;
+      document.getElementById('q-text').textContent = qObj.q;
+
+      const optsDiv = document.getElementById('q-options');
+      optsDiv.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      const selected = userAnswers[currentQ];
+
+      qObj.options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+
+        let btnClass = 'w-full text-left p-3 rounded-xl border text-xs sm:text-sm font-medium transition flex items-center gap-3 ';
+        let letterClass = 'w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ';
+
+        if (selected !== null) {
+          if (quizMode === 'learn') {
+            if (i === qObj.correct) {
+              btnClass += 'border-emerald-500 bg-emerald-50 text-emerald-950';
+              letterClass += 'border-emerald-600 bg-emerald-600 text-white';
+            } else if (i === selected) {
+              btnClass += 'border-[#dc2626] bg-red-50 text-red-950';
+              letterClass += 'border-[#dc2626] bg-[#dc2626] text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-500 opacity-75';
+              letterClass += 'border-slate-300 text-slate-400';
+            }
+          } else {
+            if (i === selected) {
+              btnClass += 'border-[#0f766e] bg-teal-50/70 text-teal-950';
+              letterClass += 'border-[#0f766e] bg-[#0f766e] text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50';
+              letterClass += 'border-slate-300 text-slate-500';
+            }
+          }
+        } else {
+          btnClass += 'border-slate-200 bg-white text-slate-800 hover:border-[#0f766e] hover:bg-teal-50/30';
+          letterClass += 'border-slate-300 text-slate-600';
+        }
+
+        btn.className = btnClass;
+        btn.innerHTML = `<span class="${letterClass}">${letters[i]}</span><span class="leading-snug">${optText}</span>`;
+        btn.onclick = () => selectOption(i);
+        optsDiv.appendChild(btn);
+      });
+
+      const expDiv = document.getElementById('q-explanation');
+      if (quizMode === 'learn' && selected !== null) {
+        expDiv.classList.remove('hidden');
+        expDiv.innerHTML = `<strong class="text-[#0f766e]">Разбор по протоколу МЗ РК:</strong> ${qObj.exp}`;
+      } else {
+        expDiv.classList.add('hidden');
+      }
+
+      const nextBtn = document.getElementById('next-btn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = quizMode === 'exam' ? 'Завершить экзамен ✓' : 'В начало ↺';
+      } else {
+        nextBtn.textContent = 'Далее →';
+      }
+    }
+
+    function selectOption(idx) {
+      if (quizMode === 'learn' && userAnswers[currentQ] !== null) return;
+      userAnswers[currentQ] = idx;
+      renderQuiz();
+    }
+
+    function prevQuestion() {
+      if (currentQ > 0) {
+        currentQ--;
+        renderQuiz();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQ < questions.length - 1) {
+        currentQ++;
+        renderQuiz();
+      } else {
+        if (quizMode === 'exam') {
+          finishExam();
+        } else {
+          currentQ = 0;
+          renderQuiz();
+        }
+      }
+    }
+
+    function finishExam() {
+      let score = 0;
+      questions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) score++;
+      });
+      const pct = Math.round((score / questions.length) * 100);
+
+      document.getElementById('quiz-card').classList.add('hidden');
+      const resCard = document.getElementById('exam-result-card');
+      resCard.classList.remove('hidden');
+
+      document.getElementById('exam-score-text').textContent = `Правильных ответов: ${score} из ${questions.length} (${pct}%)`;
+      document.getElementById('exam-feedback-text').textContent = pct >= 80
+        ? 'Отличный результат! Алгоритмы остановки кровотечений и оказания помощи при геморрагическом шоке усвоены уверенно.'
+        : 'Рекомендуется повторить вкладку «Алгоритм помощи» и пройти тест в режиме обучения.';
+    }
+
+    // =========================================================================
+    // 4. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    // =========================================================================
+    function switchTab(tabName) {
+      ['kit', 'algo', 'quiz'].forEach(name => {
+        const btn = document.getElementById(`nav-${name}`);
+        const sec = document.getElementById(`tab-${name}`);
+
+        if (name === tabName) {
+          btn.className = 'py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-[#0f766e] text-white shadow-sm';
+          sec.classList.remove('hidden');
+        } else {
+          btn.className = 'py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900';
+          sec.classList.add('hidden');
+        }
+      });
+    }
+
+    // Инициализация приложения
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAuditState();
+      renderKit();
+      selectShockStage(1);
+      renderQuiz();
+    });
+  </script>
+</body>
+</html>
