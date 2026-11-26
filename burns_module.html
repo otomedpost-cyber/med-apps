@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Термические ожоги и ожоговый шок • КП МЗ РК</title>
+  <!-- Подключение Tailwind CSS для адаптивного медицинского интерфейса -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Шрифт Inter для высокой читаемости на мобильных устройствах -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Стили для формирования чистого печатного отчета аудита укладки */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      #tab-kit {
+        display: block !important;
+      }
+      body {
+        background-color: #ffffff !important;
+        padding-bottom: 0 !important;
+      }
+      .print-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        break-inside: avoid;
+      }
+      input[type="text"],
+      input[type="date"] {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-weight: 700 !important;
+      }
+    }
+  </style>
+</head>
+<body class="pb-12">
+
+  <!-- Основной контейнер мобильной ширины -->
+  <div class="max-w-[640px] mx-auto px-4 pt-4">
+
+    <!-- Шапка приложения -->
+    <header class="flex items-center gap-3.5 mb-4">
+      <div class="w-12 h-12 rounded-2xl bg-[#0f766e] text-white flex items-center justify-center shadow-md shadow-teal-900/20 shrink-0">
+        <!-- Иконка пламени / термической помощи SVG -->
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c.5 3.5-1.5 5.5-3.5 7.5C6.8 12.2 6 13.8 6 15.8A6 6 0 0 0 18 16c0-2.8-1.8-5.2-3.2-6.8-.6 1.6-1.8 2.3-2.8 2.3 0-2.5.8-5.5 0-8.5Z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-tight">
+          Термические ожоги и шок
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+          Контроль укладки, теория, алгоритм и тест • КП МЗ РК
+        </p>
+      </div>
+    </header>
+
+    <!-- Навигационные вкладки (3 модуля) -->
+    <nav class="no-print grid grid-cols-3 gap-1 bg-slate-200/80 p-1 rounded-2xl mb-4" role="tablist">
+      <button type="button" id="nav-kit" onclick="switchTab('kit')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-[#0f766e] text-white shadow-sm">
+        Проверка укладки
+      </button>
+      <button type="button" id="nav-algo" onclick="switchTab('algo')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+        Теория и алгоритм
+      </button>
+      <button type="button" id="nav-quiz" onclick="switchTab('quiz')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+        Тест-тренажер
+      </button>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 1: ДИНАМИЧЕСКИЙ АУДИТ ПРОТИВООЖОГОВОЙ УКЛАДКИ -->
+    <!-- ===================================================================== -->
+    <section id="tab-kit" class="space-y-4">
+
+      <!-- Карточка статуса, реквизитов проверки и сводки -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Аудит укладки «При ожогах»</h2>
+          <span id="status-badge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+            Требуется проверка
+          </span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed mb-3.5 no-print">
+          Отметьте фактическое наличие каждой позиции и введите срок годности с упаковки в формате <strong>ММ.ГГ</strong> (точка подставится автоматически при вводе 4 цифр).
+        </p>
+
+        <!-- Блок ФИО проверяющего и редактируемой даты проверки -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 mb-3.5">
+          <div class="sm:col-span-2">
+            <label for="auditor-name" class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
+              ФИО проверяющего / подразделение
+            </label>
+            <input
+              type="text"
+              id="auditor-name"
+              oninput="saveAuditMeta()"
+              placeholder="Например: м/с Алиева Д.К., процедурный каб."
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0f766e]"
+            >
+          </div>
+          <div>
+            <label for="audit-date-input" class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
+              Дата проверки
+            </label>
+            <input
+              type="date"
+              id="audit-date-input"
+              value="2026-11-26"
+              onchange="handleAuditDateChange(this.value)"
+              oninput="handleAuditDateChange(this.value)"
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0f766e]"
+            >
+          </div>
+        </div>
+
+        <!-- Кнопки управления проверкой -->
+        <div class="no-print flex flex-wrap gap-2 mb-4">
+          <button type="button" onclick="toggleAllPresence(true)" class="px-3 py-2 rounded-xl text-xs font-semibold border border-[#0f766e] text-[#0f766e] bg-white hover:bg-teal-50 active:scale-95 transition">
+            Отметить всё
+          </button>
+          <button type="button" onclick="resetKitAudit()" class="px-3 py-2 rounded-xl text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            Сбросить проверку
+          </button>
+          <button type="button" onclick="window.print()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-white hover:bg-slate-900 active:scale-95 transition ml-auto">
+            🖨 Печать / Отчет
+          </button>
+        </div>
+
+        <!-- Сводка по годным, просроченным и отсутствующим позициям -->
+        <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+          <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div id="stat-valid" class="text-base sm:text-lg font-extrabold text-emerald-700">0</div>
+            <div class="text-[11px] font-semibold text-emerald-800">Годных из 9</div>
+          </div>
+          <div class="p-2 rounded-xl bg-red-50 border border-red-200">
+            <div id="stat-expired" class="text-base sm:text-lg font-extrabold text-red-700">0</div>
+            <div class="text-[11px] font-semibold text-red-800">Просрочено</div>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-100 border border-slate-200">
+            <div id="stat-missing" class="text-base sm:text-lg font-extrabold text-slate-700">9</div>
+            <div class="text-[11px] font-semibold text-slate-600">Отсутствует</div>
+          </div>
+        </div>
+
+        <!-- Индикатор прогресса укомплектованности -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold mb-1.5">
+            <span id="progress-text" class="text-slate-700">Укомплектованность: 0 из 9 позиций</span>
+            <span id="progress-percent" class="text-[#0f766e] font-bold">0%</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+            <div id="progress-fill" class="h-full bg-[#0f766e] rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Раздел 1: Лекарственные средства и местные препараты (4 позиции) -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0f766e]"></span>
+            1. Лекарственные средства и местные препараты
+          </h3>
+          <span id="count-ls" class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+            0 / 4
+          </span>
+        </div>
+        <div id="list-ls" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Раздел 2: Перевязочные материалы и ИМН (5 позиций) -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0f766e]"></span>
+            2. Перевязочные материалы и ИМН
+          </h3>
+          <span id="count-imn" class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+            0 / 5
+          </span>
+        </div>
+        <div id="list-imn" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Печатная сводная таблица-отчет (видна только при печати) -->
+      <div class="hidden print-only bg-white rounded-2xl p-4 border border-slate-300 mt-4 space-y-3">
+        <div class="text-sm font-bold text-slate-900">Сводный лист аудита противоожоговой укладки</div>
+        <table class="w-full text-left border-collapse text-xs border border-slate-300">
+          <thead>
+            <tr class="bg-slate-100">
+              <th class="border border-slate-300 p-1.5">№</th>
+              <th class="border border-slate-300 p-1.5">Наименование</th>
+              <th class="border border-slate-300 p-1.5">Наличие</th>
+              <th class="border border-slate-300 p-1.5">Срок годности</th>
+              <th class="border border-slate-300 p-1.5">Заключение</th>
+            </tr>
+          </thead>
+          <tbody id="print-table-body"></tbody>
+        </table>
+        <div class="flex justify-between items-end text-xs text-slate-800 pt-4">
+          <div>Подпись ответственного лица: _______________________</div>
+          <div>Дата проверки: <span id="print-footer-date" class="font-bold"></span></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 2: ТЕОРИЯ, КАЛЬКУЛЯТОР ПЛОЩАДИ, АЛГОРИТМ И «ЧЕГО НЕЛЬЗЯ» -->
+    <!-- ===================================================================== -->
+    <section id="tab-algo" class="hidden space-y-4">
+
+      <!-- Блок 1: Интерактивный калькулятор площади ожога по «Правилу девяток» -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Калькулятор площади ожога («Правило девяток»)</h2>
+          <button type="button" onclick="resetBurnCalc()" class="text-xs font-semibold text-slate-500 hover:text-[#dc2626] underline">
+            Сбросить
+          </button>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">
+          Отметьте пораженные анатомические области взрослого и преобладающую глубину поражения (дополнительно: <strong>1 ладонь пациента = 1% ПТ</strong>):
+        </p>
+
+        <!-- Переключатель глубины поражения -->
+        <div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-xl mb-3">
+          <button type="button" id="depth-superficial" onclick="setBurnDepth('superficial')" class="py-2 px-2.5 rounded-lg text-xs font-bold bg-[#0f766e] text-white shadow-sm transition">
+            Поверхностный (I, II, IIIа ст.)
+          </button>
+          <button type="button" id="depth-deep" onclick="setBurnDepth('deep')" class="py-2 px-2.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition">
+            Глубокий (IIIб, IV ст.)
+          </button>
+        </div>
+
+        <!-- Чекбоксы анатомических зон -->
+        <div id="burn-zones-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3.5"></div>
+
+        <!-- Итоговая плашка расчета площади и риска шока -->
+        <div id="burn-calc-result" class="p-3.5 rounded-xl border transition-all"></div>
+      </div>
+
+      <!-- Блок 2: Классификация глубины ожогов и термоингаляционная травма -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 space-y-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Классификация ожогов по глубине поражения</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Ориентиры для первичного осмотра (КП МЗ РК):</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2">
+          <div class="p-3 rounded-xl bg-teal-50/50 border border-teal-200">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-teal-950">I степень (поверхностный ожог эпидермиса)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-teal-100 text-[#0f766e]">Поверхностный</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Покраснение (гиперемия), умеренный отек, жгучая боль. Пузырей нет; заживает самостоятельно за 3–7 дней без рубцов.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-teal-50/50 border border-teal-200">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-teal-950">II степень (поражение эпидермиса и верхних слоев дермы)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-teal-100 text-[#0f766e]">Поверхностный</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Яркая гиперемия, выраженный отек, резкая боль, <strong>пузыри с прозрачным или желтоватым содержимым</strong>. Заживает за 1–2 недели.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-amber-50/60 border border-amber-200">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-amber-950">IIIа степень (частичный некроз дермы с сохранением дериватов кожи)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">Пограничный</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Плотные пузыри с геморрагическим содержимым, отек, бледно-розовое или пестрое дно раны, болевая чувствительность снижена.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-red-50/60 border border-red-200">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-red-950">IIIб степень (некроз всей толщи кожи до клетчатки)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-800">Глубокий</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Формирование сухого или влажного <strong>струпа</strong> (серого, бурого, коричневого цвета), <strong>отсутствие болевой чувствительности</strong> в зоне поражения. Требует хирургического лечения.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-red-50/80 border border-red-300">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-red-950">IV степень (обугливание и некроз глубжележащих тканей)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-red-200 text-red-900">Критически глубокий</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Поражение фасций, мышц, сухожилий, костей. Плотный черный струп, полная анестезия тканей, высокий риск тяжелого ожогового шока и сепсиса.</p>
+          </div>
+        </div>
+
+        <!-- Особое внимание: Термоингаляционная травма -->
+        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-950">
+          <div class="font-extrabold text-sm text-amber-900 mb-1">
+            Термоингаляционное поражение (ожог дыхательных путей)
+          </div>
+          <p class="leading-relaxed">
+            Подозревайте при пожаре в закрытом помещении, ожоге лица/губ/бровей, опалении волос в ноздрях, копоти в ротоглотке, осиплости голоса, лающем кашле, стридоре и одышке. Отек гортани нарастает стремительно — показана ранняя ингаляция кислорода и экстренная эвакуация!
+          </p>
+        </div>
+      </div>
+
+      <!-- Блок 3: Пошаговый протокол оказания неотложной помощи (КП МЗ РК) -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Пошаговый алгоритм неотложной помощи при ожогах</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Последовательность действий на догоспитальном и амбулаторном этапе:</p>
+        </div>
+
+        <div class="border-l-4 border-[#dc2626] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#dc2626]">Шаг 1 • Безопасность и прекращение поражения</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Устранить действие термического агента</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Убедиться в личной безопасности (огонь, дым, электричество, горячие жидкости/ГСМ).</li>
+            <li>Погасить пламя (накрыть плотной тканью, сбить пламя; не позволять пострадавшему бежать).</li>
+            <li>Снять горячую/тлеющую одежду, часы, кольца и ремни до нарастания отека. <strong>Прилипшую (приварившуюся) к ране одежду не срывать — аккуратно обрезать по краю!</strong></li>
+          </ul>
+        </div>
+
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">Шаг 2 • Дыхательные пути и первичная оценка</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Контроль проходимости ВДП и гемодинамики</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Оценить сознание, дыхание, ЧСС, АД и сатурацию (SpO₂).</li>
+            <li>При признаках термоингаляционной травмы или SpO₂ &lt; 90% — подача увлажненного кислорода и готовность к обеспечению проходимости дыхательных путей.</li>
+          </ul>
+        </div>
+
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">Шаг 3 • Первые 10–20 минут</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Местное охлаждение ожоговой поверхности</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Охлаждать область ожога <strong>прохладной проточной водой (12–18 °C) в течение 10–20 минут</strong> в первые минуты после травмы — это останавливает прогревание глубоких тканей и уменьшает боль.</li>
+            <li>При обширных ожогах (&gt; 15–20% ПТ) избегать длительного охлаждения всего тела во избежание переохлаждения (гипотермии).</li>
+          </ul>
+        </div>
+
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">Шаг 4 • Анальгезия и противошоковая терапия</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Обезболивание и восполнение ОЦК</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li><strong>Обезболивание:</strong> введение анальгетиков согласно протоколу и табелю оснащения (при умеренной боли — метамизол натрия 50% 2,0 мл в/м или в/в; при выраженных обширных ожогах — наркотические анальгетики по показаниям).</li>
+            <li><strong>Инфузионная терапия:</strong> при площади глубокого ожога &gt; 10% или поверхностного &gt; 15–20% — катетеризация периферической вены и начало инфузии кристаллоидов (<strong>Натрия хлорид 0,9%</strong>).</li>
+          </ul>
+        </div>
+
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">Шаг 5 • Повязка и маршрутизация</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Асептическая защита раны и эвакуация</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Наложить сухую стерильную нетугую повязку (ИПП, стерильный бинт) или специальную противоожоговую гидрогелевую салфетку.</li>
+            <li>Кожу вокруг поверхностного ожога (при загрязнении) можно обработать антисептиком (5% раствор йода применяется <strong>только на неповрежденную кожу вокруг раны</strong>).</li>
+            <li>Согреть пациента (термоодеяло/плед) и организовать экстренную госпитализацию по показаниям.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Блок 4: Яркий красный блок «ЧЕГО ДЕЛАТЬ КАТЕГОРИЧЕСКИ НЕЛЬЗЯ» -->
+      <div class="bg-red-50 rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-[#dc2626]">
+        <div class="flex items-center gap-2.5 mb-2.5">
+          <div class="w-8 h-8 rounded-xl bg-[#dc2626] text-white flex items-center justify-center font-extrabold text-base shrink-0">
+            !
+          </div>
+          <h3 class="text-base sm:text-lg font-extrabold text-[#dc2626] uppercase tracking-tight">
+            Чего делать категорически НЕЛЬЗЯ
+          </h3>
+        </div>
+        <ul class="space-y-2 text-xs sm:text-sm text-red-950">
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Наносить масла, жиры, сметану, кремы и мази на жировой основе на свежий ожог:</strong> жировая пленка нарушает теплоотдачу (углубляет ожог), инфицирует рану и мешает хирургу оценить глубину поражения.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Прикладывать лед напрямую к ожоговой поверхности:</strong> вызывает резкий спазм сосудов, ишемию и дополнительное холодовое повреждение тканей.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Прокалывать, срезать или вскрывать ожоговые пузыри на первичном этапе:</strong> целостная покрышка пузыря — естественная стерильная биологическая повязка; вскрытие открывает ворота для тяжелой инфекции.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Отрывать прилипшую (приварившуюся) к ожогу одежду:</strong> это приводит к отрыву жизнеспособных слоев дермы, кровотечению и усилению болевого шока (ткань только обрезают вокруг).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Заливать в открытую ожоговую рану спирт или 5% спиртовой раствор йода:</strong> вызывает химический коагуляционный некроз раневого дна и нестерпимую боль (5% йод используется только для краев неповрежденной кожи вокруг).</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Блок 5: Критерии экстренной госпитализации в ожоговый центр -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <h3 class="text-base font-bold text-slate-900 mb-2">
+          Критерии экстренной госпитализации в ожоговый центр / стационар
+        </h3>
+        <ul class="list-disc pl-4 space-y-1.5 text-xs sm:text-sm text-slate-700">
+          <li><strong>Поверхностные ожоги</strong> площадью более <strong>10% ПТ</strong> у взрослых (или более 5% у детей и пожилых).</li>
+          <li><strong>Глубокие ожоги (IIIб–IV степени)</strong> площадью более <strong>2–5% ПТ</strong> (а при локализации в функционально значимых зонах — любой площади).</li>
+          <li><strong>Ожоги особых (шокогенных и функциональных) зон:</strong> лицо, шея, кисти, стопы, промежность / гениталии, область крупных суставов.</li>
+          <li><strong>Термоингаляционная травма</strong> (подозрение на ожог верхних дыхательных путей или отравление угарным газом).</li>
+          <li><strong>Циркулярные ожоги</strong> конечностей или грудной клетки (риск сдавления сосудов и нарушения экскурсии грудной клетки).</li>
+          <li><strong>Электроожоги, химические ожоги</strong>, комбинированные поражения и тяжелая сопутствующая патология (сахарный диабет, ИБС и др.).</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ВКЛАДКА 3: ТЕСТ-ТРЕНАЖЕР (15 ВОПРОСОВ ПО КП МЗ РК) -->
+    <!-- ===================================================================== -->
+    <section id="tab-quiz" class="hidden space-y-4">
+
+      <!-- Панель выбора режима и сетка вопросов -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="grid grid-cols-2 gap-1 bg-slate-200/80 p-1 rounded-xl mb-3.5">
+          <button type="button" id="mode-learn" onclick="setQuizMode('learn')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition">
+            Режим обучения
+          </button>
+          <button type="button" id="mode-exam" onclick="setQuizMode('exam')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition">
+            Режим экзамена
+          </button>
+        </div>
+
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+          <span id="quiz-counter" class="text-xs sm:text-sm font-bold text-slate-800">Отвечено: 0 из 15</span>
+          <span id="mode-desc" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 text-[#0f766e] border border-teal-200">
+            Обучение: разбор сразу после ответа
+          </span>
+        </div>
+
+        <div id="q-grid" class="grid grid-cols-5 gap-1.5"></div>
+      </div>
+
+      <!-- Карточка текущего вопроса -->
+      <div id="quiz-card" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex justify-between items-center gap-2 mb-3">
+          <span id="q-topic" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-50 text-[#0f766e] border border-teal-200">
+            ОЦЕНКА ПЛОЩАДИ
+          </span>
+          <span id="q-step-label" class="text-xs font-medium text-slate-500">Вопрос 1 из 15</span>
+        </div>
+
+        <div id="q-text" class="text-sm sm:text-base font-bold text-slate-900 leading-snug mb-4"></div>
+
+        <div id="q-options" class="space-y-2"></div>
+
+        <div id="q-explanation" class="hidden mt-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed"></div>
+
+        <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-100">
+          <button type="button" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            ← Назад
+          </button>
+          <button type="button" id="next-btn" onclick="nextQuestion()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-[#0f766e] text-[#0f766e] bg-white hover:bg-teal-50 active:scale-95 transition">
+            Далее →
+          </button>
+        </div>
+      </div>
+
+      <!-- Карточка результатов экзамена -->
+      <div id="exam-result-card" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-teal-50 text-[#0f766e] flex items-center justify-center text-2xl mx-auto font-bold">
+          ✓
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Результат тестирования</h3>
+        <p id="exam-score-text" class="text-base sm:text-lg font-extrabold text-[#0f766e]"></p>
+        <p id="exam-feedback-text" class="text-xs sm:text-sm text-slate-600"></p>
+        <div class="pt-2">
+          <button type="button" onclick="resetQuiz()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#0f766e] text-white hover:bg-teal-800 active:scale-95 transition">
+            Пройти тест заново
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. ДАННЫЕ СТАНДАРТНОЙ ПРОТИВООЖОГОВОЙ УКЛАДКИ (9 ПОЗИЦИЙ)
+    // =========================================================================
+    const kitItems = [
+      // Группа 1. Лекарственные средства и местные препараты (4 позиции)
+      {
+        id: 'ls1',
+        group: 'ls',
+        name: 'Декспантенол спрей',
+        norm: 'Норма: 1 штука • Стимулятор регенерации (после охлаждения)'
+      },
+      {
+        id: 'ls2',
+        group: 'ls',
+        name: 'Метамизол натрия 50% — 2,0 мл',
+        norm: 'Норма: 2 ампулы • Анальгетик / антипиретик'
+      },
+      {
+        id: 'ls3',
+        group: 'ls',
+        name: 'Раствор Йода 5%',
+        norm: 'Норма: 1 флакон • Только для обработки кожи вокруг раны!'
+      },
+      {
+        id: 'ls4',
+        group: 'ls',
+        name: 'Натрия хлорид 0,9% — 200–400 мл',
+        norm: 'Норма: 2 флакона • Дополнение для инфузий при ожоговом шоке'
+      },
+
+      // Группа 2. Перевязочные материалы и ИМН (5 позиций)
+      {
+        id: 'imn1',
+        group: 'imn',
+        name: 'ИПП (индивидуальный перевязочный пакет / бинт стерильный)',
+        norm: 'Норма: 5 штук • Стерильная защита ожоговой раны'
+      },
+      {
+        id: 'imn2',
+        group: 'imn',
+        name: 'Шприц для инъекций 2,0 мл',
+        norm: 'Норма: 2 штуки • Стерильно'
+      },
+      {
+        id: 'imn3',
+        group: 'imn',
+        name: 'Вата медицинская стерильная 50,0 г',
+        norm: 'Норма: 1 штука • Поверх марлевой повязки'
+      },
+      {
+        id: 'imn4',
+        group: 'imn',
+        name: 'Стерильные марлевые салфетки / противоожоговая гидрогелевая повязка',
+        norm: 'Норма: 1 упаковка • Рекомендуемое дополнение'
+      },
+      {
+        id: 'imn5',
+        group: 'imn',
+        name: 'Перчатки медицинские нестерильные + периферический венозный катетер',
+        norm: 'Норма: 2 пары / 1 шт. • Рекомендуемое дополнение'
+      }
+    ];
+
+    // Состояние аудита: { [id]: { present: boolean, expiry: string } }
+    let auditState = {};
+    let auditDate = '2026-11-26';
+    const STORAGE_KEY = 'burns_kit_audit_v1';
+
+    function getReferenceYearMonth() {
+      const fallback = new Date(2026, 10, 26); // 2026-11-26
+      if (!auditDate || !/^\d{4}-\d{2}-\d{2}$/.test(auditDate)) {
+        return {
+          year: fallback.getFullYear(),
+          month: fallback.getMonth() + 1,
+          formatted: '26.11.2026'
+        };
+      }
+      const parts = auditDate.split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parts[2];
+      return {
+        year: year,
+        month: month,
+        formatted: `${day}.${parts[1]}.${year}`
+      };
+    }
+
+    function loadAuditState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          auditState = parsed.items || {};
+          if (parsed.auditor) {
+            document.getElementById('auditor-name').value = parsed.auditor;
+          }
+          if (parsed.auditDate && /^\d{4}-\d{2}-\d{2}$/.test(parsed.auditDate)) {
+            auditDate = parsed.auditDate;
+          }
+        }
+      } catch (e) {
+        auditState = {};
+      }
+      const dateInput = document.getElementById('audit-date-input');
+      if (dateInput) dateInput.value = auditDate;
+
+      kitItems.forEach(item => {
+        if (!auditState[item.id]) {
+          auditState[item.id] = { present: false, expiry: '' };
+        }
+      });
+      syncPrintDate();
+    }
+
+    function saveAuditMeta() {
+      try {
+        const auditor = document.getElementById('auditor-name').value;
+        const dateInput = document.getElementById('audit-date-input');
+        if (dateInput && dateInput.value) {
+          auditDate = dateInput.value;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          auditor: auditor,
+          auditDate: auditDate,
+          items: auditState
+        }));
+      } catch (e) {}
+    }
+
+    function handleAuditDateChange(newDateVal) {
+      if (newDateVal && /^\d{4}-\d{2}-\d{2}$/.test(newDateVal)) {
+        auditDate = newDateVal;
+      }
+      saveAuditMeta();
+      syncPrintDate();
+      kitItems.forEach(item => updateItemVisuals(item.id));
+      updateSummaryStats();
+    }
+
+    function syncPrintDate() {
+      const ref = getReferenceYearMonth();
+      const footerDate = document.getElementById('print-footer-date');
+      if (footerDate) footerDate.textContent = ref.formatted;
+    }
+
+    // Проверка актуальности срока годности относительно выбранной «Даты проверки»
+    function evaluateExpiry(expiryStr) {
+      const clean = (expiryStr || '').trim();
+      if (!clean) {
+        return { code: 'empty', label: 'Укажите срок (ММ.ГГ)' };
+      }
+
+      const match = clean.match(/^(\d{2})\.(\d{2})$/);
+      if (!match) {
+        return { code: 'invalid', label: 'Формат: ММ.ГГ' };
+      }
+
+      const month = parseInt(match[1], 10);
+      const yearShort = parseInt(match[2], 10);
+
+      if (month < 1 || month > 12) {
+        return { code: 'invalid', label: 'Неверный месяц (01–12)' };
+      }
+
+      const fullYear = 2000 + yearShort;
+      const ref = getReferenceYearMonth();
+      const diffMonths = (fullYear - ref.year) * 12 + (month - ref.month);
+
+      if (diffMonths < 0) {
+        return { code: 'expired', label: `ПРОСРОЧЕНО — заменить! (${clean})` };
+      } else if (diffMonths === 0) {
+        return { code: 'expiring', label: `Истекает в текущем месяце (${clean})` };
+      } else {
+        return { code: 'valid', label: `Срок в норме (до ${clean})` };
+      }
+    }
+
+    function handleExpiryInput(id, inputEl) {
+      let digits = inputEl.value.replace(/\D/g, '').slice(0, 4);
+      let formatted = digits;
+      if (digits.length > 2) {
+        formatted = digits.slice(0, 2) + '.' + digits.slice(2);
+      }
+      inputEl.value = formatted;
+      auditState[id].expiry = formatted;
+      saveAuditMeta();
+      updateItemVisuals(id);
+      updateSummaryStats();
+    }
+
+    function handlePresenceChange(id, isChecked) {
+      auditState[id].present = isChecked;
+      saveAuditMeta();
+      updateItemVisuals(id);
+      updateSummaryStats();
+    }
+
+    function updateItemVisuals(id) {
+      const card = document.getElementById(`card-${id}`);
+      const badge = document.getElementById(`badge-${id}`);
+      if (!card || !badge) return;
+
+      const state = auditState[id];
+      const expStatus = evaluateExpiry(state.expiry);
+
+      let cardClasses = 'p-3 rounded-xl border transition ';
+      let badgeClasses = 'inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border ';
+      let badgeText = expStatus.label;
+
+      if (!state.present) {
+        cardClasses += 'border-slate-200 bg-slate-50/60';
+        badgeClasses += 'bg-slate-100 text-slate-600 border-slate-200';
+        badgeText = expStatus.code === 'expired'
+          ? `Нет в наличии • ${expStatus.label}`
+          : 'Нет в наличии';
+      } else {
+        if (expStatus.code === 'expired') {
+          cardClasses += 'border-[#dc2626] bg-red-50/50';
+          badgeClasses += 'bg-red-100 text-red-800 border-red-300';
+        } else if (expStatus.code === 'expiring') {
+          cardClasses += 'border-[#d97706] bg-amber-50/40';
+          badgeClasses += 'bg-amber-100 text-amber-800 border-amber-300';
+        } else if (expStatus.code === 'valid') {
+          cardClasses += 'border-teal-400 bg-teal-50/40';
+          badgeClasses += 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        } else if (expStatus.code === 'invalid') {
+          cardClasses += 'border-amber-300 bg-white';
+          badgeClasses += 'bg-amber-50 text-amber-700 border-amber-200';
+        } else {
+          cardClasses += 'border-teal-300 bg-white';
+          badgeClasses += 'bg-slate-100 text-slate-600 border-slate-200';
+        }
+      }
+
+      card.className = cardClasses;
+      badge.className = badgeClasses;
+      badge.textContent = badgeText;
+      renderPrintTable();
+    }
+
+    function renderKit() {
+      const lsContainer = document.getElementById('list-ls');
+      const imnContainer = document.getElementById('list-imn');
+      lsContainer.innerHTML = '';
+      imnContainer.innerHTML = '';
+
+      kitItems.forEach(item => {
+        const state = auditState[item.id] || { present: false, expiry: '' };
+        const div = document.createElement('div');
+        div.id = `card-${item.id}`;
+
+        div.innerHTML = `
+          <div class="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="chk-${item.id}"
+              ${state.present ? 'checked' : ''}
+              onchange="handlePresenceChange('${item.id}', this.checked)"
+              class="w-5 h-5 mt-0.5 rounded accent-[#0f766e] shrink-0 cursor-pointer"
+              aria-label="В наличии: ${item.name}"
+            >
+            <div class="flex-1 min-w-0">
+              <label for="chk-${item.id}" class="block text-xs sm:text-sm font-semibold text-slate-900 leading-snug cursor-pointer">
+                ${item.name}
+              </label>
+              <div class="text-[11px] sm:text-xs text-slate-500 mt-0.5">${item.norm}</div>
+
+              <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5">
+                  <label for="exp-${item.id}" class="text-[11px] font-semibold text-slate-600">Срок:</label>
+                  <input
+                    type="text"
+                    id="exp-${item.id}"
+                    inputmode="numeric"
+                    maxlength="5"
+                    placeholder="ММ.ГГ"
+                    value="${state.expiry}"
+                    oninput="handleExpiryInput('${item.id}', this)"
+                    class="w-20 px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-bold text-center text-slate-900 focus:outline-none focus:border-[#0f766e]"
+                  >
+                </div>
+                <span id="badge-${item.id}"></span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (item.group === 'ls') lsContainer.appendChild(div);
+        else imnContainer.appendChild(div);
+
+        updateItemVisuals(item.id);
+      });
+
+      updateSummaryStats();
+    }
+
+    function renderPrintTable() {
+      const tbody = document.getElementById('print-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      kitItems.forEach((item, index) => {
+        const st = auditState[item.id] || { present: false, expiry: '' };
+        const status = evaluateExpiry(st.expiry);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="border border-slate-300 p-1.5 text-center">${index + 1}</td>
+          <td class="border border-slate-300 p-1.5 font-medium">${item.name}</td>
+          <td class="border border-slate-300 p-1.5 text-center">${st.present ? 'Да' : 'Нет'}</td>
+          <td class="border border-slate-300 p-1.5 text-center">${st.expiry || '—'}</td>
+          <td class="border border-slate-300 p-1.5">${st.present ? status.label : 'Отсутствует'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleAllPresence(isPresent) {
+      kitItems.forEach(item => {
+        auditState[item.id].present = isPresent;
+      });
+      saveAuditMeta();
+      renderKit();
+    }
+
+    function resetKitAudit() {
+      kitItems.forEach(item => {
+        auditState[item.id] = { present: false, expiry: '' };
+      });
+      saveAuditMeta();
+      renderKit();
+    }
+
+    function updateSummaryStats() {
+      const total = kitItems.length;
+      let validCount = 0;
+      let expiredCount = 0;
+      let missingCount = 0;
+      let lsValid = 0;
+      let imnValid = 0;
+
+      kitItems.forEach(item => {
+        const st = auditState[item.id];
+        const status = evaluateExpiry(st.expiry);
+
+        if (!st.present) {
+          missingCount++;
+          if (status.code === 'expired') expiredCount++;
+        } else {
+          if (status.code === 'expired') {
+            expiredCount++;
+          } else {
+            validCount++;
+            if (item.group === 'ls') lsValid++;
+            else imnValid++;
+          }
+        }
+      });
+
+      const lsTotal = kitItems.filter(i => i.group === 'ls').length;
+      const imnTotal = kitItems.filter(i => i.group === 'imn').length;
+      const pct = Math.round((validCount / total) * 100);
+
+      document.getElementById('stat-valid').textContent = validCount;
+      document.getElementById('stat-expired').textContent = expiredCount;
+      document.getElementById('stat-missing').textContent = missingCount;
+
+      document.getElementById('progress-text').textContent = `Укомплектованность: ${validCount} из ${total} позиций`;
+      document.getElementById('progress-percent').textContent = `${pct}%`;
+      document.getElementById('progress-fill').style.width = `${pct}%`;
+      document.getElementById('count-ls').textContent = `${lsValid} / ${lsTotal}`;
+      document.getElementById('count-imn').textContent = `${imnValid} / ${imnTotal}`;
+
+      const badge = document.getElementById('status-badge');
+      if (expiredCount > 0) {
+        badge.textContent = `Внимание: просрочено (${expiredCount})`;
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800';
+      } else if (validCount === total) {
+        badge.textContent = 'Укладка укомплектована (100%)';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-100 text-teal-800';
+      } else if (validCount > 0) {
+        badge.textContent = 'Идет проверка...';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+      } else {
+        badge.textContent = 'Требуется проверка';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600';
+      }
+    }
+
+    // =========================================================================
+    // 2. ИНТЕРАКТИВНЫЙ КАЛЬКУЛЯТОР ПЛОЩАДИ ОЖОГА («ПРАВИЛО ДЕВЯТОК»)
+    // =========================================================================
+    const burnZones = [
+      { id: 'head', label: 'Голова и шея', pct: 9 },
+      { id: 'arm_r', label: 'Правая рука', pct: 9 },
+      { id: 'arm_l', label: 'Левая рука', pct: 9 },
+      { id: 'chest', label: 'Грудь (перед туловища)', pct: 9 },
+      { id: 'abdomen', label: 'Живот (перед туловища)', pct: 9 },
+      { id: 'back_up', label: 'Верх спины', pct: 9 },
+      { id: 'back_low', label: 'Поясница и ягодицы', pct: 9 },
+      { id: 'leg_r', label: 'Правая нога (бедро + голень/стопа)', pct: 18 },
+      { id: 'leg_l', label: 'Левая нога (бедро + голень/стопа)', pct: 18 },
+      { id: 'perineum', label: 'Промежность', pct: 1 }
+    ];
+
+    let selectedZones = {};
+    let burnDepth = 'superficial'; // 'superficial' | 'deep'
+
+    function setBurnDepth(depth) {
+      burnDepth = depth;
+      const btnSup = document.getElementById('depth-superficial');
+      const btnDeep = document.getElementById('depth-deep');
+
+      if (depth === 'superficial') {
+        btnSup.className = 'py-2 px-2.5 rounded-lg text-xs font-bold bg-[#0f766e] text-white shadow-sm transition';
+        btnDeep.className = 'py-2 px-2.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition';
+      } else {
+        btnDeep.className = 'py-2 px-2.5 rounded-lg text-xs font-bold bg-[#dc2626] text-white shadow-sm transition';
+        btnSup.className = 'py-2 px-2.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition';
+      }
+      recalculateBurnArea();
+    }
+
+    function renderBurnZones() {
+      const grid = document.getElementById('burn-zones-grid');
+      grid.innerHTML = '';
+
+      burnZones.forEach(z => {
+        const checked = !!selectedZones[z.id];
+        const label = document.createElement('label');
+        label.className = `flex items-center justify-between gap-2 p-2.5 rounded-xl border cursor-pointer transition ${
+          checked
+            ? 'border-[#0f766e] bg-teal-50/70'
+            : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50'
+        }`;
+        label.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            <input
+              type="checkbox"
+              ${checked ? 'checked' : ''}
+              onchange="toggleBurnZone('${z.id}', this.checked)"
+              class="w-4 h-4 rounded accent-[#0f766e] shrink-0 cursor-pointer"
+            >
+            <span class="text-xs font-semibold text-slate-800 leading-snug">${z.label}</span>
+          </div>
+          <span class="text-xs font-extrabold ${checked ? 'text-[#0f766e]' : 'text-slate-500'} shrink-0">
+            ${z.pct}%
+          </span>
+        `;
+        grid.appendChild(label);
+      });
+    }
+
+    function toggleBurnZone(id, isChecked) {
+      selectedZones[id] = isChecked;
+      renderBurnZones();
+      recalculateBurnArea();
+    }
+
+    function resetBurnCalc() {
+      selectedZones = {};
+      burnDepth = 'superficial';
+      setBurnDepth('superficial');
+      renderBurnZones();
+      recalculateBurnArea();
+    }
+
+    function recalculateBurnArea() {
+      let totalPct = 0;
+      burnZones.forEach(z => {
+        if (selectedZones[z.id]) totalPct += z.pct;
+      });
+
+      const resDiv = document.getElementById('burn-calc-result');
+      const isDeep = burnDepth === 'deep';
+
+      // Оценка риска ожогового шока и госпитализации (КП МЗ РК)
+      if (totalPct === 0) {
+        resDiv.className = 'p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-600';
+        resDiv.innerHTML = 'Отметьте пораженные зоны выше для расчета общей площади ожога (% ПТ), риска ожогового шока и показаний к госпитализации.';
+        return;
+      }
+
+      const shockThreshold = isDeep ? 10 : 15;
+      const hospThreshold = isDeep ? 2 : 10;
+      const hasShockRisk = totalPct >= shockThreshold;
+      const needsHosp = totalPct >= hospThreshold || selectedZones['head'] || selectedZones['perineum'];
+
+      if (hasShockRisk) {
+        resDiv.className = 'p-3.5 rounded-xl border-2 border-[#dc2626] bg-red-50/70';
+        resDiv.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <span class="text-sm sm:text-base font-extrabold text-red-950">Общая площадь ожога: ${totalPct}% ПТ</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-[#dc2626] text-white">
+              ВЫСОКИЙ РИСК ОЖОГОВОГО ШОКА!
+            </span>
+          </div>
+          <p class="text-xs text-red-900 leading-relaxed">
+            ${isDeep ? 'Глубокие ожоги (IIIб–IV ст.) ≥ 10% ПТ' : 'Обширные поверхностные ожоги ≥ 15–20% ПТ'} сопровождаются массивной плазмопотерей и болевым синдромом. Показаны: адекватное обезболивание, венозный доступ, инфузия кристаллоидов (NaCl 0,9%), согревание и <strong>экстренная госпитализация в ожоговый центр / ОРИТ</strong>.
+          </p>
+        `;
+      } else if (needsHosp) {
+        resDiv.className = 'p-3.5 rounded-xl border border-amber-300 bg-amber-50/70';
+        resDiv.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <span class="text-sm sm:text-base font-extrabold text-amber-950">Общая площадь ожога: ${totalPct}% ПТ</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-200 text-amber-950">
+              ПОКАЗАНА ГОСПИТАЛИЗАЦИЯ
+            </span>
+          </div>
+          <p class="text-xs text-amber-900 leading-relaxed">
+            Наличие глубокого поражения (IIIб–IV ст.), ожога функционально значимой зоны (лицо/шея/промежность/кисти) или площади &gt; 10% ПТ требует направления в стационар / ожоговое отделение после охлаждения, обезболивания и наложения стерильной повязки.
+          </p>
+        `;
+      } else {
+        resDiv.className = 'p-3.5 rounded-xl border border-teal-200 bg-teal-50/60';
+        resDiv.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <span class="text-sm sm:text-base font-extrabold text-teal-950">Общая площадь ожога: ${totalPct}% ПТ</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-100 text-[#0f766e]">
+              Ограниченный поверхностный ожог
+            </span>
+          </div>
+          <p class="text-xs text-teal-900 leading-relaxed">
+            Риск ожогового шока низкий (если нет ожога кистей, стоп, суставов или дыхательных путей). Тактика: охлаждение прохладной водой 10–20 мин, обезболивание при боли, сухая стерильная повязка и амбулаторное наблюдение хирурга.
+          </p>
+        `;
+      }
+    }
+
+    // =========================================================================
+    // 3. ТЕСТ-ТРЕНАЖЕР (15 ВОПРОСОВ СОГЛАСНО КП МЗ РК)
+    // =========================================================================
+    const questions = [
+      {
+        topic: 'ПРАВИЛО ДЕВЯТОК • РАСЧЕТ ПЛОЩАДИ',
+        q: 'У взрослого пострадавшего диагностирован ожог передней поверхности туловища (грудь и живот) и всей правой верхней конечности. Какова общая площадь ожога по «правилу девяток»?',
+        options: [
+          '18% поверхности тела',
+          '27% поверхности тела',
+          '36% поверхности тела',
+          '45% поверхности тела'
+        ],
+        correct: 1,
+        exp: 'По «правилу девяток» Уоллеса передняя поверхность туловища составляет 18% (грудь 9% + живот 9%), а одна верхняя конечность — 9%. В сумме: 18% + 9% = 27%.'
+      },
+      {
+        topic: 'ПРАВИЛО ЛАДОНИ',
+        q: 'Чему условно равна площадь ладони пострадавшего (вместе с пальцами) при оценке мозаичных или небольших ожогов?',
+        options: [
+          '0,5% поверхности тела',
+          '1% поверхности тела',
+          '3% поверхности тела',
+          '5% поверхности тела'
+        ],
+        correct: 1,
+        exp: 'Согласно «правилу ладони», площадь ладонной поверхности кисти пациента с сомкнутыми пальцами составляет примерно 1% общей площади поверхности тела.'
+      },
+      {
+        topic: 'ГЛУБИНА ОЖОГОВ • IIIБ СТЕПЕНЬ',
+        q: 'Какие местные клинические признаки характерны для глубокого ожога IIIб степени?',
+        options: [
+          'Яркая гиперемия без пузырей, резкая болезненность при прикосновении',
+          'Наличие сухого или влажного струпа (серого/бурого цвета) и резкое снижение или отсутствие болевой чувствительности',
+          'Тонкостенные пузыри с прозрачным содержимым и выраженная гиперестезия',
+          'Быстрая самостоятельная эпителизация за 4 дня'
+        ],
+        correct: 1,
+        exp: 'При ожоге IIIб степени погибает вся толща кожи до подкожной клетчатки: формируется струп, а из-за гибели болевых рецепторов исчезает болевая чувствительность.'
+      },
+      {
+        topic: 'ТЕРМОИНГАЛЯЦИОННАЯ ТРАВМА',
+        q: 'Какие признаки указывают на возможное термоингаляционное поражение (ожог верхних дыхательных путей) у пострадавшего на пожаре?',
+        options: [
+          'Ожог лица и губ, опаление волос в ноздрях, копоть в ротоглотке, осиплость голоса и лающий кашель',
+          'Только локальный ожог тыльной поверхности стопы',
+          'Повышение аппетита и брадикардия',
+          'Отсутствие любых жалоб со стороны дыхания и голоса'
+        ],
+        correct: 0,
+        exp: 'Ожоги лица, копоть в носовых ходах/глотке, осиплость голоса и стридор являются ранними маркерами ожога дыхательных путей с высоким риском стремительного отека гортани.'
+      },
+      {
+        topic: 'МЕСТНОЕ ОХЛАЖДЕНИЕ',
+        q: 'Как правильно проводить местное охлаждение термического ожога в первые минуты после травмы?',
+        options: [
+          'Охлаждать прохладной проточной водой (12–18 °C) в течение 10–20 минут',
+          'Погрузить пострадавшего в ледяную прорубь на 1 час',
+          'Сразу смазать ожог растительным маслом без охлаждения',
+          'Охлаждать спиртовым компрессом'
+        ],
+        correct: 0,
+        exp: 'Охлаждение прохладной проточной водой в течение 10–20 минут отводит избыточное тепло из тканей, препятствует углублению некроза и уменьшает боль.'
+      },
+      {
+        topic: 'ЗАПРЕТЫ ПРИ ОЖОГАХ • ЛЕД',
+        q: 'Почему запрещено прикладывать лед непосредственно к ожоговой поверхности?',
+        options: [
+          'Лед слишком быстро тает и пачкает одежду',
+          'Вызывает резкий спазм сосудов, ишемию и дополнительное холодовое повреждение тканей',
+          'Лед усиливает всасывание декспантенола',
+          'Применение льда разрешено при любых глубоких ожогах'
+        ],
+        correct: 1,
+        exp: 'Прямой контакт льда с обожженной кожей вызывает криоповреждение и усугубляет нарушение микроциркуляции в зоне паранекроза.'
+      },
+      {
+        topic: 'ЗАПРЕТЫ ПРИ ОЖОГАХ • МАСЛА И ЖИРЫ',
+        q: 'Почему категорически запрещено наносить масла, жиры, сметану или жирные мази на свежий термический ожог?',
+        options: [
+          'Они создают теплоизолирующую пленку (удерживают тепло и углубляют ожог), инфицируют рану и затрудняют осмотр',
+          'Они вызывают мгновенное рубцевание за 10 минут',
+          'Они нейтрализуют действие анальгетиков',
+          'Они повышают артериальное давление'
+        ],
+        correct: 0,
+        exp: 'Жировая пленка препятствует охлаждению тканей, создает парниковый эффект для бактериальной флоры и мешает врачу оценить глубину ожога.'
+      },
+      {
+        topic: 'ТАКТИКА В ОТНОШЕНИИ ПУЗЫРЕЙ',
+        q: 'Какова правильная тактика медработника в отношении неповрежденных ожоговых пузырей при оказании первой/неотложной помощи?',
+        options: [
+          'Немедленно проколоть все пузыри нестерильной иглой',
+          'Не вскрывать и не срезать покрышку пузыря — наложить сухую стерильную нетугую повязку',
+          'Срезать пузыри ножницами и залить рану 5% йодом',
+          'Выдавить жидкость из пузырей руками'
+        ],
+        correct: 1,
+        exp: 'Целостная покрышка ожогового пузыря выполняет роль естественной биологической повязки, защищающей раневое дно от микробного загрязнения.'
+      },
+      {
+        topic: 'ТАКТИКА ПРИ ПРИЛИПШЕЙ ОДЕЖДЕ',
+        q: 'При осмотре пострадавшего обнаружено, что синтетическая ткань одежды приварилась (прилипла) к глубокой ожоговой ране. Ваши действия?',
+        options: [
+          'Резким движением оторвать ткань от раны',
+          'Не срывать прилипшую ткань — аккуратно обрезать одежду вокруг раны ножницами и наложить стерильную повязку поверх',
+          'Залить прилипшую ткань ацетоном',
+          'Растереть место прилипания спиртовой салфеткой'
+        ],
+        correct: 1,
+        exp: 'Отрывание приварившейся одежды приводит к травматизации жизнеспособных тканей, кровотечению и усилению болевого шока; ткань только обрезают по краям.'
+      },
+      {
+        topic: 'ПРИМЕНЕНИЕ 5% РАСТВОРА ЙОДА',
+        q: 'Как допускается использовать 5% спиртовой раствор йода из противоожоговой укладки?',
+        options: [
+          'Заливать непосредственно в открытую ожоговую рану',
+          'Использовать только для обработки неповрежденной кожи вокруг краев раны',
+          'Пропитывать им марлевые салфетки для тампонады ожога III степени',
+          'Наносить на слизистую оболочку полости рта при ожоге'
+        ],
+        correct: 1,
+        exp: 'Спиртовой раствор йода 5% вызывает химический ожог и некроз открытой раневой поверхности; его применяют строго для обработки неповрежденной кожи вокруг раны.'
+      },
+      {
+        topic: 'КРИТЕРИИ ОЖОГОВОГО ШОКА',
+        q: 'При какой площади глубоких ожогов (IIIб–IV степени) у взрослого пациента закономерно развивается ожоговый шок?',
+        options: [
+          'Только при поражении 90% поверхности тела',
+          'Уже при площади глубокого ожога более 10% поверхности тела (или поверхностного > 15–20% ПТ)',
+          'Ожоговый шок развивается только при ожоге I степени площадью 1%',
+          'При глубоких ожогах шок не развивается'
+        ],
+        correct: 1,
+        exp: 'Глубокие ожоги > 10% ПТ (или обширные поверхностные > 15–20% ПТ) у взрослых приводят к массивной плазмопотере, гемоконцентрации и развитию ожогового шока.'
+      },
+      {
+        topic: 'ГОСПИТАЛИЗАЦИЯ В ОЖОГОВЫЙ ЦЕНТР',
+        q: 'Какие локализации ожогов являются показанием к обязательной госпитализации в специализированное ожоговое отделение даже при небольшой площади поражения?',
+        options: [
+          'Ожог I степени в области предплечья площадью 2%',
+          'Ожоги лица, шеи, кистей, стоп, промежности и области крупных суставов',
+          'Покраснение кожи после загара на спине',
+          'Небольшой поверхностный ожог голени площадью 1%'
+        ],
+        correct: 1,
+        exp: 'Ожоги лица, шеи, кистей, стоп, промежности и крупных суставов относятся к функционально значимым и шокогенным зонам и требуют стационарного лечения.'
+      },
+      {
+        topic: 'ОБЕЗБОЛИВАНИЕ ПРИ ОЖОГАХ',
+        q: 'Почему адекватное обезболивание является обязательным компонентом противошоковой помощи при ожогах?',
+        options: [
+          'Потому что интенсивная боль усиливает симпатоадреналовую реакцию, спазм сосудов и утяжеляет течение ожогового шока',
+          'Анальгетики полностью заменяют перевязку раны',
+          'Обезболивание требуется только при ожогах IV степени, где боли уже нет',
+          'Анальгетики назначают только через 24 часа после травмы'
+        ],
+        correct: 0,
+        exp: 'Выраженный болевой импульс является одним из главных пусковых механизмов ожогового шока, поэтому своевременная анальгезия критически важна.'
+      },
+      {
+        topic: 'ПРОФИЛАКТИКА ГИПОТЕРМИИ',
+        q: 'Почему после первичного охлаждения и наложения повязки пострадавшего с обширными ожогами необходимо укрыть (согреть)?',
+        options: [
+          'Из-за утраты защитной функции кожи обожженные пациенты стремительно теряют тепло, а гипотермия усугубляет шок и коагулопатию',
+          'Чтобы вызвать обильное потоотделение',
+          'Согревание при ожогах противопоказано',
+          'Только для удобства переноски на носилках'
+        ],
+        correct: 0,
+        exp: 'Поврежденная кожа теряет способность к терморегуляции; развитие гипотермии резко ухудшает прогноз при ожоговом шоке.'
+      },
+      {
+        topic: 'АУДИТ ПРОТИВООЖОГОВОЙ УКЛАДКИ',
+        q: 'При проверке укладки «При ожогах» выявлено, что на флаконе антисептика стерта дата срока годности (не читается), а срок годности ИПП истек в прошлом месяце. Каковы действия медработника?',
+        options: [
+          'Оставить обе позиции в укладке до конца года',
+          'Немедленно изъять позиции с нечитаемым или истекшим сроком годности и заменить их на актуальные с внесением в журнал/отчет проверки',
+          'Написать новую дату маркером поверх этикетки',
+          'Переложить просроченные ИПП в укладку при кровотечении'
+        ],
+        correct: 1,
+        exp: 'Использование медикаментов и перевязочных средств с истекшим или нечитаемым сроком годности запрещено приказами МЗ РК; позиции подлежат немедленному изъятию и замене.'
+      }
+    ];
+
+    let currentQ = 0;
+    let quizMode = 'learn';
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function setQuizMode(mode) {
+      quizMode = mode;
+      const btnLearn = document.getElementById('mode-learn');
+      const btnExam = document.getElementById('mode-exam');
+
+      if (mode === 'learn') {
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition';
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Обучение: разбор сразу после ответа';
+      } else {
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition';
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Экзамен: оценка в конце теста';
+      }
+      resetQuiz();
+    }
+
+    function resetQuiz() {
+      currentQ = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      document.getElementById('exam-result-card').classList.add('hidden');
+      document.getElementById('quiz-card').classList.remove('hidden');
+      renderQuiz();
+    }
+
+    function renderQuiz() {
+      const grid = document.getElementById('q-grid');
+      grid.innerHTML = '';
+
+      questions.forEach((_, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        let classes = 'py-1.5 rounded-lg border text-xs font-bold transition ';
+
+        if (idx === currentQ) {
+          classes += 'ring-2 ring-[#0f766e] border-[#0f766e] text-[#0f766e] ';
+        } else {
+          classes += 'border-slate-200 ';
+        }
+
+        if (userAnswers[idx] !== null) {
+          if (quizMode === 'learn') {
+            classes += userAnswers[idx] === questions[idx].correct
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-400'
+              : 'bg-red-50 text-red-700 border-red-400';
+          } else {
+            classes += 'bg-teal-50 text-teal-800 border-teal-300';
+          }
+        } else {
+          classes += 'bg-white text-slate-700 hover:bg-slate-50';
+        }
+
+        btn.className = classes;
+        btn.textContent = idx + 1;
+        btn.onclick = () => {
+          currentQ = idx;
+          renderQuiz();
+        };
+        grid.appendChild(btn);
+      });
+
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      document.getElementById('quiz-counter').textContent = `Отвечено: ${answeredCount} из ${questions.length}`;
+
+      const qObj = questions[currentQ];
+      document.getElementById('q-topic').textContent = qObj.topic;
+      document.getElementById('q-step-label').textContent = `Вопрос ${currentQ + 1} из ${questions.length}`;
+      document.getElementById('q-text').textContent = qObj.q;
+
+      const optsDiv = document.getElementById('q-options');
+      optsDiv.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      const selected = userAnswers[currentQ];
+
+      qObj.options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+
+        let btnClass = 'w-full text-left p-3 rounded-xl border text-xs sm:text-sm font-medium transition flex items-center gap-3 ';
+        let letterClass = 'w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ';
+
+        if (selected !== null) {
+          if (quizMode === 'learn') {
+            if (i === qObj.correct) {
+              btnClass += 'border-emerald-500 bg-emerald-50 text-emerald-950';
+              letterClass += 'border-emerald-600 bg-emerald-600 text-white';
+            } else if (i === selected) {
+              btnClass += 'border-[#dc2626] bg-red-50 text-red-950';
+              letterClass += 'border-[#dc2626] bg-[#dc2626] text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-500 opacity-75';
+              letterClass += 'border-slate-300 text-slate-400';
+            }
+          } else {
+            if (i === selected) {
+              btnClass += 'border-[#0f766e] bg-teal-50/70 text-teal-950';
+              letterClass += 'border-[#0f766e] bg-[#0f766e] text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50';
+              letterClass += 'border-slate-300 text-slate-500';
+            }
+          }
+        } else {
+          btnClass += 'border-slate-200 bg-white text-slate-800 hover:border-[#0f766e] hover:bg-teal-50/30';
+          letterClass += 'border-slate-300 text-slate-600';
+        }
+
+        btn.className = btnClass;
+        btn.innerHTML = `<span class="${letterClass}">${letters[i]}</span><span class="leading-snug">${optText}</span>`;
+        btn.onclick = () => selectOption(i);
+        optsDiv.appendChild(btn);
+      });
+
+      const expDiv = document.getElementById('q-explanation');
+      if (quizMode === 'learn' && selected !== null) {
+        expDiv.classList.remove('hidden');
+        expDiv.innerHTML = `<strong class="text-[#0f766e]">Разбор по протоколу МЗ РК:</strong> ${qObj.exp}`;
+      } else {
+        expDiv.classList.add('hidden');
+      }
+
+      const nextBtn = document.getElementById('next-btn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = quizMode === 'exam' ? 'Завершить экзамен ✓' : 'В начало ↺';
+      } else {
+        nextBtn.textContent = 'Далее →';
+      }
+    }
+
+    function selectOption(idx) {
+      if (quizMode === 'learn' && userAnswers[currentQ] !== null) return;
+      userAnswers[currentQ] = idx;
+      renderQuiz();
+    }
+
+    function prevQuestion() {
+      if (currentQ > 0) {
+        currentQ--;
+        renderQuiz();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQ < questions.length - 1) {
+        currentQ++;
+        renderQuiz();
+      } else {
+        if (quizMode === 'exam') {
+          finishExam();
+        } else {
+          currentQ = 0;
+          renderQuiz();
+        }
+      }
+    }
+
+    function finishExam() {
+      let score = 0;
+      questions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) score++;
+      });
+      const pct = Math.round((score / questions.length) * 100);
+
+      document.getElementById('quiz-card').classList.add('hidden');
+      const resCard = document.getElementById('exam-result-card');
+      resCard.classList.remove('hidden');
+
+      document.getElementById('exam-score-text').textContent = `Правильных ответов: ${score} из ${questions.length} (${pct}%)`;
+      document.getElementById('exam-feedback-text').textContent = pct >= 80
+        ? 'Отличный результат! Правила оценки площади, глубины ожогов и оказания неотложной помощи по КП МЗ РК усвоены уверенно.'
+        : 'Рекомендуется повторить вкладку «Теория и алгоритм» (особенно блок «Чего делать нельзя») и пройти тест в режиме обучения.';
+    }
+
+    // =========================================================================
+    // 4. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    // =========================================================================
+    function switchTab(tabName) {
+      ['kit', 'algo', 'quiz'].forEach(name => {
+        const btn = document.getElementById(`nav-${name}`);
+        const sec = document.getElementById(`tab-${name}`);
+
+        if (name === tabName) {
+          btn.className = 'py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-[#0f766e] text-white shadow-sm';
+          sec.classList.remove('hidden');
+        } else {
+          btn.className = 'py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900';
+          sec.classList.add('hidden');
+        }
+      });
+    }
+
+    // Инициализация приложения при загрузке страницы
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAuditState();
+      renderKit();
+      renderBurnZones();
+      recalculateBurnArea();
+      renderQuiz();
+    });
+  </script>
+</body>
+</html>
