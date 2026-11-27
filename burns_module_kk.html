@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Термиялық күйіктер және күйік шогы • ҚР ДСМ КХ</title>
+  <!-- Адаптивті медициналық интерфейс үшін Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Мобильді құрылғыларда анық оқылуы үшін Inter шрифті -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Жиынтық аудитінің таза баспа есебін қалыптастыру стильдері */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      #tab-kit {
+        display: block !important;
+      }
+      body {
+        background-color: #ffffff !important;
+        padding-bottom: 0 !important;
+      }
+      .print-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        break-inside: avoid;
+      }
+      input[type="text"],
+      input[type="date"] {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-weight: 700 !important;
+      }
+    }
+  </style>
+</head>
+<body class="pb-12">
+
+  <!-- Мобильді ені шектелген негізгі контейнер (max-width: 640px) -->
+  <div class="max-w-[640px] mx-auto px-4 pt-4">
+
+    <!-- Қосымшаның тақырып бөлімі -->
+    <header class="flex items-center gap-3.5 mb-4">
+      <div class="w-12 h-12 rounded-2xl bg-[#0f766e] text-white flex items-center justify-center shadow-md shadow-teal-900/20 shrink-0">
+        <!-- Термиялық көмек белгішесі (SVG) -->
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c.5 3.5-1.5 5.5-3.5 7.5C6.8 12.2 6 13.8 6 15.8A6 6 0 0 0 18 16c0-2.8-1.8-5.2-3.2-6.8-.6 1.6-1.8 2.3-2.8 2.3 0-2.5.8-5.5 0-8.5Z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-tight">
+          Термиялық күйіктер және күйік шогы
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+          Жиынтық бақылауы, хаттамалық алгоритм және тест • ҚР ДСМ КХ
+        </p>
+      </div>
+    </header>
+
+    <!-- Жоғарғы навигациялық қойындылар (3 модуль) -->
+    <nav class="no-print grid grid-cols-3 gap-1 bg-slate-200/80 p-1 rounded-2xl mb-4" role="tablist">
+      <button type="button" id="nav-kit" onclick="switchTab('kit')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-[#0f766e] text-white shadow-sm">
+        Жиынтықты тексеру
+      </button>
+      <button type="button" id="nav-algo" onclick="switchTab('algo')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+        Теория және алгоритм
+      </button>
+      <button type="button" id="nav-quiz" onclick="switchTab('quiz')" class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+        Тест-тренажер
+      </button>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- 1-ҚОЙЫНДЫ: КҮЙІККЕ ҚАРСЫ ЖИЫНТЫҚТЫ ДИНАМИКАЛЫҚ ТЕКСЕРУ -->
+    <!-- ===================================================================== -->
+    <section id="tab-kit" class="space-y-4">
+
+      <!-- Мәртебе, тексеру деректемелері және жиынтық ақпарат картасы -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Күйікке қарсы жиынтық аудиті</h2>
+          <span id="status-badge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+            Тексеру қажет
+          </span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-500 leading-relaxed mb-3.5 no-print">
+          Әрбір позицияның нақты бар-жоғын белгілеп, қаптамадағы жарамдылық мерзімін <strong>АА.ЖЖ</strong> форматында енгізіңіз (4 сан енгізгенде нүкте автоматты түрде қойылады).
+        </p>
+
+        <!-- Тексерушінің Т.А.Ә. және өңделетін тексеру күні -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 mb-3.5">
+          <div class="sm:col-span-2">
+            <label for="auditor-name" class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
+              Тексерушінің Т.А.Ә. / бөлімшесі
+            </label>
+            <input
+              type="text"
+              id="auditor-name"
+              oninput="saveAuditMeta()"
+              placeholder="Мысалы: медбике Әлиева Д.Қ., емшара кабинеті"
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0f766e]"
+            >
+          </div>
+          <div>
+            <label for="audit-date-input" class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
+              Тексеру күні
+            </label>
+            <input
+              type="date"
+              id="audit-date-input"
+              value="2026-11-27"
+              onchange="handleAuditDateChange(this.value)"
+              oninput="handleAuditDateChange(this.value)"
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0f766e]"
+            >
+          </div>
+        </div>
+
+        <!-- Тексеруді басқару батырмалары -->
+        <div class="no-print flex flex-wrap gap-2 mb-4">
+          <button type="button" onclick="toggleAllPresence(true)" class="px-3 py-2 rounded-xl text-xs font-semibold border border-[#0f766e] text-[#0f766e] bg-white hover:bg-teal-50 active:scale-95 transition">
+            Барлығын белгілеу
+          </button>
+          <button type="button" onclick="resetKitAudit()" class="px-3 py-2 rounded-xl text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            Тексеруді қалпына келтіру
+          </button>
+          <button type="button" onclick="window.print()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-white hover:bg-slate-900 active:scale-95 transition ml-auto">
+            🖨 Басып шығару / Есеп
+          </button>
+        </div>
+
+        <!-- Жарамды, мерзімі өткен және жоқ позициялар бойынша жиынтық -->
+        <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+          <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div id="stat-valid" class="text-base sm:text-lg font-extrabold text-emerald-700">0</div>
+            <div class="text-[11px] font-semibold text-emerald-800">Жарамды (8-ден)</div>
+          </div>
+          <div class="p-2 rounded-xl bg-red-50 border border-red-200">
+            <div id="stat-expired" class="text-base sm:text-lg font-extrabold text-red-700">0</div>
+            <div class="text-[11px] font-semibold text-red-800">Мерзімі өткен</div>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-100 border border-slate-200">
+            <div id="stat-missing" class="text-base sm:text-lg font-extrabold text-slate-700">8</div>
+            <div class="text-[11px] font-semibold text-slate-600">Жоқ / Белгіленбеген</div>
+          </div>
+        </div>
+
+        <!-- Жасақталу прогресс-бары -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold mb-1.5">
+            <span id="progress-text" class="text-slate-700">Жасақталу деңгейі: 0 / 8 позиция</span>
+            <span id="progress-percent" class="text-[#0f766e] font-bold">0%</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+            <div id="progress-fill" class="h-full bg-[#0f766e] rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-бөлім: Дәрілік заттар (ДЗ) — 3 позиция -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0f766e]"></span>
+            1. Дәрілік заттар (ДЗ)
+          </h3>
+          <span id="count-ls" class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+            0 / 3
+          </span>
+        </div>
+        <div id="list-ls" class="space-y-2.5"></div>
+      </div>
+
+      <!-- 2-бөлім: Медициналық мақсаттағы бұйымдар (ММБ) — 5 позиция -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 print-card">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0f766e]"></span>
+            2. Медициналық мақсаттағы бұйымдар (ММБ)
+          </h3>
+          <span id="count-imn" class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+            0 / 5
+          </span>
+        </div>
+        <div id="list-imn" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Баспаға шығаруға арналған жиынтық кесте-есеп (тек басып шығарғанда көрінеді) -->
+      <div class="hidden print-only bg-white rounded-2xl p-4 border border-slate-300 mt-4 space-y-3">
+        <div class="text-sm font-bold text-slate-900">Күйікке қарсы жиынтықты тексерудің жиынтық актісі</div>
+        <table class="w-full text-left border-collapse text-xs border border-slate-300">
+          <thead>
+            <tr class="bg-slate-100">
+              <th class="border border-slate-300 p-1.5">№</th>
+              <th class="border border-slate-300 p-1.5">Атауы</th>
+              <th class="border border-slate-300 p-1.5">Бар-жоғы</th>
+              <th class="border border-slate-300 p-1.5">Жарамдылық мерзімі</th>
+              <th class="border border-slate-300 p-1.5">Қорытынды</th>
+            </tr>
+          </thead>
+          <tbody id="print-table-body"></tbody>
+        </table>
+        <div class="flex justify-between items-end text-xs text-slate-800 pt-4">
+          <div>Жауапты тұлғаның қолы: _______________________</div>
+          <div>Тексеру күні: <span id="print-footer-date" class="font-bold"></span></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 2-ҚОЙЫНДЫ: ТЕОРИЯ, АУДАН КАЛЬКУЛЯТОРЫ, АЛГОРИТМ ЖӘНЕ ТЫЙЫМДАР -->
+    <!-- ===================================================================== -->
+    <section id="tab-algo" class="hidden space-y-4">
+
+      <!-- 1-блок: «Тоғыздық ережесі» бойынша күйік ауданының интерактивті калькуляторы -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Күйік ауданы калькуляторы («Тоғыздық ережесі»)</h2>
+          <button type="button" onclick="resetBurnCalc()" class="text-xs font-semibold text-slate-500 hover:text-[#dc2626] underline">
+            Тазалау
+          </button>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">
+          Ересек адамның зақымданған анатомиялық аймақтарын және күйік тереңдігін таңдаңыз (сонымен қатар: <strong>«Алақан ережесі» бойынша 1 алақан = дене бетінің 1%-ы</strong>):
+        </p>
+
+        <!-- Күйік тереңдігін ауыстырғыш -->
+        <div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-xl mb-3">
+          <button type="button" id="depth-superficial" onclick="setBurnDepth('superficial')" class="py-2 px-2.5 rounded-lg text-xs font-bold bg-[#0f766e] text-white shadow-sm transition">
+            Беткей күйіктер (I–II–IIIа дәреже)
+          </button>
+          <button type="button" id="depth-deep" onclick="setBurnDepth('deep')" class="py-2 px-2.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition">
+            Терең күйіктер (IIIб–IV дәреже)
+          </button>
+        </div>
+
+        <!-- Анатомиялық аймақтар батырмалары -->
+        <div id="burn-zones-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3.5"></div>
+
+        <!-- Есептеу нәтижесі және күйік шогы қаупін бағалау блогы -->
+        <div id="burn-calc-result" class="p-3.5 rounded-xl border transition-all"></div>
+      </div>
+
+      <!-- 2-блок: Күйік тереңдігінің жіктелуі және термоингаляциялық зақымдану -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 space-y-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Күйіктердің зақымдану тереңдігі бойынша жіктелуі</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Алғашқы қарап-тексеруге арналған клиникалық белгілер (ҚР ДСМ КХ):</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2">
+          <div class="p-3 rounded-xl bg-teal-50/50 border border-teal-200">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-teal-950">I дәреже (эпидермистің беткей күйігі)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-teal-100 text-[#0f766e]">Беткей</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Терінің қызаруы (гиперемия), шамалы ісіну, күйдіріп ауырсыну. Көпіршіктер болмайды; 3–7 күнде тыртықсыз өздігінен жазылады.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-teal-50/50 border border-teal-200">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-teal-950">II дәреже (эпидермис пен дерманың жоғарғы қабаты)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-teal-100 text-[#0f766e]">Беткей</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Айқын гиперемия, ісіну, қатты ауырсыну, <strong>мөлдір немесе сарғыш серозды сұйықтыққа толы көпіршіктер</strong> түзіледі. 1–2 аптада эпителизацияланады.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-amber-50/60 border border-amber-200">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-amber-950">IIIа дәреже (тері дериваттары сақталған дерманың ішінара некрозы)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">Шекаралық</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Геморрагиялық сұйықтығы бар тығыз көпіршіктер, ақшыл-қызғылт немесе шұбар жара түбі, ауырсыну сезімталдығы төмендеген.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-red-50/60 border border-red-200">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-red-950">IIIб дәреже (терінің барлық қабатының теріасты майына дейін некрозы)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-800">Терең</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Құрғақ немесе ылғалды <strong>қабыршақ (струп)</strong> (сұр, қоңыр түсті) түзіледі, зақымданған аймақта <strong>ауырсыну сезімталдығы жойылған (анестезия)</strong>. Хирургиялық емді қажет етеді.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-red-50/80 border border-red-300">
+            <div class="flex justify-between items-center">
+              <span class="text-xs sm:text-sm font-extrabold text-red-950">IV дәреже (көмірлену және терең тіндердің некрозы)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-red-200 text-red-900">Аса терең</span>
+            </div>
+            <p class="text-xs text-slate-700 mt-1">Фасциялар, бұлшықеттер, сіңірлер және сүйектердің зақымдануы. Тығыз қара струп, тіндердің толық анестезиясы, ауыр күйік шогы мен сепсис қаупі жоғары.</p>
+          </div>
+        </div>
+
+        <!-- Термоингаляциялық зақымдану белгілері -->
+        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-950">
+          <div class="font-extrabold text-sm text-amber-900 mb-1">
+            Термоингаляциялық зақымдану (жоғарғы тыныс жолдарының күйігі)
+          </div>
+          <p class="leading-relaxed">
+            Жабық үй-жайдағы өрт кезінде, беттің/қастың/еріннің күюі, танау түктерінің үйітілуі, мұрын-жұтқыншақтағы күйе, дауыстың қарлығуы, үрмелі жөтел, стридор және ентігу байқалғанда күдіктену қажет. Көмей ісінуі өте жылдам дамиды — ерте оттегі ингаляциясы және шұғыл эвакуация көрсетілген!
+          </p>
+        </div>
+      </div>
+
+      <!-- 3-блок: ҚР ДСМ КХ бойынша шұғыл көмек көрсетудің қадамдық хаттамасы -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Термиялық күйіктер кезіндегі шұғыл көмек алгоритмі</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Госпитальға дейінгі және амбулаториялық кезеңдегі іс-қимыл реті (ҚР ДСМ КХ):</p>
+        </div>
+
+        <div class="border-l-4 border-[#dc2626] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#dc2626]">1-қадам • Қауіпсіздік және термиялық агентті тоқтату</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Жылу әсерін дереу жою</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Жеке қауіпсіздікке көз жеткізу (от, түтін, электр тогы, ыстық сұйықтықтар).</li>
+            <li>Жалынды сөндіру (тығыз матамен жабу; зардап шегушінің жүгіруіне жол бермеу).</li>
+            <li>Ісіну күшейгенге дейін ыстық/бықсыған киімді, сақина, сағат және белдіктерді шешу. <strong>Жараға жабысып қалған киімді күшпен жұлып алуға БОЛМАЙДЫ — шетінен мұқият қиып алу керек!</strong></li>
+          </ul>
+        </div>
+
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">2-қадам • Тыныс жолдарын және жағдайды бағалау</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Тыныс жолдарының өткізгіштігі мен гемодинамиканы бақылау</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Есін, тыныс алуын, ЖСЖ, АҚ және сатурацияны (SpO₂) бағалау.</li>
+            <li>Термоингаляциялық жарақат белгілері немесе SpO₂ &lt; 90% болғанда — ылғалдандырылған оттегі беру және тыныс жолдарының өткізгіштігін қамтамасыз етуге дайын болу.</li>
+          </ul>
+        </div>
+
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">3-қадам • Алғашқы 10–20 минут</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Күйік бетін жергілікті салқындату</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Жарақаттан кейінгі алғашқы минуттарда күйік аймағын <strong>салқын ағынды сумен (12–18 °C) 10–20 минут бойы</strong> салқындату — бұл терең тіндердің қызуын тоқтатады және ауырсынуды азайтады.</li>
+            <li>Кең көлемді күйіктерде (&gt; 15–20% дене беті) жалпы гипотермияның алдын алу үшін денені ұзақ салқындатудан сақтану керек.</li>
+          </ul>
+        </div>
+
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">4-қадам • Анальгезия және шокқа қарсы терапия</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Ауырсынуды басу және инфузиялық қолдау</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li><strong>Ауырсынуды басу (анальгезия):</strong> хаттама мен жабдықталуға сәйкес анальгетиктер енгізу (орташа ауырсынуда — Метамизол натрий 50% – 2,0 мл б/і немесе к/т; ауыр кең күйіктерде — көрсетілім бойынша есірткілік анальгетиктер).</li>
+            <li><strong>Инфузиялық терапия:</strong> терең күйік ауданы &gt; 10% немесе беткей күйік &gt; 15–20% болғанда — шеткері венаны катетерлеу және кристаллоидтар инфузиясын (<strong>Натрий хлориді 0,9%</strong>) бастау.</li>
+          </ul>
+        </div>
+
+        <div class="border-l-4 border-[#0f766e] pl-3.5 py-0.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0f766e]">5-қадам • Асептикалық таңғыш және эвакуация</div>
+          <h4 class="text-sm font-bold text-slate-900 mt-0.5 mb-1">Жараны қорғау және госпитализациялау</h4>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-700">
+            <li>Құрғақ стерильді бос таңғыш (ЖТП, стерильді бинт) немесе арнайы гидрогельді күйікке қарсы салфетка салу.</li>
+            <li>Беткей күйік айналасындағы зақымданбаған теріні ғана 5% йод ерітіндісімен өңдеуге болады.</li>
+            <li>Науқасты жылыту (терможамылғы) және көрсетілім бойынша стационарға шұғыл эвакуациялау.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4-блок: Ашық қызыл ескерту блогы «НЕНІ ҚАТАҢ ІСТЕУГЕ БОЛМАЙДЫ!» -->
+      <div class="bg-[#fef2f2] rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-[#dc2626]">
+        <div class="flex items-center gap-2.5 mb-2.5">
+          <div class="w-8 h-8 rounded-xl bg-[#dc2626] text-white flex items-center justify-center font-extrabold text-base shrink-0">
+            !
+          </div>
+          <h3 class="text-base sm:text-lg font-extrabold text-[#dc2626] uppercase tracking-tight">
+            НЕНІ ҚАТАҢ ІСТЕУГЕ БОЛМАЙДЫ!
+          </h3>
+        </div>
+        <ul class="space-y-2 text-xs sm:text-sm text-red-950">
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Жас күйік бетіне май, қаймақ, крем немесе майлы жақпамай жағуға:</strong> май қабаты жылу алмасуды бұзып (күйікті тереңдетеді), жараны инфекциялайды және хирургтің зақымдану тереңдігін бағалауын қиындатады.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Мұзды тікелей теріге (күйік бетіне) басуға:</strong> тамырлардың күрт түйілуін (спазмын), ишемияны және тіндердің қосымша суықтан зақымдануын тудырады.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Күйік көпіршіктерін тесуге немесе жаруға:</strong> бүтін көпіршік қабығы — жара түбін инфекциядан қорғайтын табиғи стерильді биологиялық таңғыш; оны ашу ауыр іріңді инфекцияға жол ашады.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Жараға жабысып қалған киімді күшпен жұлып алуға:</strong> бұл тірі дерма қабаттарының жыртылуына, қан кетуге және ауырсыну шогының күшеюіне әкеледі (матаны тек айналасынан қиып алады).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-extrabold text-[#dc2626]">✕</span>
+            <span><strong>Ашық күйік бетіне спирт немесе 5% спиртті йод ерітіндісін құюға:</strong> жара түбінің химиялық коагуляциялық некрозын және шыдатпас ауырсынуды тудырады (5% йод тек жара айналасындағы бүтін теріге қолданылады).</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 5-блок: Күйік орталығына шұғыл госпитализациялау критерийлері -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <h3 class="text-base font-bold text-slate-900 mb-2">
+          Күйік орталығына / стационарға шұғыл госпитализациялау критерийлері
+        </h3>
+        <ul class="list-disc pl-4 space-y-1.5 text-xs sm:text-sm text-slate-700">
+          <li>Ересектерде <strong>беткей күйіктердің</strong> ауданы дене бетінің <strong>10%-нан</strong> асса (балалар мен қарттарда 5%-дан асса).</li>
+          <li><strong>Терең күйіктер (IIIб–IV дәреже)</strong> ауданы <strong>2–5%-дан</strong> асса (ал функционалды маңызды аймақтарда орналасқанда — кез келген ауданда).</li>
+          <li><strong>Ерекше (шоктық және функционалды маңызды) аймақтардың күйігі:</strong> бет, мойын, қол басы, табан, шап / жыныс мүшелері, ірі буындар аймағы.</li>
+          <li><strong>Термоингаляциялық жарақат</strong> (жоғарғы тыныс жолдарының күйігіне немесе иіс газымен улануға күдік).</li>
+          <li>Аяқ-қолдардың немесе кеуде қуысының <strong>циркулярлық (айналма) күйіктері</strong> (қан тамырларының қысылуы және тыныс алу экскурсиясының бұзылу қаупі).</li>
+          <li><strong>Электр күйіктері, химиялық күйіктер</strong>, аралас жарақаттар және ауыр қосалқы патологиялар.</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 3-ҚОЙЫНДЫ: ТЕСТ-ТРЕНАЖЕР (ҚР ДСМ ХАТТАМАСЫ БОЙЫНША 15 СҰРАҚ) -->
+    <!-- ===================================================================== -->
+    <section id="tab-quiz" class="hidden space-y-4">
+
+      <!-- Режим таңдау панелі және сұрақтар торы -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="grid grid-cols-2 gap-1 bg-slate-200/80 p-1 rounded-xl mb-3.5">
+          <button type="button" id="mode-learn" onclick="setQuizMode('learn')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition">
+            Оқыту режимі
+          </button>
+          <button type="button" id="mode-exam" onclick="setQuizMode('exam')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition">
+            Емтихан режимі
+          </button>
+        </div>
+
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+          <span id="quiz-counter" class="text-xs sm:text-sm font-bold text-slate-800">Жауап берілді: 0 / 15</span>
+          <span id="mode-desc" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 text-[#0f766e] border border-teal-200">
+            Оқыту: жауаптан кейін бірден талдау
+          </span>
+        </div>
+
+        <div id="q-grid" class="grid grid-cols-5 gap-1.5"></div>
+      </div>
+
+      <!-- Ағымдағы сұрақ картасы -->
+      <div id="quiz-card" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex justify-between items-center gap-2 mb-3">
+          <span id="q-topic" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-50 text-[#0f766e] border border-teal-200">
+            АУДАНДЫ БАҒАЛАУ
+          </span>
+          <span id="q-step-label" class="text-xs font-medium text-slate-500">1-сұрақ (барлығы 15)</span>
+        </div>
+
+        <div id="q-text" class="text-sm sm:text-base font-bold text-slate-900 leading-snug mb-4"></div>
+
+        <div id="q-options" class="space-y-2"></div>
+
+        <div id="q-explanation" class="hidden mt-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed"></div>
+
+        <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-100">
+          <button type="button" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            ← Артқа
+          </button>
+          <button type="button" id="next-btn" onclick="nextQuestion()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-[#0f766e] text-[#0f766e] bg-white hover:bg-teal-50 active:scale-95 transition">
+            Келесі →
+          </button>
+        </div>
+      </div>
+
+      <!-- Емтихан нәтижесі картасы -->
+      <div id="exam-result-card" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-teal-50 text-[#0f766e] flex items-center justify-center text-2xl mx-auto font-bold">
+          ✓
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Тестілеу нәтижесі</h3>
+        <p id="exam-score-text" class="text-base sm:text-lg font-extrabold text-[#0f766e]"></p>
+        <p id="exam-feedback-text" class="text-xs sm:text-sm text-slate-600"></p>
+        <div id="exam-review-list" class="text-left space-y-2 pt-2 max-h-80 overflow-y-auto"></div>
+        <div class="pt-2">
+          <button type="button" onclick="resetQuiz()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#0f766e] text-white hover:bg-teal-800 active:scale-95 transition">
+            Тестті қайта өту
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. КҮЙІККЕ ҚАРСЫ ЖИЫНТЫҚТЫҢ ДЕРЕКТЕРІ (8 ПОЗИЦИЯ)
+    // =========================================================================
+    const kitItems = [
+      // 1-бөлім: Дәрілік заттар (ДЗ) — 3 позиция
+      {
+        id: 'ls1',
+        group: 'ls',
+        name: 'Декспантенол спрей — 1 дана',
+        norm: 'Қолданылуы: күйік бетін жергілікті өңдеу, эпителизацияны жеделдету'
+      },
+      {
+        id: 'ls2',
+        group: 'ls',
+        name: 'Метамизол натрий 50% – 2,0 мл — 2 ампула',
+        norm: 'Қолданылуы: ауырсынуды басу / анальгезия'
+      },
+      {
+        id: 'ls3',
+        group: 'ls',
+        name: 'Йод ерітіндісі 5% — 1 құты',
+        norm: 'Ескерту: тек жара айналасындағы бүтін теріні өңдеуге, ашық күйік бетіне құюға БОЛМАЙДЫ'
+      },
+
+      // 2-бөлім: Медициналық мақсаттағы бұйымдар (ММБ) — 5 позиция
+      {
+        id: 'imn1',
+        group: 'imn',
+        name: 'Жеке таңу пакеті (ЖТП) / Стерильді бинт — 5 дана',
+        norm: 'Асептикалық таңғыш салу үшін'
+      },
+      {
+        id: 'imn2',
+        group: 'imn',
+        name: 'Инъекцияға арналған шприц 2,0 мл — 2 дана',
+        norm: 'Стерильді, бір реттік қолдануға арналған'
+      },
+      {
+        id: 'imn3',
+        group: 'imn',
+        name: 'Медициналық стерильді мақта 50,0 г — 1 дана',
+        norm: 'Дәке таңғыштың сыртынан қорғаныш қабаты ретінде'
+      },
+      {
+        id: 'imn4',
+        group: 'imn',
+        name: 'Стерильді дәке салфеткалар / гидрогельді күйікке қарсы таңғыштар',
+        norm: 'Қосымша жасақтау стандарты бойынша'
+      },
+      {
+        id: 'imn5',
+        group: 'imn',
+        name: 'Медициналық стерильді емес қолғаптар — 2 жұп',
+        norm: 'Жеке инфекциялық қауіпсіздік құралы'
+      }
+    ];
+
+    // Аудит күйі: { [id]: { present: boolean, expiry: string } }
+    let auditState = {};
+    let auditDate = '2026-11-27';
+    const STORAGE_KEY = 'burns_kit_audit_kk_v1';
+
+    function getReferenceYearMonth() {
+      const fallback = new Date(2026, 10, 27); // 2026-11-27
+      if (!auditDate || !/^\d{4}-\d{2}-\d{2}$/.test(auditDate)) {
+        return {
+          year: fallback.getFullYear(),
+          month: fallback.getMonth() + 1,
+          formatted: '27.11.2026'
+        };
+      }
+      const parts = auditDate.split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parts[2];
+      return {
+        year: year,
+        month: month,
+        formatted: `${day}.${parts[1]}.${year}`
+      };
+    }
+
+    function loadAuditState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          auditState = parsed.items || {};
+          if (parsed.auditor) {
+            document.getElementById('auditor-name').value = parsed.auditor;
+          }
+          if (parsed.auditDate && /^\d{4}-\d{2}-\d{2}$/.test(parsed.auditDate)) {
+            auditDate = parsed.auditDate;
+          }
+        }
+      } catch (e) {
+        auditState = {};
+      }
+      const dateInput = document.getElementById('audit-date-input');
+      if (dateInput) dateInput.value = auditDate;
+
+      kitItems.forEach(item => {
+        if (!auditState[item.id]) {
+          auditState[item.id] = { present: false, expiry: '' };
+        }
+      });
+      syncPrintDate();
+    }
+
+    function saveAuditMeta() {
+      try {
+        const auditor = document.getElementById('auditor-name').value;
+        const dateInput = document.getElementById('audit-date-input');
+        if (dateInput && dateInput.value) {
+          auditDate = dateInput.value;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          auditor: auditor,
+          auditDate: auditDate,
+          items: auditState
+        }));
+      } catch (e) {}
+    }
+
+    function handleAuditDateChange(newDateVal) {
+      if (newDateVal && /^\d{4}-\d{2}-\d{2}$/.test(newDateVal)) {
+        auditDate = newDateVal;
+      }
+      saveAuditMeta();
+      syncPrintDate();
+      kitItems.forEach(item => updateItemVisuals(item.id));
+      updateSummaryStats();
+    }
+
+    function syncPrintDate() {
+      const ref = getReferenceYearMonth();
+      const footerDate = document.getElementById('print-footer-date');
+      if (footerDate) footerDate.textContent = ref.formatted;
+    }
+
+    // Таңдалған «Тексеру күніне» қатысты жарамдылық мерзімін бағалау
+    function evaluateExpiry(expiryStr) {
+      const clean = (expiryStr || '').trim();
+      if (!clean) {
+        return { code: 'empty', label: 'Мерзімін енгізіңіз (АА.ЖЖ)' };
+      }
+
+      const match = clean.match(/^(\d{2})\.(\d{2})$/);
+      if (!match) {
+        return { code: 'invalid', label: 'Формат: АА.ЖЖ' };
+      }
+
+      const month = parseInt(match[1], 10);
+      const yearShort = parseInt(match[2], 10);
+
+      if (month < 1 || month > 12) {
+        return { code: 'invalid', label: 'Қате ай (01–12)' };
+      }
+
+      const fullYear = 2000 + yearShort;
+      const ref = getReferenceYearMonth();
+      const diffMonths = (fullYear - ref.year) * 12 + (month - ref.month);
+
+      if (diffMonths < 0) {
+        return { code: 'expired', label: `МЕРЗІМІ ӨТКЕН (${clean})` };
+      } else if (diffMonths === 0 || diffMonths === 1) {
+        return { code: 'expiring', label: `Мерзімі жақындады (${clean})` };
+      } else {
+        return { code: 'valid', label: `Жарамды (дейін ${clean})` };
+      }
+    }
+
+    function handleExpiryInput(id, inputEl) {
+      let digits = inputEl.value.replace(/\D/g, '').slice(0, 4);
+      let formatted = digits;
+      if (digits.length > 2) {
+        formatted = digits.slice(0, 2) + '.' + digits.slice(2);
+      }
+      inputEl.value = formatted;
+      auditState[id].expiry = formatted;
+      saveAuditMeta();
+      updateItemVisuals(id);
+      updateSummaryStats();
+    }
+
+    function handlePresenceChange(id, isChecked) {
+      auditState[id].present = isChecked;
+      saveAuditMeta();
+      updateItemVisuals(id);
+      updateSummaryStats();
+    }
+
+    function updateItemVisuals(id) {
+      const card = document.getElementById(`card-${id}`);
+      const badge = document.getElementById(`badge-${id}`);
+      if (!card || !badge) return;
+
+      const state = auditState[id];
+      const expStatus = evaluateExpiry(state.expiry);
+
+      let cardClasses = 'p-3 rounded-xl border transition ';
+      let badgeClasses = 'inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border ';
+      let badgeText = expStatus.label;
+
+      if (!state.present) {
+        cardClasses += 'border-slate-200 bg-slate-50/60';
+        badgeClasses += 'bg-slate-100 text-slate-600 border-slate-200';
+        badgeText = expStatus.code === 'expired'
+          ? `Қоймада жоқ • ${expStatus.label}`
+          : 'Қоймада жоқ';
+      } else {
+        if (expStatus.code === 'expired') {
+          cardClasses += 'border-[#dc2626] bg-[#fef2f2]';
+          badgeClasses += 'bg-red-100 text-red-800 border-red-300';
+        } else if (expStatus.code === 'expiring') {
+          cardClasses += 'border-amber-400 bg-amber-50/50';
+          badgeClasses += 'bg-amber-100 text-amber-800 border-amber-300';
+        } else if (expStatus.code === 'valid') {
+          cardClasses += 'border-emerald-400 bg-emerald-50/40';
+          badgeClasses += 'bg-emerald-100 text-emerald-800 border-emerald-300';
+        } else if (expStatus.code === 'invalid') {
+          cardClasses += 'border-amber-300 bg-white';
+          badgeClasses += 'bg-amber-50 text-amber-700 border-amber-200';
+        } else {
+          cardClasses += 'border-teal-300 bg-white';
+          badgeClasses += 'bg-slate-100 text-slate-600 border-slate-200';
+        }
+      }
+
+      card.className = cardClasses;
+      badge.className = badgeClasses;
+      badge.textContent = badgeText;
+      renderPrintTable();
+    }
+
+    function renderKit() {
+      const lsContainer = document.getElementById('list-ls');
+      const imnContainer = document.getElementById('list-imn');
+      lsContainer.innerHTML = '';
+      imnContainer.innerHTML = '';
+
+      kitItems.forEach(item => {
+        const state = auditState[item.id] || { present: false, expiry: '' };
+        const div = document.createElement('div');
+        div.id = `card-${item.id}`;
+
+        div.innerHTML = `
+          <div class="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="chk-${item.id}"
+              ${state.present ? 'checked' : ''}
+              onchange="handlePresenceChange('${item.id}', this.checked)"
+              class="w-5 h-5 mt-0.5 rounded accent-[#0f766e] shrink-0 cursor-pointer"
+              aria-label="Бар-жоғы: ${item.name}"
+            >
+            <div class="flex-1 min-w-0">
+              <label for="chk-${item.id}" class="block text-xs sm:text-sm font-semibold text-slate-900 leading-snug cursor-pointer">
+                ${item.name}
+              </label>
+              <div class="text-[11px] sm:text-xs text-slate-500 mt-0.5">${item.norm}</div>
+
+              <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5">
+                  <label for="exp-${item.id}" class="text-[11px] font-semibold text-slate-600">Мерзімі:</label>
+                  <input
+                    type="text"
+                    id="exp-${item.id}"
+                    inputmode="numeric"
+                    maxlength="5"
+                    placeholder="АА.ЖЖ"
+                    value="${state.expiry}"
+                    oninput="handleExpiryInput('${item.id}', this)"
+                    class="w-20 px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-bold text-center text-slate-900 focus:outline-none focus:border-[#0f766e]"
+                  >
+                </div>
+                <span id="badge-${item.id}"></span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (item.group === 'ls') lsContainer.appendChild(div);
+        else imnContainer.appendChild(div);
+
+        updateItemVisuals(item.id);
+      });
+
+      updateSummaryStats();
+    }
+
+    function renderPrintTable() {
+      const tbody = document.getElementById('print-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      kitItems.forEach((item, index) => {
+        const st = auditState[item.id] || { present: false, expiry: '' };
+        const status = evaluateExpiry(st.expiry);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="border border-slate-300 p-1.5 text-center">${index + 1}</td>
+          <td class="border border-slate-300 p-1.5 font-medium">${item.name}</td>
+          <td class="border border-slate-300 p-1.5 text-center">${st.present ? 'Бар' : 'Жоқ'}</td>
+          <td class="border border-slate-300 p-1.5 text-center">${st.expiry || '—'}</td>
+          <td class="border border-slate-300 p-1.5">${st.present ? status.label : 'Жоқ'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleAllPresence(isPresent) {
+      kitItems.forEach(item => {
+        auditState[item.id].present = isPresent;
+      });
+      saveAuditMeta();
+      renderKit();
+    }
+
+    function resetKitAudit() {
+      kitItems.forEach(item => {
+        auditState[item.id] = { present: false, expiry: '' };
+      });
+      saveAuditMeta();
+      renderKit();
+    }
+
+    function updateSummaryStats() {
+      const total = kitItems.length;
+      let validCount = 0;
+      let expiredCount = 0;
+      let missingCount = 0;
+      let lsValid = 0;
+      let imnValid = 0;
+
+      kitItems.forEach(item => {
+        const st = auditState[item.id];
+        const status = evaluateExpiry(st.expiry);
+
+        if (!st.present) {
+          missingCount++;
+          if (status.code === 'expired') expiredCount++;
+        } else {
+          if (status.code === 'expired') {
+            expiredCount++;
+          } else {
+            validCount++;
+            if (item.group === 'ls') lsValid++;
+            else imnValid++;
+          }
+        }
+      });
+
+      const lsTotal = kitItems.filter(i => i.group === 'ls').length;
+      const imnTotal = kitItems.filter(i => i.group === 'imn').length;
+      const pct = Math.round((validCount / total) * 100);
+
+      document.getElementById('stat-valid').textContent = validCount;
+      document.getElementById('stat-expired').textContent = expiredCount;
+      document.getElementById('stat-missing').textContent = missingCount;
+
+      document.getElementById('progress-text').textContent = `Жасақталу деңгейі: ${validCount} / ${total} позиция`;
+      document.getElementById('progress-percent').textContent = `${pct}%`;
+      document.getElementById('progress-fill').style.width = `${pct}%`;
+      document.getElementById('count-ls').textContent = `${lsValid} / ${lsTotal}`;
+      document.getElementById('count-imn').textContent = `${imnValid} / ${imnTotal}`;
+
+      const badge = document.getElementById('status-badge');
+      if (expiredCount > 0) {
+        badge.textContent = `Назар аударыңыз: мерзімі өткен (${expiredCount})`;
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800';
+      } else if (validCount === total) {
+        badge.textContent = 'Жиынтық толық жасақталған (100%)';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-100 text-teal-800';
+      } else if (validCount > 0) {
+        badge.textContent = 'Тексеру жүргізілуде...';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+      } else {
+        badge.textContent = 'Тексеру қажет';
+        badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600';
+      }
+    }
+
+    // =========================================================================
+    // 2. «ТОҒЫЗДЫҚ ЕРЕЖЕСІ» БОЙЫНША КҮЙІК АУДАНЫНЫҢ КАЛЬКУЛЯТОРЫ
+    // =========================================================================
+    const burnZones = [
+      { id: 'head', label: 'Бас және мойын', pct: 9 },
+      { id: 'arm_r', label: 'Бір қол (оң қол)', pct: 9 },
+      { id: 'arm_l', label: 'Екінші қол (сол қол)', pct: 9 },
+      { id: 'front_torso', label: 'Кеуде және іш — алдыңғы беті', pct: 18 },
+      { id: 'back_torso', label: 'Арқа және бел — артқы беті', pct: 18 },
+      { id: 'leg_r', label: 'Бір аяқ (оң аяқ)', pct: 18 },
+      { id: 'leg_l', label: 'Екінші аяқ (сол аяқ)', pct: 18 },
+      { id: 'perineum', label: 'Шап аймағы', pct: 1 }
+    ];
+
+    let selectedZones = {};
+    let burnDepth = 'superficial'; // 'superficial' | 'deep'
+
+    function setBurnDepth(depth) {
+      burnDepth = depth;
+      const btnSup = document.getElementById('depth-superficial');
+      const btnDeep = document.getElementById('depth-deep');
+
+      if (depth === 'superficial') {
+        btnSup.className = 'py-2 px-2.5 rounded-lg text-xs font-bold bg-[#0f766e] text-white shadow-sm transition';
+        btnDeep.className = 'py-2 px-2.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition';
+      } else {
+        btnDeep.className = 'py-2 px-2.5 rounded-lg text-xs font-bold bg-[#dc2626] text-white shadow-sm transition';
+        btnSup.className = 'py-2 px-2.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition';
+      }
+      recalculateBurnArea();
+    }
+
+    function renderBurnZones() {
+      const grid = document.getElementById('burn-zones-grid');
+      grid.innerHTML = '';
+
+      burnZones.forEach(z => {
+        const checked = !!selectedZones[z.id];
+        const label = document.createElement('label');
+        label.className = `flex items-center justify-between gap-2 p-2.5 rounded-xl border cursor-pointer transition ${
+          checked
+            ? 'border-[#0f766e] bg-teal-50/70'
+            : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50'
+        }`;
+        label.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            <input
+              type="checkbox"
+              ${checked ? 'checked' : ''}
+              onchange="toggleBurnZone('${z.id}', this.checked)"
+              class="w-4 h-4 rounded accent-[#0f766e] shrink-0 cursor-pointer"
+            >
+            <span class="text-xs font-semibold text-slate-800 leading-snug">${z.label}</span>
+          </div>
+          <span class="text-xs font-extrabold ${checked ? 'text-[#0f766e]' : 'text-slate-500'} shrink-0">
+            ${z.pct}%
+          </span>
+        `;
+        grid.appendChild(label);
+      });
+    }
+
+    function toggleBurnZone(id, isChecked) {
+      selectedZones[id] = isChecked;
+      renderBurnZones();
+      recalculateBurnArea();
+    }
+
+    function resetBurnCalc() {
+      selectedZones = {};
+      burnDepth = 'superficial';
+      setBurnDepth('superficial');
+      renderBurnZones();
+      recalculateBurnArea();
+    }
+
+    function recalculateBurnArea() {
+      let totalPct = 0;
+      burnZones.forEach(z => {
+        if (selectedZones[z.id]) totalPct += z.pct;
+      });
+
+      const resDiv = document.getElementById('burn-calc-result');
+      const isDeep = burnDepth === 'deep';
+
+      if (totalPct === 0) {
+        resDiv.className = 'p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-600';
+        resDiv.innerHTML = 'Күйіктің жалпы ауданын (% дене беті), күйік шогының даму қаупін және күйік орталығына госпитализациялау көрсетілімдерін есептеу үшін жоғарыдағы зақымданған аймақтарды белгілеңіз.';
+        return;
+      }
+
+      const shockThreshold = isDeep ? 10 : 15;
+      const hospThreshold = isDeep ? 2 : 10;
+      const hasShockRisk = totalPct >= shockThreshold;
+      const needsHosp = totalPct >= hospThreshold || selectedZones['head'] || selectedZones['perineum'];
+
+      if (hasShockRisk) {
+        resDiv.className = 'p-3.5 rounded-xl border-2 border-[#dc2626] bg-[#fef2f2]';
+        resDiv.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <span class="text-sm sm:text-base font-extrabold text-red-950">Күйіктің жалпы ауданы: ${totalPct}% дене беті</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-[#dc2626] text-white">
+              КҮЙІК ШОГЫНЫҢ ЖОҒАРЫ ҚАУПІ!
+            </span>
+          </div>
+          <p class="text-xs text-red-900 leading-relaxed">
+            ${isDeep ? 'Терең күйіктер (IIIб–IV дәреже) ≥ 10% дене беті' : 'Кең көлемді беткей күйіктер ≥ 15–20% дене беті'} ауыр плазма жоғалтумен және айқын ауырсыну синдромымен қатар жүреді. Көрсетілген: барабар анальгезия, веналық қолжетімділік, кристаллоидтар инфузиясы (NaCl 0,9%), науқасты жылыту және <strong>күйік орталығына / ЖҚТБ-ға шұғыл госпитализациялау</strong>.
+          </p>
+        `;
+      } else if (needsHosp) {
+        resDiv.className = 'p-3.5 rounded-xl border border-amber-300 bg-amber-50/70';
+        resDiv.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <span class="text-sm sm:text-base font-extrabold text-amber-950">Күйіктің жалпы ауданы: ${totalPct}% дене беті</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-200 text-amber-950">
+              КҮЙІК ОРТАЛЫҒЫНА ГОСПИТАЛИЗАЦИЯ КӨРСЕТІЛГЕН
+            </span>
+          </div>
+          <p class="text-xs text-amber-900 leading-relaxed">
+            Терең зақымдану (IIIб–IV дәреже), функционалды маңызды аймақтың күйігі (бас/мойын/шап аймағы) немесе ауданы &gt; 10% болуы салқындату, ауырсынуды басу және стерильді таңғыш салудан кейін стационарға шұғыл жатқызуды талап етеді.
+          </p>
+        `;
+      } else {
+        resDiv.className = 'p-3.5 rounded-xl border border-teal-200 bg-teal-50/60';
+        resDiv.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <span class="text-sm sm:text-base font-extrabold text-teal-950">Күйіктің жалпы ауданы: ${totalPct}% дене беті</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-100 text-[#0f766e]">
+              Шектеулі беткей күйік
+            </span>
+          </div>
+          <p class="text-xs text-teal-900 leading-relaxed">
+            Күйік шогының даму қаупі төмен (егер қол басы, табан, буындар немесе тыныс жолдары зақымданбаса). Тактика: салқын ағынды сумен 10–20 мин салқындату, ауырсынуды басу, құрғақ стерильді таңғыш және хирургтің амбулаториялық бақылауы.
+          </p>
+        `;
+      }
+    }
+
+    // =========================================================================
+    // 3. ТЕСТ-ТРЕНАЖЕР (ҚР ДСМ ХАТТАМАСЫ БОЙЫНША 15 СҰРАҚ)
+    // =========================================================================
+    const questions = [
+      {
+        topic: 'ТОҒЫЗДЫҚ ЕРЕЖЕСІ • АУДАНДЫ ЕСЕПТЕУ',
+        q: 'Ересек зардап шегушіде кеуде мен іштің алдыңғы беті және бір қолы толық күйген. Уоллестің «Тоғыздық ережесі» бойынша күйіктің жалпы ауданы қанша?',
+        options: [
+          'Дене бетінің 18%-ы',
+          'Дене бетінің 27%-ы',
+          'Дене бетінің 36%-ы',
+          'Дене бетінің 45%-ы'
+        ],
+        correct: 1,
+        exp: '«Тоғыздық ережесі» бойынша кеуде мен іштің алдыңғы беті 18%-ды, ал бір қол 9%-ды құрайды. Жалпы ауданы: 18% + 9% = 27%.'
+      },
+      {
+        topic: 'АЛАҚАН ЕРЕЖЕСІ',
+        q: 'Шағын немесе мозаикалық күйіктердің ауданын бағалау кезінде зардап шегушінің бір алақаны (саусақтарымен бірге) дене бетінің қанша пайызына тең?',
+        options: [
+          'Дене бетінің 0,5%-ына',
+          'Дене бетінің 1%-ына',
+          'Дене бетінің 3%-ына',
+          'Дене бетінің 5%-ына'
+        ],
+        correct: 1,
+        exp: '«Алақан ережесіне» сәйкес науқастың саусақтары біріктірілген алақан беті дене бетінің шамамен 1%-ына сәйкес келеді.'
+      },
+      {
+        topic: 'КҮЙІК ТЕРЕҢДІГІ • IIIБ ДӘРЕЖЕ',
+        q: 'IIIб дәрежелі терең күйікке тән жергілікті клиникалық белгілер қандай?',
+        options: [
+          'Көпіршіксіз айқын гиперемия және жанасқанда қатты ауырсыну',
+          'Құрғақ немесе ылғалды қабыршақтың (струптың) түзілуі және зақымданған аймақта ауырсыну сезімталдығының жойылуы (анестезия)',
+          'Мөлдір сұйықтыққа толы жұқа қабырғалы көпіршіктер',
+          '4 күн ішінде тыртықсыз өздігінен эпителизациялану'
+        ],
+        correct: 1,
+        exp: 'IIIб дәрежелі күйікте терінің барлық қабаты теріасты майына дейін өліеттенеді: струп түзіліп, ауырсыну рецепторларының жойылуына байланысты ауырсыну сезімі жоғалады.'
+      },
+      {
+        topic: 'ТЕРМОИНГАЛЯЦИЯЛЫҚ ЖАРАҚАТ',
+        q: 'Өрт кезінде зардап шеккен науқаста термоингаляциялық зақымдануды (жоғарғы тыныс жолдарының күйігін) қандай белгілер көрсетеді?',
+        options: [
+          'Беттің, ерін мен қастың күюі, мұрын-жұтқыншақтағы күйе, дауыстың қарлығуы, стридор және ентігу',
+          'Тек табанның сыртқы бетінің шектеулі күйігі',
+          'Тәбеттің жоғарылауы және брадикардия',
+          'Тыныс алу мен дауыс тарапынан ешқандай шағымның болмауы'
+        ],
+        correct: 0,
+        exp: 'Беттің күюі, танау түктерінің үйітілуі, мұрын-жұтқыншақтағы күйе, дауыстың қарлығуы және стридор тыныс жолдары күйігінің және көмей ісінуінің ерте белгілері болып табылады.'
+      },
+      {
+        topic: 'ЖЕРГІЛІКТІ САЛҚЫНДАТУ',
+        q: 'Жарақаттан кейінгі алғашқы минуттарда термиялық күйікті жергілікті салқындату қалай дұрыс жүргізіледі?',
+        options: [
+          'Салқын ағынды сумен (12–18 °C) 10–20 минут бойы салқындату',
+          'Зардап шегушіні 1 сағатқа мұзды суға батыру',
+          'Салқындатпай бірден өсімдік майын жағу',
+          'Спиртті компресспен салқындату'
+        ],
+        correct: 0,
+        exp: 'Салқын ағынды сумен 10–20 минут бойы салқындату тіндерден артық жылуды шығарып, некроздың тереңдеуін тоқтатады және ауырсынуды азайтады.'
+      },
+      {
+        topic: 'ҚАТАҢ ТЫЙЫМДАР • МҰЗ БАСУ',
+        q: 'Неліктен мұзды тікелей күйік бетіне (теріге) басуға қатаң тыйым салынады?',
+        options: [
+          'Мұз тез еріп, киімді сулайды',
+          'Қан тамырларының күрт түйілуін (спазмын), ишемияны және тіндердің суықтан қосымша зақымдануын тудырады',
+          'Мұз декспантенолдың сіңуін күшейтеді',
+          'Барлық терең күйіктерде мұз басуға рұқсат етілген'
+        ],
+        correct: 1,
+        exp: 'Мұздың күйік бетімен тікелей жанасуы криожарақат тудырып, паранекроз аймағындағы микроциркуляцияның бұзылуын тереңдетеді.'
+      },
+      {
+        topic: 'ҚАТАҢ ТЫЙЫМДАР • МАЙЛАР МЕН ҚАЙМАҚ',
+        q: 'Неліктен жас термиялық күйік бетіне май, қаймақ немесе майлы жақпамай жағуға қатаң тыйым салынады?',
+        options: [
+          'Олар жылу өткізбейтін қабат түзіп (күйікті тереңдетеді), жараны инфекциялайды және тереңдігін бағалауды қиындатады',
+          'Олар 10 минут ішінде тыртық түзеді',
+          'Олар анальгетиктердің әсерін бейтараптандырады',
+          'Олар артериялық қысымды жоғарылатады'
+        ],
+        correct: 0,
+        exp: 'Майлы қабықша тіндердің сууына кедергі келтіреді, бактериялардың көбеюіне жағдай жасайды және дәрігердің күйік тереңдігін анықтауына бөгет болады.'
+      },
+      {
+        topic: 'КҮЙІК КӨПІРШІКТЕРІ КЕЗІНДЕГІ ТАКТИКА',
+        q: 'Алғашқы және шұғыл көмек көрсету кезінде бүтін күйік көпіршіктеріне қатысты медицина қызметкерінің дұрыс тактикасы қандай?',
+        options: [
+          'Барлық көпіршіктерді инемен тесіп, сұйықтығын шығару',
+          'Көпіршік қабығын теспеу және кеспеу — құрғақ стерильді бос таңғыш салу',
+          'Көпіршіктерді қайшымен қиып алып, 5% йод құю',
+          'Көпіршік ішіндегі сұйықтықты қолмен сығып шығару'
+        ],
+        correct: 1,
+        exp: 'Бүтін күйік көпіршігінің қабығы жара түбін микробтық ластанудан қорғайтын табиғи стерильді биологиялық таңғыш қызметін атқарады.'
+      },
+      {
+        topic: 'ЖАБЫСЫП ҚАЛҒАН КИІМ',
+        q: 'Қарап-тексеру кезінде синтетикалық киім матасының терең күйік жарасына жабысып қалғаны анықталды. Сіздің әрекетіңіз?',
+        options: [
+          'Матаны жарадан күшпен жұлып алу',
+          'Жабысқан матаны жұлмау — киімді жара айналасынан қайшымен мұқият қиып алып, үстінен стерильді таңғыш салу',
+          'Жабысқан жерге ацетон құю',
+          'Жабысқан жерді спиртті салфеткамен ысқылау'
+        ],
+        correct: 1,
+        exp: 'Жабысып қалған киімді жұлып алу тірі тіндердің зақымдануына, қан кетуге және ауырсыну шогының күшеюіне әкеледі; матаны тек шетінен қиып алады.'
+      },
+      {
+        topic: '5% ЙОД ЕРІТІНДІСІН ҚОЛДАНУ',
+        q: 'Күйікке қарсы жиынтықтағы 5% спиртті йод ерітіндісін қалай қолдануға рұқсат етіледі?',
+        options: [
+          'Ашық күйік жарасының ішіне тікелей құюға',
+          'Тек жара айналасындағы зақымданбаған бүтін теріні өңдеуге',
+          'III дәрежелі күйікті тампондау үшін дәке салфеткаларды сулауға',
+          'Ауыз қуысының шырышты қабаты күйгенде жағуға'
+        ],
+        correct: 1,
+        exp: '5% спиртті йод ерітіндісі ашық жара бетінің химиялық күйігі мен некрозын тудырады; оны тек жара айналасындағы бүтін теріні өңдеу үшін қолданады.'
+      },
+      {
+        topic: 'КҮЙІК ШОГЫНЫҢ КРИТЕРИЙЛЕРІ',
+        q: 'Ересек науқаста терең күйіктердің (IIIб–IV дәреже) ауданы қанша пайыздан асқанда күйік шогы заңды түрде дамиды?',
+        options: [
+          'Тек дене бетінің 90%-ы зақымданғанда',
+          'Терең күйік ауданы дене бетінің 10%-нан асқанда (немесе беткей күйік > 15–20% болғанда)',
+          'Күйік шогы тек 1%-дық I дәрежелі күйікте дамиды',
+          'Терең күйіктер кезінде шок дамымайды'
+        ],
+        correct: 1,
+        exp: 'Ересектерде терең күйіктер > 10% (немесе кең беткей күйіктер > 15–20%) жаппай плазма жоғалтуға, гемоконцентрацияға және күйік шогының дамуына әкеледі.'
+      },
+      {
+        topic: 'КҮЙІК ОРТАЛЫҒЫНА ГОСПИТАЛИЗАЦИЯ',
+        q: 'Күйіктің қандай орналасуы зақымдану ауданы шағын болса да мамандандырылған күйік орталығына міндетті түрде госпитализациялауға көрсетілім болып табылады?',
+        options: [
+          'Білек аймағындағы ауданы 2% болатын I дәрежелі күйік',
+          'Бет, мойын, қол басы, табан, шап аймағы және ірі буындардың күйігі',
+          'Күнге күйгеннен кейінгі арқа терісінің қызаруы',
+          'Балтырдың ауданы 1% шағын беткей күйігі'
+        ],
+        correct: 1,
+        exp: 'Бет, мойын, қол басы, табан, шап аймағы және ірі буындардың күйіктері функционалды маңызды және шоктық аймақтарға жатады, сондықтан стационарлық емді қажет етеді.'
+      },
+      {
+        topic: 'КҮЙІК КЕЗІНДЕГІ АНАЛЬГЕЗИЯ',
+        q: 'Неліктен барабар ауырсынуды басу (анальгезия) күйік кезіндегі шокқа қарсы көмектің міндетті құрамдас бөлігі болып табылады?',
+        options: [
+          'Себебі қарқынды ауырсыну симпатоадреналдық реакцияны, тамырлар спазмын күшейтіп, күйік шогының ағымын ауырлатады',
+          'Анальгетиктер жараны таңуды толық алмастырады',
+          'Ауырсынуды басу тек ауырсыну жоқ IV дәрежелі күйікте ғана қажет',
+          'Анальгетиктер жарақаттан кейін 24 сағат өткен соң ғана тағайындалады'
+        ],
+        correct: 0,
+        exp: 'Күшті ауырсыну импульсі күйік шогын іске қосатын негізгі механизмдердің бірі болғандықтан, уақтылы анальгезия өте маңызды.'
+      },
+      {
+        topic: 'ГИПОТЕРМИЯНЫҢ АЛДЫН АЛУ',
+        q: 'Неліктен алғашқы салқындату мен таңғыш салудан кейін кең көлемді күйігі бар зардап шегушіні жылыту (терможамылғымен жабу) қажет?',
+        options: [
+          'Терінің қорғаныш және терморегуляциялық қызметі жоғалғандықтан науқас жылуды тез жоғалтады, ал гипотермия шок пен коагулопатияны күшейтеді',
+          'Қатты терлеуді шақыру үшін',
+          'Күйік кезінде науқасты жылытуға тыйым салынған',
+          'Тек зембілмен тасымалдауға ыңғайлы болу үшін'
+        ],
+        correct: 0,
+        exp: 'Зақымданған тері жылуды ұстай алмайды; гипотермияның дамуы күйік шогы кезіндегі болжамды күрт нашарлатады.'
+      },
+      {
+        topic: 'ЖИЫНТЫҚ АУДИТІ • МЕРЗІМДІ БАҚЫЛАУ',
+        q: '«Күйік кезінде» жиынтығын тексеру барысында Декспантенол спрейінің жарамдылық мерзімі өткен айда аяқталғаны анықталды. Медицина қызметкерінің әрекеті қандай?',
+        options: [
+          'Жыл соңына дейін жиынтықта қалдыру',
+          'Мерзімі өткен препаратты жиынтықтан дереу алып тастау, есептен шығару актісін рәсімдеу және жарамды мерзімді препаратпен толықтыру',
+          'Қаптамадағы мерзімді маркермен түзетіп жазу',
+          'Басқа шұғыл көмек жиынтығына ауыстырып салу'
+        ],
+        correct: 1,
+        exp: 'ҚР ДСМ бұйрықтарына сәйкес жарамдылық мерзімі өткен дәрілік заттар мен ММБ-ны шұғыл көмек жиынтықтарында сақтауға және қолдануға қатаң тыйым салынады.'
+      }
+    ];
+
+    let currentQ = 0;
+    let quizMode = 'learn';
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function setQuizMode(mode) {
+      quizMode = mode;
+      const btnLearn = document.getElementById('mode-learn');
+      const btnExam = document.getElementById('mode-exam');
+
+      if (mode === 'learn') {
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition';
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Оқыту: жауаптан кейін бірден талдау';
+      } else {
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition';
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Емтихан: нәтиже мен талдау тест соңында';
+      }
+      resetQuiz();
+    }
+
+    function resetQuiz() {
+      currentQ = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      document.getElementById('exam-result-card').classList.add('hidden');
+      document.getElementById('quiz-card').classList.remove('hidden');
+      renderQuiz();
+    }
+
+    function renderQuiz() {
+      const grid = document.getElementById('q-grid');
+      grid.innerHTML = '';
+
+      questions.forEach((_, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        let classes = 'py-1.5 rounded-lg border text-xs font-bold transition ';
+
+        if (idx === currentQ) {
+          classes += 'ring-2 ring-[#0f766e] border-[#0f766e] text-[#0f766e] ';
+        } else {
+          classes += 'border-slate-200 ';
+        }
+
+        if (userAnswers[idx] !== null) {
+          if (quizMode === 'learn') {
+            classes += userAnswers[idx] === questions[idx].correct
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-400'
+              : 'bg-red-50 text-red-700 border-red-400';
+          } else {
+            classes += 'bg-teal-50 text-teal-800 border-teal-300';
+          }
+        } else {
+          classes += 'bg-white text-slate-700 hover:bg-slate-50';
+        }
+
+        btn.className = classes;
+        btn.textContent = idx + 1;
+        btn.onclick = () => {
+          currentQ = idx;
+          renderQuiz();
+        };
+        grid.appendChild(btn);
+      });
+
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      document.getElementById('quiz-counter').textContent = `Жауап берілді: ${answeredCount} / ${questions.length}`;
+
+      const qObj = questions[currentQ];
+      document.getElementById('q-topic').textContent = qObj.topic;
+      document.getElementById('q-step-label').textContent = `${currentQ + 1}-сұрақ (барлығы ${questions.length})`;
+      document.getElementById('q-text').textContent = qObj.q;
+
+      const optsDiv = document.getElementById('q-options');
+      optsDiv.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      const selected = userAnswers[currentQ];
+
+      qObj.options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+
+        let btnClass = 'w-full text-left p-3 rounded-xl border text-xs sm:text-sm font-medium transition flex items-center gap-3 ';
+        let letterClass = 'w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ';
+
+        if (selected !== null) {
+          if (quizMode === 'learn') {
+            if (i === qObj.correct) {
+              btnClass += 'border-emerald-500 bg-emerald-50 text-emerald-950';
+              letterClass += 'border-emerald-600 bg-emerald-600 text-white';
+            } else if (i === selected) {
+              btnClass += 'border-[#dc2626] bg-[#fef2f2] text-red-950';
+              letterClass += 'border-[#dc2626] bg-[#dc2626] text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-500 opacity-75';
+              letterClass += 'border-slate-300 text-slate-400';
+            }
+          } else {
+            if (i === selected) {
+              btnClass += 'border-[#0f766e] bg-teal-50/70 text-teal-950';
+              letterClass += 'border-[#0f766e] bg-[#0f766e] text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50';
+              letterClass += 'border-slate-300 text-slate-500';
+            }
+          }
+        } else {
+          btnClass += 'border-slate-200 bg-white text-slate-800 hover:border-[#0f766e] hover:bg-teal-50/30';
+          letterClass += 'border-slate-300 text-slate-600';
+        }
+
+        btn.className = btnClass;
+        btn.innerHTML = `<span class="${letterClass}">${letters[i]}</span><span class="leading-snug">${optText}</span>`;
+        btn.onclick = () => selectOption(i);
+        optsDiv.appendChild(btn);
+      });
+
+      const expDiv = document.getElementById('q-explanation');
+      if (quizMode === 'learn' && selected !== null) {
+        expDiv.classList.remove('hidden');
+        expDiv.innerHTML = `<strong class="text-[#0f766e]">ҚР ДСМ хаттамасы бойынша түсіндірме:</strong> ${qObj.exp}`;
+      } else {
+        expDiv.classList.add('hidden');
+      }
+
+      const nextBtn = document.getElementById('next-btn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = quizMode === 'exam' ? 'Емтиханды аяқтау ✓' : 'Басына оралу ↺';
+      } else {
+        nextBtn.textContent = 'Келесі →';
+      }
+    }
+
+    function selectOption(idx) {
+      if (quizMode === 'learn' && userAnswers[currentQ] !== null) return;
+      userAnswers[currentQ] = idx;
+      renderQuiz();
+    }
+
+    function prevQuestion() {
+      if (currentQ > 0) {
+        currentQ--;
+        renderQuiz();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQ < questions.length - 1) {
+        currentQ++;
+        renderQuiz();
+      } else {
+        if (quizMode === 'exam') {
+          finishExam();
+        } else {
+          currentQ = 0;
+          renderQuiz();
+        }
+      }
+    }
+
+    function finishExam() {
+      let score = 0;
+      const reviewList = document.getElementById('exam-review-list');
+      reviewList.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const isOk = userAnswers[idx] === q.correct;
+        if (isOk) score++;
+
+        const itemDiv = document.createElement('div');
+        itemDiv.className = `p-2.5 rounded-xl border text-xs ${
+          isOk ? 'border-emerald-200 bg-emerald-50/50 text-emerald-950' : 'border-red-200 bg-[#fef2f2] text-red-950'
+        }`;
+        const userOpt = userAnswers[idx] !== null ? q.options[userAnswers[idx]] : 'Жауап берілмеген';
+        itemDiv.innerHTML = `
+          <div class="font-bold">${idx + 1}. ${q.q}</div>
+          <div class="mt-1">Сіздің жауабыңыз: <strong>${userOpt}</strong></div>
+          ${!isOk ? `<div class="mt-0.5 text-emerald-800">Дұрыс жауап: <strong>${q.options[q.correct]}</strong></div>` : ''}
+          <div class="mt-1 text-slate-600">${q.exp}</div>
+        `;
+        reviewList.appendChild(itemDiv);
+      });
+
+      const pct = Math.round((score / questions.length) * 100);
+
+      document.getElementById('quiz-card').classList.add('hidden');
+      const resCard = document.getElementById('exam-result-card');
+      resCard.classList.remove('hidden');
+
+      document.getElementById('exam-score-text').textContent = `Дұрыс жауаптар: ${score} / ${questions.length} (${pct}%)`;
+      document.getElementById('exam-feedback-text').textContent = pct >= 80
+        ? 'Өте жақсы нәтиже! ҚР ДСМ хаттамасы бойынша термиялық күйіктерді бағалау және шұғыл көмек көрсету ережелері сенімді меңгерілген.'
+        : '«Теория және алгоритм» бөлімін (әсіресе «Нені қатаң істеуге болмайды!» блогын) қайталап, тестті оқыту режимінде өту ұсынылады.';
+    }
+
+    // =========================================================================
+    // 4. ҚОЙЫНДЫЛАРДЫ АУЫСТЫРУ
+    // =========================================================================
+    function switchTab(tabName) {
+      ['kit', 'algo', 'quiz'].forEach(name => {
+        const btn = document.getElementById(`nav-${name}`);
+        const sec = document.getElementById(`tab-${name}`);
+
+        if (name === tabName) {
+          btn.className = 'py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-[#0f766e] text-white shadow-sm';
+          sec.classList.remove('hidden');
+        } else {
+          btn.className = 'py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900';
+          sec.classList.add('hidden');
+        }
+      });
+    }
+
+    // Бет жүктелгенде қосымшаны инициализациялау
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAuditState();
+      renderKit();
+      renderBurnZones();
+      recalculateBurnArea();
+      renderQuiz();
+    });
+  </script>
+</body>
+</html>
