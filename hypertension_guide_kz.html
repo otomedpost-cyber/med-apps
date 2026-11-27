@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Артериялық гипертензия және гипертониялық криз • ҚР КХ</title>
+  <!-- Tailwind CSS қосылымы -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter қаріпі (кириллица мен қазақ әріптерін нақты көрсету үшін) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Сандық өрістердің стандартты бағыттағыштарын жасыру */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    /* Жүгіртпелерді (range slider) ыңғайлы безендіру */
+    input[type="range"] {
+      accent-color: #0f766e;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="pb-12">
+
+  <!-- Негізгі контейнер -->
+  <div class="max-w-[640px] mx-auto px-4 pt-4">
+
+    <!-- Қосымша бөрігі (Шапка) -->
+    <header class="flex items-center gap-3.5 mb-4">
+      <div class="w-12 h-12 rounded-2xl bg-[#0f766e] text-white flex items-center justify-center shadow-md shadow-teal-900/20 shrink-0">
+        <!-- Кардиограмма / пульс SVG иконкасы -->
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l3-9 4 18 3-9h4" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-tight">
+          Артериялық гипертензия және гипертониялық криз
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+          АҚ градациясы, салыстыру, шұғыл көмек және тест-тренажер • ҚР КХ
+        </p>
+      </div>
+    </header>
+
+    <!-- Навигациялық қойындылар -->
+    <nav class="grid grid-cols-3 gap-1 bg-slate-200/80 p-1 rounded-2xl mb-4" role="tablist" aria-label="Бөлімдер">
+      <button
+        type="button"
+        id="nav-eval"
+        onclick="switchTab('eval')"
+        class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-[#0f766e] text-white shadow-sm"
+      >
+        Бағалау және градация
+      </button>
+      <button
+        type="button"
+        id="nav-help"
+        onclick="switchTab('help')"
+        class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900"
+      >
+        Салыстыру және көмек
+      </button>
+      <button
+        type="button"
+        id="nav-quiz"
+        onclick="switchTab('quiz')"
+        class="py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900"
+      >
+        Тест-тренажер
+      </button>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- ҚОЙЫНДЫ 1: БАҒАЛАУ ЖӘНЕ ГРАДАЦИЯ -->
+    <!-- ===================================================================== -->
+    <section id="tab-eval" class="space-y-4">
+
+      <!-- 1-карточка: АҚ градациясының интерактивті калькуляторы -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">1. Артериялық қысым (АҚ) калькуляторы</h2>
+          <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-50 text-[#0f766e] border border-teal-200">
+            ҚР КХ / ESH-ESC
+          </span>
+        </div>
+
+        <!-- САҚ және ДАҚ енгізу өрістері мен жүгіртпелері -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3.5">
+          <!-- Систолалық АҚ (САҚ) -->
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-[#0f766e] focus-within:bg-white transition">
+            <label for="input-sbp" class="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
+              Систолалық АҚ (САҚ)
+            </label>
+            <div class="flex items-baseline gap-1.5 mb-2">
+              <input
+                type="number"
+                id="input-sbp"
+                value="148"
+                min="60"
+                max="300"
+                oninput="syncFromNumber('sbp')"
+                class="w-full text-2xl font-extrabold text-slate-900 bg-transparent focus:outline-none"
+              >
+              <span class="text-xs font-medium text-slate-400 shrink-0">мм с.б.</span>
+            </div>
+            <input
+              type="range"
+              id="slider-sbp"
+              min="60"
+              max="280"
+              value="148"
+              oninput="syncFromSlider('sbp')"
+              aria-label="Систолалық АҚ жүгіртпесі"
+              class="w-full h-2 bg-slate-200 rounded-lg"
+            >
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+              <span>60</span>
+              <span>120</span>
+              <span>140</span>
+              <span>180</span>
+              <span>280</span>
+            </div>
+          </div>
+
+          <!-- Диастолалық АҚ (ДАҚ) -->
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-[#0f766e] focus-within:bg-white transition">
+            <label for="input-dbp" class="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
+              Диастолалық АҚ (ДАҚ)
+            </label>
+            <div class="flex items-baseline gap-1.5 mb-2">
+              <input
+                type="number"
+                id="input-dbp"
+                value="92"
+                min="40"
+                max="180"
+                oninput="syncFromNumber('dbp')"
+                class="w-full text-2xl font-extrabold text-slate-900 bg-transparent focus:outline-none"
+              >
+              <span class="text-xs font-medium text-slate-400 shrink-0">мм с.б.</span>
+            </div>
+            <input
+              type="range"
+              id="slider-dbp"
+              min="40"
+              max="160"
+              value="92"
+              oninput="syncFromSlider('dbp')"
+              aria-label="Диастолалық АҚ жүгіртпесі"
+              class="w-full h-2 bg-slate-200 rounded-lg"
+            >
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+              <span>40</span>
+              <span>80</span>
+              <span>90</span>
+              <span>110</span>
+              <span>160</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Жылдам таңдау пресет батырмалары -->
+        <div class="mb-4">
+          <div class="text-[11px] font-semibold text-slate-500 mb-1.5">Үлгі мәндерді жылдам таңдау:</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="setPresetBP(115, 75)" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-teal-50 hover:text-[#0f766e] text-slate-700 border border-slate-200 transition">
+              115/75
+            </button>
+            <button type="button" onclick="setPresetBP(135, 85)" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-teal-50 hover:text-[#0f766e] text-slate-700 border border-slate-200 transition">
+              135/85
+            </button>
+            <button type="button" onclick="setPresetBP(148, 92)" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-teal-50 hover:text-[#0f766e] text-slate-700 border border-slate-200 transition">
+              148/92
+            </button>
+            <button type="button" onclick="setPresetBP(168, 102)" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-teal-50 hover:text-[#0f766e] text-slate-700 border border-slate-200 transition">
+              168/102
+            </button>
+            <button type="button" onclick="setPresetBP(188, 115)" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-teal-50 hover:text-[#0f766e] text-slate-700 border border-slate-200 transition">
+              188/115
+            </button>
+            <button type="button" onclick="setPresetBP(165, 75)" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-teal-50 hover:text-[#0f766e] text-slate-700 border border-slate-200 transition">
+              165/75 (ОСАГ)
+            </button>
+          </div>
+        </div>
+
+        <!-- Анықталған АҚ санатының тақтасы -->
+        <div id="bp-category-banner" class="p-3.5 rounded-xl border transition-all"></div>
+      </div>
+
+      <!-- 2-карточка: Нысана-ағзалардың жедел зақымдануының «қызыл жалаулары» -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">
+            2. Нысана-ағзалардың жедел зақымдануының «қызыл жалаулары»
+          </h2>
+          <button type="button" onclick="clearRedFlags()" class="text-xs font-semibold text-slate-500 hover:text-[#dc2626] underline shrink-0">
+            Тазалау
+          </button>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">
+          Науқаста анықталған жедел зақымдану белгілерін белгілеңіз (жүрек, бас миы, ірі тамырлар, көз торқабығы, бүйрек):
+        </p>
+
+        <div id="red-flags-list" class="space-y-2"></div>
+      </div>
+
+      <!-- 3-карточка: Динамикалық клиникалық қорытынды және тактика -->
+      <div id="clinical-decision-card" class="rounded-2xl p-4 sm:p-5 shadow-sm border transition-all"></div>
+
+      <!-- 4-карточка: АҚ градациясының жиынтық кестесі -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-1">
+          Кеңселік АҚ градациясының кестесі (ҚР КХ)
+        </h3>
+        <p class="text-xs text-slate-500 mb-3">
+          САҚ және ДАҚ көрсеткіштері әртүрлі санатқа түссе, <strong>жоғарырақ санат</strong> қолданылады.
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 text-[11px] uppercase">
+                <th class="py-2 pr-2 font-bold">АҚ санаты</th>
+                <th class="py-2 px-2 font-bold">САҚ (мм с.б.)</th>
+                <th class="py-2 pl-2 font-bold">ДАҚ (мм с.б.)</th>
+              </tr>
+            </thead>
+            <tbody id="gradation-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ҚОЙЫНДЫ 2: САЛЫСТЫРУ ЖӘНЕ КӨМЕК -->
+    <!-- ===================================================================== -->
+    <section id="tab-help" class="hidden space-y-4">
+
+      <!-- Салыстыру кестесі -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <h2 class="text-base sm:text-lg font-bold text-slate-900 mb-1">
+          Салыстыру: асқынбаған АҚ жоғарылауы vs асқынған гипертониялық криз
+        </h2>
+        <p class="text-xs text-slate-500 mb-3">
+          Негізгі айырмашылық — тонометрдегі сандар ғана емес, <strong>нысана-ағзалардың жедел зақымдануының (НАЖЗ)</strong> болуы немесе болмауы.
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700">
+                <th class="p-2.5 rounded-tl-xl font-bold w-1/4">Критерий</th>
+                <th class="p-2.5 font-bold text-[#d97706] w-[37.5%]">Асқынбаған АҚ жоғарылауы (асқынбаған криз)</th>
+                <th class="p-2.5 rounded-tr-xl font-bold text-[#dc2626] w-[37.5%]">Асқынған гипертониялық криз (өмірге қауіп төндіретін жағдай)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr>
+                <td class="p-2.5 font-semibold text-slate-800">Нысана-ағзалардың жедел зақымдануы</td>
+                <td class="p-2.5 text-slate-700 bg-amber-50/40"><strong>Жоқ</strong> (жіті коронарлық синдром, өкпе ісінуі, ЖМКБ, қолқа қатпарлануы байқалмайды).</td>
+                <td class="p-2.5 text-slate-700 bg-red-50/40"><strong>Бар</strong> (жүрек, бас миы, ірі тамырлар, көз торқабығы, бүйректің жедел өмірге қауіпті зақымдануы).</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-semibold text-slate-800">АҚ төмендету қарқыны</td>
+                <td class="p-2.5 text-slate-700 bg-amber-50/40"><strong>Бірқалыпты / баяу</strong> — бірнеше сағат ішінде (24–48 сағатқа дейін).</td>
+                <td class="p-2.5 text-slate-700 bg-red-50/40"><strong>Бақыланатын, мөлшерленген</strong> — алғашқы сағаттарда 20–25%-ға (қолқа қатпарлануы мен ЖМКБ кезінде ерекше нысаналар).</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-semibold text-slate-800">Препараттарды енгізу жолы</td>
+                <td class="p-2.5 text-slate-700 bg-amber-50/40">Негізінен <strong>пероральді</strong> (ішке / тіл астына таблетка түрінде).</td>
+                <td class="p-2.5 text-slate-700 bg-red-50/40"><strong>Парентеральді</strong> (көктамыр ішіне титрлеп немесе болюсті түрде көрсетілім бойынша).</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-semibold text-slate-800">Алғашқы минуттарда күрт төмендету қаупі</td>
+                <td class="p-2.5 text-slate-700 bg-amber-50/40"><strong>Қауіпті!</strong> Бас миы, миокард және бүйрек ишемиясын тудыруы мүмкін.</td>
+                <td class="p-2.5 text-slate-700 bg-red-50/40"><strong>Қауіпті!</strong> Ми қан айналымының авторегуляциясы бұзылады (қолқа қатпарлануын қоспағанда).</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-semibold text-slate-800">Ауруханаға жатқызу</td>
+                <td class="p-2.5 text-slate-700 bg-amber-50/40">Көбіне <strong>қажет емес</strong>; бақылау және ЖПД / кардиологта жоспарлы емді түзету.</td>
+                <td class="p-2.5 text-slate-700 bg-red-50/40"><strong>Міндетті шұғыл</strong> ауруханаға жатқызу (ҚРҚБ / бейінді стационар).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- АҚ өлшеу ережелері -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <h3 class="text-base font-bold text-slate-900 mb-2">
+          Қабылдауда АҚ-ны дұрыс өлшеу ережелері
+        </h3>
+        <ul class="list-disc pl-4 space-y-1.5 text-xs sm:text-sm text-slate-700">
+          <li><strong>5 минут тыныштық:</strong> науқас арқасын орындыққа сүйеп отырады, табаны еденде, аяғы айқаспаған.</li>
+          <li><strong>Қолдың қалыбы:</strong> қол босаңсыған, манжет ортасы жүрек деңгейінде (IV қабырғааралық) орналасады.</li>
+          <li><strong>Ықпал етуші факторларды шектеу:</strong> өлшеуден 30 минут бұрын кофеин, темекі, дене жүктемесі және тамыр тарылтатын тамшылар (деконгестанттар) болмауы тиіс.</li>
+          <li><strong>Қайталау және симметрия:</strong> 1–2 минут аралықпен кемінде 2 рет өлшеу. Алғашқы қарауда <strong>екі қолда</strong> өлшеу (САҚ айырмашылығы &gt; 15–20 мм с.б. болса — қолқа патологиясын тексеру қажет).</li>
+        </ul>
+      </div>
+
+      <!-- А алгоритмі: Асқынбаған АҚ жоғарылауы -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-[#d97706]">
+            А АЛГОРИТМІ • НАЖЗ ЖОҚ
+          </span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 mb-2">
+          Асқынбаған АҚ жоғарылауы кезіндегі тактика
+        </h3>
+        <ol class="list-decimal pl-4 space-y-2 text-xs sm:text-sm text-slate-700">
+          <li><strong>Физикалық және психоэмоционалдық тыныштық:</strong> науқасты ыңғайлы отырғызу, қысатын киімді босату, таза ауа кіруін қамтамасыз ету.</li>
+          <li><strong>Түрткі факторды жою:</strong> жедел ауру сезімі болса (мысалы, жедел отит, синусит) — ауруды басу; жоспарлы гипотензивті дәрілерді қабылдау тәртібін нақтылау.</li>
+          <li><strong>«Қызыл жалауларды» жоққа шығару:</strong> төс артындағы ауру, ентігу, ошақтық неврологиялық белгілер және көрудің бұзылуы жоқтығына көз жеткізу; 10–15 минуттан кейін АҚ-ны қайта өлшеу.</li>
+          <li><strong>Пероральді ем (ҚР КХ және көрсетілім бойынша):</strong>
+            <div class="mt-1.5 p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1 text-xs">
+              <div>• <strong>Каптоприл:</strong> 12,5–25 мг ішке немесе тіл астына (әсері 15–30 минутта басталады). <em>Қарсы көрсетілімдер: бүйрек артерияларының екіжақты стенозы, жүктілік, гиперкалиемия, анамнездегі Квинке ісінуі.</em></div>
+              <div>• <strong>Моксонидин:</strong> 0,2–0,4 мг ішке. <em>Қарсы көрсетілімдер: синустық түйін әлсіздігі синдромы, айқын брадикардия (&lt; 50 соққы/мин), II–III дәрежелі AV-блокада, ауыр ССЖ.</em></div>
+            </div>
+          </li>
+          <li><strong>Бақылау және бағыттау:</strong> 30–60 минуттан соң АҚ-ны қайта тексеру. Мақсат — АҚ-ны 15–25%-ға бірқалыпты төмендету. Жоспарлы емді нақтылау үшін ЖПД / кардиологқа жолдау.</li>
+        </ol>
+      </div>
+
+      <!-- Б алгоритмі: Асқынған гипертониялық криз -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-red-200">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-red-100 text-[#dc2626]">
+            Б АЛГОРИТМІ • ШҰҒЫЛ КӨМЕК (EMERGENCY)
+          </span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 mb-2">
+          Асқынған гипертониялық криз кезіндегі шұғыл көмек
+        </h3>
+        <ol class="list-decimal pl-4 space-y-2 text-xs sm:text-sm text-slate-700">
+          <li><strong>Жедел жәрдем (ЖЖҚ) / реанимация бригадасын шұғыл шақыру</strong> және АҚ (әр 5–15 мин сайын), ЖЖЖ, SpO₂ және 12 тіркемеде ЭКГ мониторингін жүргізу.</li>
+          <li><strong>Науқастың қалыбы:</strong> ентігу және өкпе ісінуі кезінде — аяғын төмен түсіріп жартылай отырғызу; сана бұзылғанда немесе құсу кезінде — қауіпсіз бүйір қалып.</li>
+          <li><strong>Оксигенотерапия:</strong> ылғалдандырылған оттегіні тек гипоксемия кезінде (<strong>SpO₂ &lt; 90%</strong>) немесе тыныс жеткіліксіздігі белгілерінде беру.</li>
+          <li><strong>Көктамырлық қолжетімділік:</strong> шеткергі веноздық катетер (18G–20G) орнату.</li>
+          <li><strong>Асқыну түріне қарай бақыланатын төмендету және сараланған тактика (ҚР КХ):</strong>
+            <div class="mt-1.5 space-y-1.5 text-xs">
+              <div class="p-2.5 rounded-xl bg-red-50/70 border border-red-200">
+                <strong>• ЖКС / Кардиогендік өкпе ісінуі:</strong> Нитроглицерин (0,4 мг спрей немесе к/і инфузия), іркіліс кезінде диуретиктер (фуросемид), өкпе ісінуі болмағанда бета-блокаторлар, ЖКС кезінде антиагреганттар.
+              </div>
+              <div class="p-2.5 rounded-xl bg-red-50/70 border border-red-200">
+                <strong>• Қолқа қатпарлануы (жыртып ауыру, қолдардағы АҚ асимметриясы):</strong> САҚ-ны барынша тез <strong>100–120 мм с.б.</strong> және ЖЖЖ &lt; 60 соққы/мин деңгейіне дейін төмендету (к/і бета-блокаторлар + нитраттар/нитропруссид) және ауруды тиімді басу.
+              </div>
+              <div class="p-2.5 rounded-xl bg-red-50/70 border border-red-200">
+                <strong>• Жедел ми қан айналымының бұзылуы (ЖМКБ):</strong> госпитальға дейінгі кезеңде АҚ-ны агрессивті төмендетуге <strong>тыйым салынады</strong>! Ишемиялық инсультте АҚ &lt; 220/120 мм с.б. болса төмендетілмейді (тромболизис жоспарланса — &lt; 185/110 мм с.б.); одан жоғары болса — алғашқы 24 сағатта 15%-дан асырмай абайлап төмендету.
+              </div>
+              <div class="p-2.5 rounded-xl bg-red-50/70 border border-red-200">
+                <strong>• Гипертониялық энцефалопатия:</strong> алғашқы 1–2 сағатта орташа АҚ-ны 20–25%-ға бақыланатын түрде төмендету (хаттама бойынша урапидил / лабеталол / эналаприлат).
+              </div>
+            </div>
+          </li>
+          <li><strong>Шұғыл ауруханаға жатқызу:</strong> витальды көрсеткіштерді үздіксіз бақылай отырып стационарға шұғыл жеткізу.</li>
+        </ol>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ҚОЙЫНДЫ 3: ТЕСТ-ТРЕНАЖЕР (15 СҰРАҚ) -->
+    <!-- ===================================================================== -->
+    <section id="tab-quiz" class="hidden space-y-4">
+
+      <!-- Режим ауыстырғышы және сұрақтар торы -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="grid grid-cols-2 gap-1 bg-slate-200/80 p-1 rounded-xl mb-3.5">
+          <button type="button" id="mode-learn" onclick="setQuizMode('learn')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition">
+            Оқыту режимі
+          </button>
+          <button type="button" id="mode-exam" onclick="setQuizMode('exam')" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition">
+            Емтихан режимі
+          </button>
+        </div>
+
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+          <span id="quiz-counter" class="text-xs sm:text-sm font-bold text-slate-800">Жауап берілді: 0 / 15</span>
+          <span id="mode-desc" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 text-[#0f766e] border border-teal-200">
+            Оқыту: жауаптан кейін бірден талдау
+          </span>
+        </div>
+
+        <div id="q-grid" class="grid grid-cols-5 gap-1.5"></div>
+      </div>
+
+      <!-- Ағымдағы сұрақ карточкасы -->
+      <div id="quiz-card" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+        <div class="flex justify-between items-center gap-2 mb-3">
+          <span id="q-topic" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-50 text-[#0f766e] border border-teal-200">
+            АҚ ГРАДАЦИЯСЫ
+          </span>
+          <span id="q-step-label" class="text-xs font-medium text-slate-500">Сұрақ 1 / 15</span>
+        </div>
+
+        <div id="q-text" class="text-sm sm:text-base font-bold text-slate-900 leading-snug mb-4"></div>
+
+        <div id="q-options" class="space-y-2"></div>
+
+        <div id="q-explanation" class="hidden mt-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed"></div>
+
+        <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-100">
+          <button type="button" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition">
+            ← Алдыңғы
+          </button>
+          <button type="button" id="next-btn" onclick="nextQuestion()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-[#0f766e] text-[#0f766e] bg-white hover:bg-teal-50 active:scale-95 transition">
+            Келесі →
+          </button>
+        </div>
+      </div>
+
+      <!-- Емтихан нәтижесінің карточкасы -->
+      <div id="exam-result-card" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-teal-50 text-[#0f766e] flex items-center justify-center text-2xl mx-auto font-bold">
+          ✓
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Тестілеу нәтижесі</h3>
+        <p id="exam-score-text" class="text-base sm:text-lg font-extrabold text-[#0f766e]"></p>
+        <p id="exam-feedback-text" class="text-xs sm:text-sm text-slate-600"></p>
+        <div class="pt-2">
+          <button type="button" onclick="resetQuiz()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#0f766e] text-white hover:bg-teal-800 active:scale-95 transition">
+            Тестті қайта тапсыру
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. АҚ ГРАДАЦИЯСЫ (ҚР КХ / ESH-ESC) ЖӘНЕ «ҚЫЗЫЛ ЖАЛАУЛАР» ДЕРЕКТЕРІ
+    // =========================================================================
+    const bpCategories = [
+      { id: 'optimal', name: 'Оңтайлы АҚ', sbpText: '< 120', dbpText: 'және < 80', rank: 0 },
+      { id: 'normal', name: 'Қалыпты АҚ', sbpText: '120–129', dbpText: 'және/немесе 80–84', rank: 1 },
+      { id: 'high_normal', name: 'Жоғары қалыпты АҚ', sbpText: '130–139', dbpText: 'және/немесе 85–89', rank: 2 },
+      { id: 'ish', name: 'Оқшауланған систолалық АГ', sbpText: '≥ 140', dbpText: 'және < 90', rank: 3 },
+      { id: 'grade1', name: '1-дәрежелі артериялық гипертензия', sbpText: '140–159', dbpText: 'және/немесе 90–99', rank: 4 },
+      { id: 'grade2', name: '2-дәрежелі артериялық гипертензия', sbpText: '160–179', dbpText: 'және/немесе 100–109', rank: 5 },
+      { id: 'grade3', name: '3-дәрежелі артериялық гипертензия', sbpText: '≥ 180', dbpText: 'және/немесе ≥ 110', rank: 6 }
+    ];
+
+    const redFlagsData = [
+      {
+        id: 'rf_acs',
+        title: 'Төс артындағы қысатын, күйдіретін немесе жаншитын ауру',
+        sub: 'Жүрек • Жіті коронарлық синдромға (ЖКС) күдік'
+      },
+      {
+        id: 'rf_edema',
+        title: 'Айқын ентігу, тұншығу, өкпеде ылғалды сырылдар',
+        sub: 'Жүрек • Сол қарыншалық жедел жеткіліксіздік / өкпе ісінуі'
+      },
+      {
+        id: 'rf_stroke',
+        title: 'Бет асимметриясы, қол-аяқтың әлсіздігі, сөйлеудің бұзылуы',
+        sub: 'Бас миы • Жедел ми қан айналымының бұзылуы (ЖМКБ)'
+      },
+      {
+        id: 'rf_enceph',
+        title: 'Сананың шатасуымен немесе құрысумен қатар жүретін қатты бас ауруы',
+        sub: 'Бас миы • Жедел гипертониялық энцефалопатия'
+      },
+      {
+        id: 'rf_aorta',
+        title: 'Кеудеде немесе жауырынаралық аймақта кенеттен пайда болған өткір «жыртып» ауыру',
+        sub: 'Ірі тамырлар • Қолқа қатпарлануына күдік (екі қолдағы АҚ айырмашылығын тексеріңіз)'
+      },
+      {
+        id: 'rf_vision',
+        title: 'Көрудің кенеттен нашарлауы, көз алдындағы тұман немесе көру алаңының тарылуы',
+        sub: 'Көз торқабығы • Жедел гипертониялық ретинопатия / қан құйылу'
+      },
+      {
+        id: 'rf_renal',
+        title: 'Диурездің күрт азаюы (олигурия) немесе зәрде қан болуы',
+        sub: 'Бүйрек • Бүйректің жедел зақымдануы'
+      }
+    ];
+
+    let selectedRedFlags = {};
+
+    function renderRedFlags() {
+      const container = document.getElementById('red-flags-list');
+      container.innerHTML = '';
+
+      redFlagsData.forEach(rf => {
+        const checked = !!selectedRedFlags[rf.id];
+        const label = document.createElement('label');
+        label.className = `flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition ${
+          checked
+            ? 'border-[#dc2626] bg-red-50/70'
+            : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50'
+        }`;
+        label.innerHTML = `
+          <input
+            type="checkbox"
+            ${checked ? 'checked' : ''}
+            onchange="toggleRedFlag('${rf.id}', this.checked)"
+            class="w-5 h-5 mt-0.5 rounded accent-[#dc2626] shrink-0 cursor-pointer"
+          >
+          <div class="flex-1 min-w-0">
+            <div class="text-xs sm:text-sm font-semibold ${checked ? 'text-red-950' : 'text-slate-900'} leading-snug">
+              ${rf.title}
+            </div>
+            <div class="text-[11px] ${checked ? 'text-red-700 font-medium' : 'text-slate-500'} mt-0.5">
+              ${rf.sub}
+            </div>
+          </div>
+        `;
+        container.appendChild(label);
+      });
+    }
+
+    function toggleRedFlag(id, isChecked) {
+      selectedRedFlags[id] = isChecked;
+      renderRedFlags();
+      recalculateClinicalState();
+    }
+
+    function clearRedFlags() {
+      selectedRedFlags = {};
+      renderRedFlags();
+      recalculateClinicalState();
+    }
+
+    function setPresetBP(sbp, dbp) {
+      const sbpInput = document.getElementById('input-sbp');
+      const dbpInput = document.getElementById('input-dbp');
+      const sbpSlider = document.getElementById('slider-sbp');
+      const dbpSlider = document.getElementById('slider-dbp');
+
+      sbpInput.value = sbp;
+      dbpInput.value = dbp;
+      sbpSlider.value = Math.min(Math.max(sbp, Number(sbpSlider.min)), Number(sbpSlider.max));
+      dbpSlider.value = Math.min(Math.max(dbp, Number(dbpSlider.min)), Number(dbpSlider.max));
+      recalculateClinicalState();
+    }
+
+    function syncFromSlider(axis) {
+      if (axis === 'sbp') {
+        document.getElementById('input-sbp').value = document.getElementById('slider-sbp').value;
+      } else {
+        document.getElementById('input-dbp').value = document.getElementById('slider-dbp').value;
+      }
+      recalculateClinicalState();
+    }
+
+    function syncFromNumber(axis) {
+      if (axis === 'sbp') {
+        const val = parseInt(document.getElementById('input-sbp').value, 10);
+        const slider = document.getElementById('slider-sbp');
+        if (!Number.isNaN(val)) {
+          slider.value = Math.min(Math.max(val, Number(slider.min)), Number(slider.max));
+        }
+      } else {
+        const val = parseInt(document.getElementById('input-dbp').value, 10);
+        const slider = document.getElementById('slider-dbp');
+        if (!Number.isNaN(val)) {
+          slider.value = Math.min(Math.max(val, Number(slider.min)), Number(slider.max));
+        }
+      }
+      recalculateClinicalState();
+    }
+
+    // ҚР КХ бойынша АҚ санатын анықтау (жоғарырақ санат және оқшауланған систолалық АГ ережесімен)
+    function classifyBP(sbp, dbp) {
+      if (!sbp || !dbp || sbp <= 0 || dbp <= 0) {
+        return null;
+      }
+
+      if (sbp >= 140 && dbp < 90) {
+        let subGrade = '1-дәрежелі';
+        if (sbp >= 180) subGrade = '3-дәрежелі';
+        else if (sbp >= 160) subGrade = '2-дәрежелі';
+        return {
+          id: 'ish',
+          title: `Оқшауланған систолалық АГ (${subGrade} САҚ)`,
+          ruleNote: 'САҚ ≥ 140 мм с.б. және ДАҚ < 90 мм с.б.',
+          isElevated: true,
+          isSevere: sbp >= 180
+        };
+      }
+
+      let sbpRank = 0;
+      if (sbp >= 180) sbpRank = 6;
+      else if (sbp >= 160) sbpRank = 5;
+      else if (sbp >= 140) sbpRank = 4;
+      else if (sbp >= 130) sbpRank = 2;
+      else if (sbp >= 120) sbpRank = 1;
+
+      let dbpRank = 0;
+      if (dbp >= 110) dbpRank = 6;
+      else if (dbp >= 100) dbpRank = 5;
+      else if (dbp >= 90) dbpRank = 4;
+      else if (dbp >= 85) dbpRank = 2;
+      else if (dbp >= 80) dbpRank = 1;
+
+      const finalRank = Math.max(sbpRank, dbpRank);
+      const cat = bpCategories.find(c => c.rank === finalRank) || bpCategories[0];
+      const ruleNote = sbpRank !== dbpRank && finalRank >= 1
+        ? 'САҚ және ДАҚ көрсеткіштері әртүрлі санатқа түскендіктен, жоғарырақ санат таңдалды.'
+        : 'САҚ және ДАҚ көрсеткіштері бір санатқа сәйкес келеді.';
+
+      return {
+        id: cat.id,
+        title: cat.name,
+        ruleNote,
+        isElevated: finalRank >= 4,
+        isSevere: finalRank === 6
+      };
+    }
+
+    function renderGradationTable(activeId) {
+      const tbody = document.getElementById('gradation-table-body');
+      tbody.innerHTML = '';
+
+      bpCategories.forEach(cat => {
+        const isActive = cat.id === activeId;
+        const tr = document.createElement('tr');
+        tr.className = isActive
+          ? 'bg-teal-50/90 font-bold text-slate-900'
+          : 'text-slate-700';
+        tr.innerHTML = `
+          <td class="py-2.5 pr-2">
+            <div class="flex items-center gap-1.5">
+              ${isActive ? '<span class="w-2 h-2 rounded-full bg-[#0f766e] shrink-0"></span>' : ''}
+              <span>${cat.name}</span>
+            </div>
+          </td>
+          <td class="py-2.5 px-2 whitespace-nowrap">${cat.sbpText}</td>
+          <td class="py-2.5 pl-2 whitespace-nowrap">${cat.dbpText}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function recalculateClinicalState() {
+      const sbp = parseInt(document.getElementById('input-sbp').value, 10);
+      const dbp = parseInt(document.getElementById('input-dbp').value, 10);
+      const banner = document.getElementById('bp-category-banner');
+      const decisionCard = document.getElementById('clinical-decision-card');
+
+      const classification = classifyBP(sbp, dbp);
+      const activeFlags = redFlagsData.filter(rf => selectedRedFlags[rf.id]);
+      const hasRedFlags = activeFlags.length > 0;
+
+      if (!classification) {
+        banner.className = 'p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-500';
+        banner.textContent = 'САҚ және ДАҚ сандық мәндерін енгізіңіз.';
+        renderGradationTable(null);
+        decisionCard.className = 'hidden';
+        return;
+      }
+
+      renderGradationTable(classification.id);
+
+      if (classification.isSevere) {
+        banner.className = 'p-3.5 rounded-xl border border-red-300 bg-red-50/70';
+        banner.innerHTML = `
+          <div class="text-[11px] font-bold uppercase text-[#dc2626]">АҚ санаты (${sbp}/${dbp} мм с.б.)</div>
+          <div class="text-sm sm:text-base font-extrabold text-red-950 mt-0.5">${classification.title}</div>
+          <div class="text-xs text-red-800 mt-1">${classification.ruleNote}</div>
+        `;
+      } else if (classification.isElevated) {
+        banner.className = 'p-3.5 rounded-xl border border-amber-300 bg-amber-50/70';
+        banner.innerHTML = `
+          <div class="text-[11px] font-bold uppercase text-[#d97706]">АҚ санаты (${sbp}/${dbp} мм с.б.)</div>
+          <div class="text-sm sm:text-base font-extrabold text-amber-950 mt-0.5">${classification.title}</div>
+          <div class="text-xs text-amber-800 mt-1">${classification.ruleNote}</div>
+        `;
+      } else {
+        banner.className = 'p-3.5 rounded-xl border border-teal-200 bg-teal-50/60';
+        banner.innerHTML = `
+          <div class="text-[11px] font-bold uppercase text-[#0f766e]">АҚ санаты (${sbp}/${dbp} мм с.б.)</div>
+          <div class="text-sm sm:text-base font-extrabold text-teal-950 mt-0.5">${classification.title}</div>
+          <div class="text-xs text-teal-800 mt-1">${classification.ruleNote}</div>
+        `;
+      }
+
+      decisionCard.classList.remove('hidden');
+
+      if (hasRedFlags && (classification.isElevated || sbp >= 130 || dbp >= 85)) {
+        // Асқынған гипертониялық криз (өмірге қауіп төндіретін жағдай)
+        const targetLow = Math.round(sbp * 0.75);
+        const targetHigh = Math.round(sbp * 0.80);
+        const flagsText = activeFlags.map(f => f.title).join('; ');
+
+        decisionCard.className = 'bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-[#dc2626]';
+        decisionCard.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-[#dc2626] text-white">
+              АСҚЫНҒАН ГИПЕРТОНИЯЛЫҚ КРИЗ (ӨМІРГЕ ҚАУІП ТӨНДІРЕТІН ЖАҒДАЙ)
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-800 font-medium mb-3">
+            Нысана-ағзалардың жедел зақымдану белгілері анықталды: <strong class="text-[#dc2626]">${flagsText}</strong>.
+          </p>
+          <div class="p-3 rounded-xl bg-red-50 border border-red-200 mb-3">
+            <div class="text-[11px] font-bold uppercase text-[#dc2626]">Алғашқы 1–2 сағатта САҚ-ны бақыланатын төмендету бағдары</div>
+            <div class="text-base sm:text-lg font-extrabold text-red-950 mt-0.5">
+              ${targetLow} – ${targetHigh} мм с.б. <span class="text-xs font-semibold text-red-700">(${sbp} мм с.б.-ден 20–25%-ға төмендету)</span>
+            </div>
+            <div class="text-[11px] text-red-800 mt-1">
+              *Ерекшеліктер: қолқа қатпарлануында САҚ 100–120 мм с.б. дейін тез төмендетіледі; ЖМКБ кезінде тромболизиссіз АҚ &lt; 220/120 мм с.б. болғанда күрт төмендетілмейді.
+            </div>
+          </div>
+          <div class="text-xs sm:text-sm text-slate-800 space-y-1">
+            <div><strong>Шұғыл тактика (ҚР КХ):</strong></div>
+            <div>1. Жедел жәрдем бригадасын шұғыл шақыру; АҚ (әр 5–15 мин), ЖЖЖ, SpO₂ және 12 тіркемеде ЭКГ мониторингі.</div>
+            <div>2. Науқасқа дұрыс қалып беру (ентігу/өкпе ісінуінде — жартылай отырғызу; сана бұзылғанда — бүйір қалып).</div>
+            <div>3. SpO₂ &lt; 90% болғанда оттегі беру, шеткергі веноздық катетер орнату және асқыну бейіні бойынша парентеральді ем.</div>
+          </div>
+        `;
+      } else if (!hasRedFlags && classification.isSevere) {
+        // Асқынбаған АҚ жоғарылауы (≥180/110 мм с.б., НАЖЗ жоқ)
+        const targetLow = Math.round(sbp * 0.75);
+        const targetHigh = Math.round(sbp * 0.85);
+
+        decisionCard.className = 'bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-[#d97706]';
+        decisionCard.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-[#d97706] text-white">
+              АСҚЫНБАҒАН АҚ ЖОҒАРЫЛАУЫ (НАЖЗ ЖОҚ)
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-800 font-medium mb-3">
+            АҚ айқын жоғарылаған (≥ 180/110 мм с.б.), бірақ нысана-ағзалардың жедел зақымдану белгілері <strong>жоқ</strong>. Алғашқы минуттарда күрт төмендету қауіпті!
+          </p>
+          <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 mb-3">
+            <div class="text-[11px] font-bold uppercase text-[#d97706]">САҚ-ны бірқалыпты төмендету бағдары (жақын сағаттарда)</div>
+            <div class="text-base sm:text-lg font-extrabold text-amber-950 mt-0.5">
+              ${targetLow} – ${targetHigh} мм с.б. <span class="text-xs font-semibold text-amber-800">(${sbp} мм с.б.-ден 15–25%-ға бірқалыпты)</span>
+            </div>
+          </div>
+          <div class="text-xs sm:text-sm text-slate-800 space-y-1">
+            <div><strong>Қабылдаудағы тактика:</strong></div>
+            <div>1. 10–15 минут тыныштық, түрткі факторды (ауру сезімін, үрейді) жою, АҚ-ны қайта өлшеу.</div>
+            <div>2. Пероральді қысқа әсерлі дәрілер: <strong>Каптоприл 12,5–25 мг</strong> немесе <strong>Моксонидин 0,2–0,4 мг</strong> ішке (қарсы көрсетілімдерді ескере отырып).</div>
+            <div>3. 30–60 минут бақылау және жоспарлы емді түзету үшін ЖПД / кардиологқа жолдау.</div>
+          </div>
+        `;
+      } else if (!hasRedFlags && classification.isElevated) {
+        // АГ 1–2 дәрежесі немесе ОСАГ (НАЖЗ жоқ)
+        decisionCard.className = 'bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-amber-300';
+        decisionCard.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-[#d97706]">
+              АҚ ЖОҒАРЫЛАУЫ • АСҚЫНҒАН КРИЗ ЖОҚ
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-700 mb-2">
+            Нысана-ағзалардың жедел зақымдану белгілері анықталған жоқ. Қабылдау кезіндегі АҚ жоғарылауының жағдайлық себептерін бағалаңыз:
+          </p>
+          <ul class="list-disc pl-4 space-y-1 text-xs sm:text-sm text-slate-800">
+            <li><strong>Жедел ауру немесе қабыну</strong> (мысалы, жедел отит, синусит, бас ауруы) — ауру сезімін басу.</li>
+            <li><strong>Стресс, үрей («ақ халат әсері») немесе жүктеме</strong> — 5–10 минут тынықтырып, АҚ-ны қайта өлшеу.</li>
+            <li><strong>Жоспарлы гипотензивті терапияны өткізіп алу</strong> немесе тамыр тарылтатын тамшылар / ҚҚСП қабылдау.</li>
+          </ul>
+        `;
+      } else if (hasRedFlags && !classification.isElevated) {
+        decisionCard.className = 'bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-[#dc2626]';
+        decisionCard.innerHTML = `
+          <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-[#dc2626] text-white">
+            НАЗАР АУДАРЫҢЫЗ! АҚ ${sbp}/${dbp} КЕЗІНДЕ «ҚЫЗЫЛ ЖАЛАУЛАР» БАР
+          </span>
+          <p class="text-xs sm:text-sm text-slate-800 mt-2">
+            АҚ көрсеткіштері қатты жоғары болмаса да, нысана-ағзалардың жедел зақымдану белгілері болған жағдайда шұғыл тексеру (ЭКГ, неврологиялық бағалау) және бейіні бойынша жедел жәрдем шақыру қажет.
+          </p>
+        `;
+      } else {
+        decisionCard.className = 'bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-teal-200';
+        decisionCard.innerHTML = `
+          <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-teal-50 text-[#0f766e] border border-teal-200">
+            ШҰҒЫЛ ГИПОТЕНЗИВТІ КӨМЕК ҚАЖЕТ ЕМЕС
+          </span>
+          <p class="text-xs sm:text-sm text-slate-700 mt-2">
+            АҚ көрсеткіштері қалыпты немесе жоғары қалыпты шекте, нысана-ағзалардың жедел зақымдану белгілері жоқ. Жоғары қалыпты АҚ (130–139 / 85–89 мм с.б.) кезінде динамикалық бақылау және өмір салтын түзету ұсынылады.
+          </p>
+        `;
+      }
+    }
+
+    // =========================================================================
+    // 2. ТЕСТ-ТРЕНАЖЕР: 15 СҰРАҚ (ҚАЗАҚ ТІЛІНДЕ, МЕДИЦИНАЛЫҚ ТЕРМИНОЛОГИЯМЕН)
+    // =========================================================================
+    const questions = [
+      {
+        topic: 'АҚ ГРАДАЦИЯСЫ • ҚР КХ',
+        q: 'ҚР клиникалық хаттамасы бойынша кеңселік АҚ 148/92 мм с.б. көрсеткіші қай санатқа жатады?',
+        options: [
+          'Жоғары қалыпты АҚ',
+          '1-дәрежелі артериялық гипертензия',
+          '2-дәрежелі артериялық гипертензия',
+          'Оқшауланған систолалық АГ'
+        ],
+        correct: 1,
+        exp: 'САҚ 140–159 мм с.б. және/немесе ДАҚ 90–99 мм с.б. диапазоны 1-дәрежелі артериялық гипертензияға сәйкес келеді.'
+      },
+      {
+        topic: 'ГРАДАЦИЯ ЕРЕЖЕСІ',
+        q: 'Қабылдауда науқастың АҚ 184/92 мм с.б. болды. Артериялық гипертензия дәрежесін қалай дұрыс анықтайды?',
+        options: [
+          '1-дәрежелі АГ (диастолалық АҚ бойынша)',
+          '2-дәрежелі АГ (орташа мән бойынша)',
+          '3-дәрежелі АГ (жоғарырақ санат ережесі бойынша — САҚ ≥ 180 мм с.б.)',
+          'Оқшауланған систолалық АГ'
+        ],
+        correct: 2,
+        exp: 'Егер САҚ және ДАҚ мәндері әртүрлі санатқа түссе, науқас жоғарырақ санатқа жатқызылады (САҚ ≥ 180 мм с.б. — 3-дәрежелі АГ).'
+      },
+      {
+        topic: 'ОҚШАУЛАНҒАН СИСТОЛАЛЫҚ АГ',
+        q: 'Оқшауланған систолалық артериялық гипертензияның (ОСАГ) критерийлерін көрсетіңіз:',
+        options: [
+          'САҚ ≥ 140 мм с.б. және ДАҚ < 90 мм с.б.',
+          'САҚ 130–139 мм с.б. және ДАҚ < 85 мм с.б.',
+          'САҚ < 140 мм с.б. және ДАҚ ≥ 90 мм с.б.',
+          'САҚ ≥ 180 мм с.б. және ДАҚ ≥ 110 мм с.б.'
+        ],
+        correct: 0,
+        exp: 'Оқшауланған систолалық АГ систолалық АҚ ≥ 140 мм с.б. болғанда және диастолалық АҚ < 90 мм с.б. болғанда анықталады.'
+      },
+      {
+        topic: 'КРИЗ КРИТЕРИЙЛЕРІ',
+        q: 'Асқынған гипертониялық кризді (өмірге қауіп төндіретін жағдайды) асқынбаған АҚ жоғарылауынан ажырататын басты белгі қандай?',
+        options: [
+          'Систолалық АҚ 170 мм с.б.-ден жоғары болуы',
+          'Нысана-ағзалардың жедел зақымдануының (НАЖЗ) болуы',
+          'Науқастың жеңіл бас айналуға шағымдануы',
+          'Науқастың жасы 60-тан асуы'
+        ],
+        correct: 1,
+        exp: 'Асқынған гипертониялық криздің негізгі критерийі — нысана-ағзалардың жедел зақымдануы (ЖКС, өкпе ісінуі, ЖМКБ, гипертониялық энцефалопатия, қолқа қатпарлануы, ретинопатия/нефропатия).'
+      },
+      {
+        topic: 'АҚ ТӨМЕНДЕТУ ҚАРҚЫНЫ',
+        q: 'Көптеген асқынған гипертониялық криздер кезінде (қолқа қатпарлануы мен ЖМКБ-дан басқа) алғашқы 1–2 сағатта АҚ-ны қанша пайызға төмендету қауіпсіз?',
+        options: [
+          '15 минут ішінде 120/80 мм с.б. дейін бірден түсіру',
+          'Бастапқы деңгейден 20–25%-дан асырмай бақыланатын түрде төмендету',
+          'Бастапқы САҚ-ны 50%-ға төмендету',
+          'Стационарға жеткенше АҚ-ны мүлде төмендетпеу'
+        ],
+        correct: 1,
+        exp: 'АҚ-ны 25%-дан артық күрт төмендету ми және коронарлық қан айналымының авторегуляциясын бұзып, ишемиялық инсульт немесе миокард инфарктіне әкелуі мүмкін.'
+      },
+      {
+        topic: '«ҚЫЗЫЛ ЖАЛАУ» • ҚОЛҚА',
+        q: 'АҚ 210/120 мм с.б. науқаста төс артында немесе жауырынаралық аймақта кенеттен өткір «жыртып» ауру пайда болды, екі қолдағы САҚ айырмашылығы 30 мм с.б. Ең алдымен қандай асқынуға күдіктену керек?',
+        options: [
+          'Асқынбаған АҚ жоғарылауына',
+          'Қолқаның жедел қатпарлануына',
+          'Жедел ларинготрахеитке',
+          'Нейроциркуляторлық дистонияға'
+        ],
+        correct: 1,
+        exp: 'Кенеттен болған өткір «жыртып» ауру және екі қолдағы АҚ асимметриясы қолқа қатпарлануына тән; мұнда САҚ-ны 100–120 мм с.б. дейін жедел бақыланатын төмендету қажет.'
+      },
+      {
+        topic: 'ЖМКБ КЕЗІНДЕГІ ЕРЕКШЕЛІК',
+        q: 'Ишемиялық инсульт белгілері бар науқаста госпитальға дейінгі кезеңде жоғары АҚ-ға қатысты қандай тактика дұрыс?',
+        options: [
+          'АҚ-ны кез келген тәсілмен 130/80 мм с.б. дейін шұғыл түсіру',
+          'Агрессивті төмендетуге тыйым салынады; АҚ < 220/120 мм с.б. болғанда рутинды түрде төмендетілмейді',
+          'Тіл астына нифедипиннің 3 таблеткасын салу',
+          'САҚ 40%-ға түскенше көктамырға магний сульфатын енгізу'
+        ],
+        correct: 1,
+        exp: 'Жедел ишемиялық инсультте жоғары АҚ пенумбра (ишемиялық жартыкөлеңке) аймағының перфузиясын қолдайды; тромболизис жүргізілмесе, АҚ ≥ 220/120 мм с.б. асқанда ғана абайлап төмендетіледі.'
+      },
+      {
+        topic: 'ПЕРОРАЛЬДІ ТЕРАПИЯ',
+        q: 'Амбулаториялық қабылдауда асқынбаған АҚ жоғарылауын бірқалыпты басу үшін ҚР КХ бойынша қандай пероральді препараттар қолданылады?',
+        options: [
+          'Каптоприл 12,5–25 мг немесе Моксонидин 0,2–0,4 мг',
+          'Дротаверин 40 мг немесе Папаверин',
+          'Анальгин мен димедрол',
+          'Дибазол бұлшықет ішіне'
+        ],
+        correct: 0,
+        exp: 'Асқынбаған АҚ жоғарылауы кезінде ішке қабылданатын каптоприл (12,5–25 мг) немесе моксонидин (0,2–0,4 мг) қолданылып, әсері 30–60 минуттан соң бағаланады.'
+      },
+      {
+        topic: 'ҚАРСЫ КӨРСЕТІЛІМ • КАПТОПРИЛ',
+        q: 'Қандай жағдайда каптоприл тағайындауға ҚАТАҢ ТЫЙЫМ САЛЫНАДЫ?',
+        options: [
+          '2-типті қант диабеті',
+          'Жүктілік және бүйрек артерияларының екіжақты стенозы',
+          '65 жастан асқан науқас',
+          'Созылмалы тонзиллит'
+        ],
+        correct: 1,
+        exp: 'ӨАФ тежегіштері (каптоприл) жүктілік кезінде, бүйрек артерияларының екіжақты стенозында, гиперкалиемияда және анамнездегі ангионевроздық ісінуде қарсы көрсетілген.'
+      },
+      {
+        topic: 'ҚАБЫЛДАУДАҒЫ ТАКТИКА',
+        q: 'ЛОР-қабылдауға жедел құлақ ауруымен және үреймен келген науқаста алғашқы өлшеуде АҚ 165/95 мм с.б. болды, НАЖЗ «қызыл жалаулары» жоқ. Алғашқы әрекет қандай?',
+        options: [
+          'Көктамырға фуросемид пен эналаприлатты шұғыл енгізу',
+          'Тыныштандыру, ауру сезімін басу, 10–15 минут демалдыру және АҚ-ны қайта өлшеу',
+          'Қараудан бас тартып, ұсыныссыз үйге жіберу',
+          '7 күнге қатаң төсек тәртібін тағайындау'
+        ],
+        correct: 1,
+        exp: 'Ауру сезімі мен үрей жағдайлық АҚ жоғарылауын тудырады. НАЖЗ белгілері болмаса, алдымен ауру мен стресті басып, тыныштықта қайта өлшейді.'
+      },
+      {
+        topic: 'АҚ ӨЛШЕУ ЕРЕЖЕЛЕРІ',
+        q: 'Кеңселік АҚ өлшер алдында науқас отырған қалыпта қанша уақыт тыныш отыруы керек?',
+        options: [
+          'Кабинетке кірген бойда бірден өлшеу қажет',
+          'Тыныш жағдайда кемінде 5 минут',
+          'Жатып кемінде 45 минут',
+          'Демалыс уақыты дәлдікке әсер етпейді'
+        ],
+        correct: 1,
+        exp: 'Стандарт бойынша АҚ өлшеуден бұрын науқас арқасын сүйеп, кемінде 5 минут тыныш отыруы тиіс, манжет жүрек деңгейінде орналасады.'
+      },
+      {
+        topic: 'ЖОҒАРЫ ҚАЛЫПТЫ АҚ',
+        q: 'ҚР классификациясы бойынша «Жоғары қалыпты АҚ» санатына қандай көрсеткіштер сәйкес келеді?',
+        options: [
+          'САҚ 120–129 және/немесе ДАҚ 80–84 мм с.б.',
+          'САҚ 130–139 және/немесе ДАҚ 85–89 мм с.б.',
+          'САҚ 140–149 және/немесе ДАҚ 90–94 мм с.б.',
+          'САҚ < 120 және ДАҚ < 80 мм с.б.'
+        ],
+        correct: 1,
+        exp: 'Жоғары қалыпты АҚ САҚ 130–139 мм с.б. және/немесе ДАҚ 85–89 мм с.б. болғанда анықталады.'
+      },
+      {
+        topic: 'ОКСИГЕНОТЕРАПИЯ',
+        q: 'Гипертониялық криз кезінде ылғалдандырылған оттегі қашан көрсетіледі?',
+        options: [
+          'АҚ 160/100 мм с.б. асқан барлық науқасқа',
+          'Тек гипоксемия (SpO₂ < 90%) немесе тыныс жеткіліксіздігі / өкпе ісінуі белгілерінде',
+          'Тек бас ауруы болғанда',
+          'Гипертониялық криз кезінде оттегі мүлде қолданылмайды'
+        ],
+        correct: 1,
+        exp: 'Қалыпты сатурация кезінде оттегі рутинды түрде берілмейді; ол SpO₂ < 90% болғанда немесе жедел сол қарыншалық жеткіліксіздікте қолданылады.'
+      },
+      {
+        topic: 'ҚАРСЫ КӨРСЕТІЛІМ • МОКСОНИДИН',
+        q: 'Қандай ырғақ және өткізгіштік бұзылысында моксонидин қолдануға қарсы көрсетілім бар?',
+        options: [
+          'Синустық тахикардия 92 соққы/мин',
+          'Айқын брадикардия (< 50 соққы/мин), СҮӘС немесе II–III дәрежелі AV-блокада',
+          'Жалғыз үстіңгі қарыншаүстілік экстрасистолалар',
+          'Тыныстық синустық аритмия'
+        ],
+        correct: 1,
+        exp: 'Моксонидин симпатикалық белсенділікті төмендетеді және жүрек соғу жиілігін сиретеді, сондықтан айқын брадикардияда (< 50 соққы/мин), СҮӘС және II–III дәрежелі AV-блокадада қарсы көрсетілген.'
+      },
+      {
+        topic: 'МАРШРУТТАУ',
+        q: 'Қандай жағдайда науқас жедел жәрдем бригадасымен міндетті түрде шұғыл ауруханаға жатқызылады?',
+        options: [
+          'Алғаш анықталған АҚ 150/95 мм с.б. (шағымсыз)',
+          'Нысана-ағзалардың жедел зақымдану белгілері болғанда (асқынған гипертониялық криз)',
+          'Жылдам жүргеннен кейінгі АҚ 135/85 мм с.б.',
+          'Демалыстан кейін толық қалыпқа келген АҚ 160/90 мм с.б.'
+        ],
+        correct: 1,
+        exp: 'Нысана-ағзалардың жедел зақымдануы бар асқынған гипертониялық криз кезінде міндетті шұғыл госпитализация қажет.'
+      }
+    ];
+
+    let currentQ = 0;
+    let quizMode = 'learn'; // 'learn' | 'exam'
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function setQuizMode(mode) {
+      quizMode = mode;
+      const btnLearn = document.getElementById('mode-learn');
+      const btnExam = document.getElementById('mode-exam');
+
+      if (mode === 'learn') {
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition';
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Оқыту: жауаптан кейін бірден талдау';
+      } else {
+        btnExam.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold bg-[#0f766e] text-white shadow-sm transition';
+        btnLearn.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('mode-desc').textContent = 'Емтихан: нәтиже тест соңында';
+      }
+      resetQuiz();
+    }
+
+    function resetQuiz() {
+      currentQ = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      document.getElementById('exam-result-card').classList.add('hidden');
+      document.getElementById('quiz-card').classList.remove('hidden');
+      renderQuiz();
+    }
+
+    function renderQuiz() {
+      const grid = document.getElementById('q-grid');
+      grid.innerHTML = '';
+
+      questions.forEach((_, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        let classes = 'py-1.5 rounded-lg border text-xs font-bold transition ';
+
+        if (idx === currentQ) {
+          classes += 'ring-2 ring-[#0f766e] border-[#0f766e] text-[#0f766e] ';
+        } else {
+          classes += 'border-slate-200 ';
+        }
+
+        if (userAnswers[idx] !== null) {
+          if (quizMode === 'learn') {
+            classes += userAnswers[idx] === questions[idx].correct
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-400'
+              : 'bg-red-50 text-red-700 border-red-400';
+          } else {
+            classes += 'bg-teal-50 text-teal-800 border-teal-300';
+          }
+        } else {
+          classes += 'bg-white text-slate-700 hover:bg-slate-50';
+        }
+
+        btn.className = classes;
+        btn.textContent = idx + 1;
+        btn.onclick = () => {
+          currentQ = idx;
+          renderQuiz();
+        };
+        grid.appendChild(btn);
+      });
+
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      document.getElementById('quiz-counter').textContent = `Жауап берілді: ${answeredCount} / ${questions.length}`;
+
+      const qObj = questions[currentQ];
+      document.getElementById('q-topic').textContent = qObj.topic;
+      document.getElementById('q-step-label').textContent = `Сұрақ ${currentQ + 1} / ${questions.length}`;
+      document.getElementById('q-text').textContent = qObj.q;
+
+      const optsDiv = document.getElementById('q-options');
+      optsDiv.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      const selected = userAnswers[currentQ];
+
+      qObj.options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+
+        let btnClass = 'w-full text-left p-3 rounded-xl border text-xs sm:text-sm font-medium transition flex items-center gap-3 ';
+        let letterClass = 'w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ';
+
+        if (selected !== null) {
+          if (quizMode === 'learn') {
+            if (i === qObj.correct) {
+              btnClass += 'border-emerald-500 bg-emerald-50 text-emerald-950';
+              letterClass += 'border-emerald-600 bg-emerald-600 text-white';
+            } else if (i === selected) {
+              btnClass += 'border-[#dc2626] bg-red-50 text-red-950';
+              letterClass += 'border-[#dc2626] bg-[#dc2626] text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-500 opacity-75';
+              letterClass += 'border-slate-300 text-slate-400';
+            }
+          } else {
+            if (i === selected) {
+              btnClass += 'border-[#0f766e] bg-teal-50/70 text-teal-950';
+              letterClass += 'border-[#0f766e] bg-[#0f766e] text-white';
+            } else {
+              btnClass += 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50';
+              letterClass += 'border-slate-300 text-slate-500';
+            }
+          }
+        } else {
+          btnClass += 'border-slate-200 bg-white text-slate-800 hover:border-[#0f766e] hover:bg-teal-50/30';
+          letterClass += 'border-slate-300 text-slate-600';
+        }
+
+        btn.className = btnClass;
+        btn.innerHTML = `<span class="${letterClass}">${letters[i]}</span><span class="leading-snug">${optText}</span>`;
+        btn.onclick = () => selectOption(i);
+        optsDiv.appendChild(btn);
+      });
+
+      const expDiv = document.getElementById('q-explanation');
+      if (quizMode === 'learn' && selected !== null) {
+        expDiv.classList.remove('hidden');
+        expDiv.innerHTML = `<strong class="text-[#0f766e]">ҚР КХ бойынша талдау:</strong> ${qObj.exp}`;
+      } else {
+        expDiv.classList.add('hidden');
+      }
+
+      const nextBtn = document.getElementById('next-btn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = quizMode === 'exam' ? 'Емтиханды аяқтау ✓' : 'Басына оралу ↺';
+      } else {
+        nextBtn.textContent = 'Келесі →';
+      }
+    }
+
+    function selectOption(idx) {
+      if (quizMode === 'learn' && userAnswers[currentQ] !== null) return;
+      userAnswers[currentQ] = idx;
+      renderQuiz();
+    }
+
+    function prevQuestion() {
+      if (currentQ > 0) {
+        currentQ--;
+        renderQuiz();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQ < questions.length - 1) {
+        currentQ++;
+        renderQuiz();
+      } else {
+        if (quizMode === 'exam') {
+          finishExam();
+        } else {
+          currentQ = 0;
+          renderQuiz();
+        }
+      }
+    }
+
+    function finishExam() {
+      let score = 0;
+      questions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) score++;
+      });
+      const pct = Math.round((score / questions.length) * 100);
+
+      document.getElementById('quiz-card').classList.add('hidden');
+      const resCard = document.getElementById('exam-result-card');
+      resCard.classList.remove('hidden');
+
+      document.getElementById('exam-score-text').textContent = `Дұрыс жауаптар: ${score} / ${questions.length} (${pct}%)`;
+      document.getElementById('exam-feedback-text').textContent = pct >= 80
+        ? 'Өте жақсы нәтиже! АҚ градациясы, асқынбаған жоғарылау мен гипертониялық кризді ажырату және шұғыл көмек алгоритмдері жақсы меңгерілген.'
+        : '«Бағалау және градация» мен «Салыстыру және көмек» бөлімдерін қайталап, тестті оқыту режимінде қайта өту ұсынылады.';
+    }
+
+    // =========================================================================
+    // 3. ҚОЙЫНДЫЛАРДЫ АУЫСТЫРУ
+    // =========================================================================
+    function switchTab(tabName) {
+      ['eval', 'help', 'quiz'].forEach(name => {
+        const btn = document.getElementById(`nav-${name}`);
+        const sec = document.getElementById(`tab-${name}`);
+
+        if (name === tabName) {
+          btn.className = 'py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-[#0f766e] text-white shadow-sm';
+          sec.classList.remove('hidden');
+        } else {
+          btn.className = 'py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900';
+          sec.classList.add('hidden');
+        }
+      });
+    }
+
+    // Қосымшаны іске қосу
+    window.addEventListener('DOMContentLoaded', () => {
+      renderRedFlags();
+      recalculateClinicalState();
+      renderQuiz();
+    });
+  </script>
+</body>
+</html>
